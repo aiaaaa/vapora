@@ -34,4 +34,4 @@ To regenerate the idle Holy Dust GIF from the production screen code:
 python3 synth_sdk/plugins/vapora/tools/make_showcase.py --output build/vapora-1.1.4-showcase
 ```
 
-This generates native-size and 3× exports: 160 frames, ten seconds, infinite loop. No notes are played or held. The host uses a substitute font; it does not emulate the OP-1 rasterizer.
+This generates native-size and 3× exports: 160 frames, ten seconds, infinite loop. No notes are played or held. The host uses bundled DejaVu Sans Bold 2.37, matching op1r’s preview substitute; it does not emulate the OP-1 rasterizer.
