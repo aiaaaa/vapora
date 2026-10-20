@@ -1,5 +1,6 @@
 {
-  "baseline_revision": "b0911c4e2c6d30c0fa65d53e8144559ad4931d50",
+  "version": "1.1.4",
+  "approved_source": "ac8e28b6110a0ea5c6a658c4b38b1e90fb2c794f",
   "unchanged_audio_and_core_files": {
     "vapora.c": "657b6db9038cc26e9cc84ba378599f4dedc1c0eb3e3e54abf7990bb8d1334719",
     "vapora_dsp.c": "11b19ab803aad851e309f2002014c45aa33dfd9f73bdb91899493f402771bba1",
@@ -26,5 +27,10 @@
     "deep pressure.aif": "93a4f5c5164f462855fd6318193a6cc47f405ffb16b29d786a354d09a444e01b",
     "porcelain orbit.aif": "9e06f19de34308af022ac20646810f47829ee77524effc203289908f413284b8"
   },
-  "preset_count": 15
+  "native_audio_code_data_identical": true,
+  "dry_pcm_fixtures_byte_identical": 19,
+  "approved_solid_and_lines_geometry_identical_at_81_positions": true,
+  "other_five_suns_identical_at_27_heights": true,
+  "hardware_selected_methods_approved": true,
+  "final_combined_installation_checked": false
 }

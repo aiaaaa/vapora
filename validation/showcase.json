@@ -1,0 +1,12 @@
+{
+  "version": "1.1.4",
+  "preset": "Holy Dust",
+  "sun": "01 Solid",
+  "played_notes": 0,
+  "held_notes": 0,
+  "frames": 160,
+  "duration_ms": 10000,
+  "loop": 0,
+  "host_render": true,
+  "substitute_font": true
+}
