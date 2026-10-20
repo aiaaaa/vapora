@@ -4,8 +4,8 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 
 **A reworking of [PADsynth](https://zynaddsubfx.sourceforge.io/doc/PADsynth/PADsynth.htm), the synthesis algorithm by Nasca Octavian Paul, for the original OP-1.**
 
-![Holy Dust: the sun sets and rises above VAPORA’s animated waves](media/holy-dust.gif)
 
+![Holy Dust: the sun sets and rises above VAPORA’s animated waves](media/holy-dust.gif)
 *Holy Dust, with an Synth Brightness sweep (filter)*
 
 ## Overview
