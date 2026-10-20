@@ -1,0 +1,30 @@
+{
+  "baseline_revision": "b0911c4e2c6d30c0fa65d53e8144559ad4931d50",
+  "unchanged_audio_and_core_files": {
+    "vapora.c": "657b6db9038cc26e9cc84ba378599f4dedc1c0eb3e3e54abf7990bb8d1334719",
+    "vapora_dsp.c": "11b19ab803aad851e309f2002014c45aa33dfd9f73bdb91899493f402771bba1",
+    "vapora_dsp.h": "cd5d9ca9f0a47536dfe8bfdfb3cf883c023d4239a25eef7656a4d13e77725248",
+    "vapora_params.h": "b76bcecebc925f75b00a46e22dcd0f00ebdde1c2307d41d6e49054b22873daaa",
+    "vapora_tables.h": "74ae38f84afece9bb79e353502bce118e84eef67844c6c5bfa265ba7ad3373c2",
+    "vapora_characters.h": "347f265de22cb89d33375937e003f33a3714b09a013a70b0a10c76694cb57ef5",
+    "data/core_set.json": "20d16f422b394491d187f153469b00dbb88520eb31a7e8bbaed3435b51af602c"
+  },
+  "presets_byte_identical": {
+    "asteroid swarm.aif": "f83e68bd2529b8677b1e1eaee003a65cf736a97069674024db74fe9d87d66596",
+    "tidal arc.aif": "67221ab678a25978497c220a3027c316035de19038bed6ad15a5aa42af51163b",
+    "ice chapel.aif": "70dce88b390d328a14c95462ffb682963ce11a36b40a5d5195a87eb5cdedf688",
+    "moon choir.aif": "bf742beece2fc30281cf5754f0f68926886ff74c5d3519fc00dca86965a35a17",
+    "stone hall.aif": "4917bbd70c8988ba58ae03e5d6c9e4857dab2d44d31c5f5264ff5a2c47ded578",
+    "cavern flute.aif": "b58df7a5f7cdb085a84ca7fa2bcc1bb2ed629ee6764e56fe9ddba29d4dfc9725",
+    "sub lantern.aif": "489256da50af29aee2ab278b23e694a85b4129dcae48b65152f43b38fa0fbdda",
+    "holy dust.aif": "0d56acfc51ab4c9252eebf03863d93e80c60f0e62ee3e295ff03bcb9956b9f8f",
+    "XFIN.aif": "520980b0ada42e8bf9d992bae254b495aaa6a63e74bd61935eba883c67d2f4ed",
+    "a fifth tide.aif": "ccb11c5d2cacbb10bc8e931830104a4469f9c26493513789488951c368697f2f",
+    "breath choir.aif": "7442d0ff5a32bb9143674d918946520f420bc30455b30059a75fe35d0c1899a9",
+    "last light.aif": "c7926ad4249b394caa8363044b3cf25f3a943a3ae06328f48f58a17ada75bea7",
+    "pink surf.aif": "d7b8766f52d27f167b00db80621bd77a4ac9ae3544ca79c969802fcac0a6bf18",
+    "deep pressure.aif": "93a4f5c5164f462855fd6318193a6cc47f405ffb16b29d786a354d09a444e01b",
+    "porcelain orbit.aif": "9e06f19de34308af022ac20646810f47829ee77524effc203289908f413284b8"
+  },
+  "preset_count": 15
+}

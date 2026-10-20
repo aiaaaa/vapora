@@ -1,0 +1,246 @@
+{
+  "source_revision": "88fa574d53a4eb2d8eefb3a5bd8dc4ce26cf09d7",
+  "documentation_change": "TOOLCHAIN.md replaces a local absolute path with a portable placeholder. All other plugin files match the 1.1 delivery.",
+  "files": {
+    "vapora_screen.c": {
+      "sha256": "c733d52baacb9cc8fd07e37ac4c10be26e1df6aa62d6ea945d773c53f18e8b3e",
+      "matches_built_source": true
+    },
+    "vapora.c": {
+      "sha256": "657b6db9038cc26e9cc84ba378599f4dedc1c0eb3e3e54abf7990bb8d1334719",
+      "matches_built_source": true
+    },
+    "TOOLCHAIN.md": {
+      "sha256": "72d50d3d55e2d350c4e3fd5b59f1f0e5e230b380bdc1ad1436f82f0c3e61fccf",
+      "matches_built_source": false
+    },
+    "PRESET_CATALOG.csv": {
+      "sha256": "12c76c549a204827c63eee2847a881c5fe7ce1e99d2d4e1815a54bb4668b2c77",
+      "matches_built_source": true
+    },
+    "LICENSE": {
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "matches_built_source": true
+    },
+    "requirements.txt": {
+      "sha256": "3985f68c68eeaf7f2979705619da82165e661ce873287e4600e3ec62ca0fc92b",
+      "matches_built_source": true
+    },
+    "vapora_visual.h": {
+      "sha256": "cb9ab276efca7655b1f99e4212b8461469deb454296074cf153c99b9e9f9354a",
+      "matches_built_source": true
+    },
+    "retired-r6-presets.txt": {
+      "sha256": "c4529a35f0f0a3ad9b7c733610b3f6cbe3506514b88c4b430c22e77c8cf0385b",
+      "matches_built_source": true
+    },
+    "CHANGELOG.md": {
+      "sha256": "95b4ff1299be6a9e3a76b648b01a83da68d7855517025244bdd017505def5d45",
+      "matches_built_source": true
+    },
+    "CPU_AUDIT.md": {
+      "sha256": "4378c2930363442d34524d844d5f85d5e259a16b4b41e666c44d55e254ae8564",
+      "matches_built_source": true
+    },
+    "vapora_mailbox.h": {
+      "sha256": "49186cdcabada44ed95426a1fa9b3f8c68345aa1070c1710a9c20b47c8c2d17c",
+      "matches_built_source": true
+    },
+    "vapora_dsp.h": {
+      "sha256": "cd5d9ca9f0a47536dfe8bfdfb3cf883c023d4239a25eef7656a4d13e77725248",
+      "matches_built_source": true
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "sha256": "6ffe84e69b1be37f6e371419fc5f34f3921521d0b2be550e7306ba0120fc34d9",
+      "matches_built_source": true
+    },
+    "vapora_params.h": {
+      "sha256": "b76bcecebc925f75b00a46e22dcd0f00ebdde1c2307d41d6e49054b22873daaa",
+      "matches_built_source": true
+    },
+    "plugin.json": {
+      "sha256": "7074dceeea4063d89151482f34a924aaebe3119d2feb5077ac1bcdc87a73c8fc",
+      "matches_built_source": true
+    },
+    "NOTICE": {
+      "sha256": "fcb804ab471cc98e141b85fbd183a0d94d31c2301ca676fde25e3fdf2c6452a3",
+      "matches_built_source": true
+    },
+    "README.md": {
+      "sha256": "9fe425d5f5dda3a4cc5d8e01b7271d21b789080b14a843fdb4eabfb83be0833d",
+      "matches_built_source": true
+    },
+    "vapora.svg": {
+      "sha256": "41e7febb6ee24288bc0cd01c478f70786357bc6726a7d6dae863baf39aa7fcaa",
+      "matches_built_source": true
+    },
+    "HARDWARE_CHECKLIST.md": {
+      "sha256": "758266589ea929712ebcb3448c73f38a23383e9f61cfe3556cb1c41ba0fdde8e",
+      "matches_built_source": true
+    },
+    "vapora_characters.h": {
+      "sha256": "347f265de22cb89d33375937e003f33a3714b09a013a70b0a10c76694cb57ef5",
+      "matches_built_source": true
+    },
+    ".gitignore": {
+      "sha256": "60c9bdd905fcf45ac485c680d32e9773962cf061b6f041dcddd033911558a672",
+      "matches_built_source": true
+    },
+    "vapora_suns.h": {
+      "sha256": "15e1bb6e980f63f70b2982344908e9700ba692e0e4c6a83c1682c4f3c575823e",
+      "matches_built_source": true
+    },
+    "vapora_q.h": {
+      "sha256": "97002e43474141fee384635ba148e149382051a03f87e21ec662108388da8660",
+      "matches_built_source": true
+    },
+    "vapora_tables.h": {
+      "sha256": "74ae38f84afece9bb79e353502bce118e84eef67844c6c5bfa265ba7ad3373c2",
+      "matches_built_source": true
+    },
+    "vapora_dsp.c": {
+      "sha256": "11b19ab803aad851e309f2002014c45aa33dfd9f73bdb91899493f402771bba1",
+      "matches_built_source": true
+    },
+    "tools/build.py": {
+      "sha256": "72b4d2604cd1037c5924b8b15651dbe5082262c8f5f3c2098e95b400e32dedaf",
+      "matches_built_source": true
+    },
+    "tools/build_toolchain.sh": {
+      "sha256": "bede3cd4078093d5482a10dd2ecee525739ea5e8cffa3e4906e21d4f8d3a24b4",
+      "matches_built_source": true
+    },
+    "tools/gen_presets.py": {
+      "sha256": "5f671ba8d3b2abf2e0f40dd6c08eb2a80466ea597f0160e9f541133295d54451",
+      "matches_built_source": true
+    },
+    "tools/check_package.py": {
+      "sha256": "275ee1984d44412771b3c0dbd587e67ba1ae2356e66c39ef574e7dfa5c59d023",
+      "matches_built_source": true
+    },
+    "tools/compare_host_cpu.py": {
+      "sha256": "f17113e2d5dd30f63c890cfe441b38dd110df66494adc426ee81bf2cb54e543a",
+      "matches_built_source": true
+    },
+    "tools/check_assets.py": {
+      "sha256": "53d2de685a8430c78903af68f6f36dcbef98f74bdf8a9bdeebeaa45655d4b0a8",
+      "matches_built_source": true
+    },
+    "tools/gen_tables.py": {
+      "sha256": "befda3853ac547fde19132cead6ee36e659590426fa9a16b5c2ccc5373a54787",
+      "matches_built_source": true
+    },
+    "tools/gen_art.py": {
+      "sha256": "1acd7aa6818c58e07e3296d618c2f4439544effdd4f21a3d42de519f5249232e",
+      "matches_built_source": true
+    },
+    "tools/check_retained.py": {
+      "sha256": "29b0d7b463d3c8ee7597e67a9e2349abc6fd192ba33598fafe7aa40a4537f4d8",
+      "matches_built_source": true
+    },
+    "tests/loader.c": {
+      "sha256": "f1ebe319b53523d110f3ebc681ecdbc9d42a2e40318508df1f6d72e09d4e7f74",
+      "matches_built_source": true
+    },
+    "tests/native_mock.h": {
+      "sha256": "06751bc323ee99d13093a8e7aff647dfb7c7f89a4acdd9efc527983632cf4ef3",
+      "matches_built_source": true
+    },
+    "tests/benchmark.c": {
+      "sha256": "452b62d809de3ba6b4ff535ffb744bf455be70e4c21e9540326f167a1d9f2ec4",
+      "matches_built_source": true
+    },
+    "tests/preset_words.h": {
+      "sha256": "98c658841d6cd2d19c20a5ec97cfd8eb98512665f61f0bc6ef099eed059e15f4",
+      "matches_built_source": true
+    },
+    "tests/host.c": {
+      "sha256": "77d226149032d6878783ef7d71cc890a002a3de52b2f6ab647bbd1b314c4b7b9",
+      "matches_built_source": true
+    },
+    "presets/recipes.json": {
+      "sha256": "628cdf84164a3e7de0259f2385239b6285c4d597c71ad19aa83398a8f0a4762d",
+      "matches_built_source": true
+    },
+    "presets/asteroid swarm.aif": {
+      "sha256": "f83e68bd2529b8677b1e1eaee003a65cf736a97069674024db74fe9d87d66596",
+      "matches_built_source": true
+    },
+    "presets/tidal arc.aif": {
+      "sha256": "67221ab678a25978497c220a3027c316035de19038bed6ad15a5aa42af51163b",
+      "matches_built_source": true
+    },
+    "presets/ice chapel.aif": {
+      "sha256": "70dce88b390d328a14c95462ffb682963ce11a36b40a5d5195a87eb5cdedf688",
+      "matches_built_source": true
+    },
+    "presets/moon choir.aif": {
+      "sha256": "bf742beece2fc30281cf5754f0f68926886ff74c5d3519fc00dca86965a35a17",
+      "matches_built_source": true
+    },
+    "presets/stone hall.aif": {
+      "sha256": "4917bbd70c8988ba58ae03e5d6c9e4857dab2d44d31c5f5264ff5a2c47ded578",
+      "matches_built_source": true
+    },
+    "presets/cavern flute.aif": {
+      "sha256": "b58df7a5f7cdb085a84ca7fa2bcc1bb2ed629ee6764e56fe9ddba29d4dfc9725",
+      "matches_built_source": true
+    },
+    "presets/sub lantern.aif": {
+      "sha256": "489256da50af29aee2ab278b23e694a85b4129dcae48b65152f43b38fa0fbdda",
+      "matches_built_source": true
+    },
+    "presets/holy dust.aif": {
+      "sha256": "0d56acfc51ab4c9252eebf03863d93e80c60f0e62ee3e295ff03bcb9956b9f8f",
+      "matches_built_source": true
+    },
+    "presets/XFIN.aif": {
+      "sha256": "520980b0ada42e8bf9d992bae254b495aaa6a63e74bd61935eba883c67d2f4ed",
+      "matches_built_source": true
+    },
+    "presets/a fifth tide.aif": {
+      "sha256": "ccb11c5d2cacbb10bc8e931830104a4469f9c26493513789488951c368697f2f",
+      "matches_built_source": true
+    },
+    "presets/breath choir.aif": {
+      "sha256": "7442d0ff5a32bb9143674d918946520f420bc30455b30059a75fe35d0c1899a9",
+      "matches_built_source": true
+    },
+    "presets/last light.aif": {
+      "sha256": "c7926ad4249b394caa8363044b3cf25f3a943a3ae06328f48f58a17ada75bea7",
+      "matches_built_source": true
+    },
+    "presets/pink surf.aif": {
+      "sha256": "d7b8766f52d27f167b00db80621bd77a4ac9ae3544ca79c969802fcac0a6bf18",
+      "matches_built_source": true
+    },
+    "presets/deep pressure.aif": {
+      "sha256": "93a4f5c5164f462855fd6318193a6cc47f405ffb16b29d786a354d09a444e01b",
+      "matches_built_source": true
+    },
+    "presets/porcelain orbit.aif": {
+      "sha256": "9e06f19de34308af022ac20646810f47829ee77524effc203289908f413284b8",
+      "matches_built_source": true
+    },
+    "data/retired_presets.json": {
+      "sha256": "4cde00824c9fb72a4db8ca474769fb08530efdbfa3452a386c11f6de17c42fef",
+      "matches_built_source": true
+    },
+    "data/presets.json": {
+      "sha256": "28794ace3528fa42689df3d18f90a62d877f1976d7a9d0e11fba7c11b94d9038",
+      "matches_built_source": true
+    },
+    "data/tables.json": {
+      "sha256": "4205cd50d6e360b44d5a151797f5104b4a4a225265f7397aff95067949cc9e83",
+      "matches_built_source": true
+    },
+    "data/core_set.json": {
+      "sha256": "20d16f422b394491d187f153469b00dbb88520eb31a7e8bbaed3435b51af602c",
+      "matches_built_source": true
+    },
+    "data/voices.json": {
+      "sha256": "f1d7a1645187bceb1cd48492eeae32508828f50f412c5a992dd7145fcf4481be",
+      "matches_built_source": true
+    }
+  }
+}
