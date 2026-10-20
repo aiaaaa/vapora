@@ -1,3 +1,11 @@
+# 1.1.4
+
+- Default 01 Solid (approved trial 10), followed by 02 Lines (approved trial 21).
+- Seven designs: Solid, Lines, Halo, Retro, Bands, Saturn and Triple.
+- Audio, release tails, 15 presets and the other approved artwork are unchanged.
+- Holy Dust showcase: ten-second looping idle Brightness sweep, no keys played or held.
+- README remains the manual; prominent PADsynth credit names Nasca Octavian Paul.
+
 # 1.1.0 — sun rendering refinement
 
 - Mark the approved sound and 15 presets as the 1.0 baseline; no sonic or preset changes.

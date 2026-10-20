@@ -2,9 +2,11 @@
 
 Cinematic pads and spectral textures for the original OP-1, built for Hundekraft.
 
+**A reworking of [PADsynth](https://zynaddsubfx.sourceforge.io/doc/PADsynth/PADsynth.htm), the synthesis algorithm by Nasca Octavian Paul, for the original OP-1.**
+
 ![Holy Dust: the sun sets and rises above VAPORA’s animated waves](media/holy-dust.gif)
 
-*Holy Dust, with a Brightness sweep.*
+*Holy Dust, with an idle Brightness sweep. No keys played or held.*
 
 ## Overview
 
@@ -12,7 +14,7 @@ VAPORA is a six-voice PADsynth-based instrument with two independently phased, d
 
 Two detuned playback heads read broad, evolving PADsynth spectra for each note. Morph between two related colors, add a pitched interval, and let the tone drift. Fourteen characters cover warm ensembles, breathy choirs, hollow flutes, glassy textures and deep drones. VAPORA plays up to six notes, follows velocity, and uses the OP-1’s normal T2 envelope and T3 effect.
 
-**Version 1.1.0** refines visual lines. The approved sound engine and preset bank are unchanged.
+**Version 1.1.4** starts with Solid, followed by Lines. The approved sound engine and preset bank are unchanged.
 
 ## Manual
 
@@ -33,7 +35,7 @@ Push blue, green or orange again to return to its main control. Each has its own
 
 **Intervals:** octave below, fifth below, unison, minor third, major third, fifth, major sixth, minor seventh, major seventh and octave above. Start with unison for a conventional pad; a fifth or octave adds a second pitch to each played note.
 
-**Sun designs:** 05 Eclipse → 01 Halo → 02 Retro → 03 Bands → 10 Saturn → 18 Triple, then back to Eclipse. These numbers identify the designs rather than their positions in the cycle. Sun selection does not change the audio.
+**Sun designs:** 01 Solid (default) → 02 Lines → 03 Halo → 04 Retro → 05 Bands → 06 Saturn → 07 Triple, then back to Solid. Solid is the approved trial 10; Lines is trial 21 with thick horizontal strokes. Sun selection does not change the audio.
 
 ### Try this
 
@@ -43,11 +45,11 @@ Load STONE HALL and play it at -3 octave range.
 
 The factory bank contains 15 sounds: A Fifth Tide, Asteroid Swarm, Breath Choir, Cavern Flute, Deep Pressure, Holy Dust, Ice Chapel, Last Light, Moon Choir, Pink Surf, Porcelain Orbit, Stone Hall, Sub Lantern, Tidal Arc and XFIN.
 
-Save an edited sound with the OP-1’s usual sound-key gesture. Deep Pressure is the only factory preset with a saved T3 effect; the other fourteen are dry. If the final bank is already installed, the 1.1 update needs only the plugin file, with no preset copying.
+Save an edited sound with the OP-1’s usual sound-key gesture. Deep Pressure is the only factory preset with a saved T3 effect; the other fourteen are dry. If the final bank is already installed, the 1.1.4 update needs only the plugin file, with no preset copying.
 
 ## Download and install
 
-- [VAPORA 1.1 plugin](downloads/vapora.knl)
+- [VAPORA 1.1.4 plugin](downloads/vapora.knl)
 - [15 factory presets](downloads/vapora-core15-presets.zip) — for new installations
 - [Checksums](downloads/SHA256SUMS)
 
@@ -63,7 +65,7 @@ Deep Pressure uses the separate Hundekraft `reverb` effect. The other factory pr
 
 [Build instructions](docs/BUILD.md) include the pinned SDK, Blackfin toolchain and host checks. All corresponding plugin source, generators, editable geometry and preset recipes are in [plugin/vapora](plugin/vapora).
 
-Native Blackfin compilation, package/import/relocation checks and sanitizer host checks passed. All 15 preset files match the approved bank byte for byte. The author has evaluated the sounds on hardware; the new 1.1 circle rendering still needs its final on-device visual check. The GIF is a host rendering, not an OLED capture. No controlled device CPU benchmark is claimed.
+Native Blackfin compilation, package/import/relocation checks and sanitizer host checks passed. All 15 preset files match the approved bank byte for byte. The author has evaluated the sounds and selected Solid and Lines on hardware. Their approved geometry is preserved in 1.1.4; the combined build still needs its installation check. The GIF is a host rendering, not an OLED capture. No controlled device CPU benchmark is claimed.
 
 [Release notes](CHANGELOG.md) · [Validation records](validation) · [Hundekraft handoff notes](docs/HUNDEKRAFT.md)
 
