@@ -6,7 +6,7 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 
 ![Holy Dust: the sun sets and rises above VAPORA’s animated waves](media/holy-dust.gif)
 
-*Holy Dust, with an idle Brightness sweep. No keys played or held.*
+*Holy Dust, with an Synth Brightness sweep (filter)*
 
 ## Overview
 
