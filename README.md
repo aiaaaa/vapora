@@ -77,4 +77,4 @@ By **aiaaaa**, developed with AI coding assistance. PADsynth algorithm by Nasca 
 
 GPL-3.0-or-later with the additional OP-1 firmware combination permission: see [LICENSE](LICENSE), [NOTICE](NOTICE), and [third-party credits](THIRD_PARTY_NOTICES.md). No Teenage Engineering firmware, extracted fonts or device keys are included.
 
-Independent project; not affiliated with Teenage Engineering or an official Hundekraft release.
+Independent project; not affiliated with Teenage Engineering.
