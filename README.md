@@ -16,8 +16,6 @@ Two detuned playback heads read broad, evolving PADsynth spectra for each note. 
 
 ## Manual
 
-[Open the standalone manual](MANUAL.md)
-
 **Load:** press **synth**, then **Shift + T1**. Turn **blue** to **vapora** and press **T1**. To load a factory sound, open the preset browser with **Shift + a sound key**, choose **vapora**, then the preset.
 
 ### Controls
