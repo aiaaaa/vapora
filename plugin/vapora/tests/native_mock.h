@@ -32,6 +32,9 @@ typedef struct {
     uint8_t press[4];
 } op1_engine_t;
 typedef struct {void(*init)(void*);void(*update)(void*,int);} op1_screen_t;
+void *op1_find_node(void*,const char*);
+void op1_node_set_visible(void*,int);
+void op1_node_set_transform(void*,const int32_t*);
 void op1_screen_draw(void*,int);
 void *op1_raster(void);
 void op1_raster_line(void*,const op1_pt*,const op1_pt*,int32_t,const uint8_t*);

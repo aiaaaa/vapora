@@ -19,14 +19,14 @@ volatile uint8_t op1_eng_page[4];
 static FILE *drawing;
 static unsigned drawn_lines,particle_light;
 static const int16_t defaults[8]={9000,26000,18500,12500,0x5320,0,0,0};
-void op1_screen_draw(void *s,int dt){(void)s;(void)dt;}
+#include "native_scene.h"
 void *op1_raster(void){return (void*)1;}
 void op1_raster_line(void *r,const op1_pt *a,const op1_pt *b,int32_t w,const uint8_t *c)
 {
     (void)r;
     assert(a->x>=0&&a->x<320*1024&&a->y>=0&&a->y<153*1024);
     assert(b->x>=0&&b->x<320*1024&&b->y>=0&&b->y<153*1024);
-    assert(w>0&&w<=PS_BIG_DOT_STROKE);drawn_lines++;
+    assert(w>0&&(w<=PS_BIG_DOT_STROKE||(w==4096&&c[0]==255&&c[1]==190&&c[2]==107)));drawn_lines++;
     if(w==PS_DOT_STROKE||w==PS_MED_DOT_STROKE||w==PS_BIG_DOT_STROKE)particle_light+=c[2];
     if(drawing)fprintf(drawing,"<line x1=\"%.4f\" y1=\"%.4f\" x2=\"%.4f\" y2=\"%.4f\" stroke=\"#%02x%02x%02x\" stroke-width=\"%.4f\"/>\n",
         a->x/1024.,a->y/1024.,b->x/1024.,b->y/1024.,c[0],c[1],c[2],w/1024.);
@@ -330,6 +330,25 @@ static void sun_motion_contract(const char *dir)
         fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
     }
 }
+static void approved_suns_contract(const char *dir)
+{
+    for(int design=0;design<2;design++){
+        for(int q=0;q<=32767;q++){
+            drawn_lines=0;ps_test_draw_sun_at(ps_sun_y(q),design,q);
+            assert(ps_native_nodes[0].visible==(design==0&&q>0));
+            assert(drawn_lines<8);
+            if(q==32767)assert(drawn_lines==(design==1?7u:0u));
+        }
+        for(int step=0;step<=80;step++){
+            char path[1024];snprintf(path,sizeof path,"%s/approved-%02d-%02d.svg",dir,design+1,step);
+            drawing=fopen(path,"w");assert(drawing);
+            fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"160\">\n",drawing);
+            int q=(80-step)*32767/80;ps_test_draw_sun_at(ps_sun_y(q),design,q);
+            fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
+        }
+    }
+    puts("Approved suns: full 32768-value sweeps; Solid visibility and seven Lines strokes checked");
+}
 static void controls_contract(const char *dir)
 {
     reset();for(int k=0;k<4;k++)op1_eng_page[k]=0;
@@ -364,7 +383,7 @@ static void controls_contract(const char *dir)
     uint32_t day_step=ps_test_particle_phase()-phase;
     assert(night_step>day_step*2&&night_light>particle_light);
     printf("Particles: low-sun step %u / high-sun step %u; sky brightness %u / %u\n",night_step,day_step,night_light,particle_light);
-    puts("Controls: 6 sun steps/wrap, original IDs 05/01/02/03/10/18; saved words unchanged by presses; active turn/page; Character changes in one detent; core preset Character mappings");
+    puts("Controls: 7 sun steps/wrap, release IDs 01/02/03/04/05/06/07; saved words unchanged by presses; active turn/page; Character changes in one detent; core preset Character mappings");
 }
 extern int ps_test_secret(void);
 static void secret_setup(void)
@@ -465,6 +484,6 @@ int main(int argc,char **argv)
         char name[100];snprintf(name,sizeof name,"preset-%02d-%s",i+1,preset_names[i]);
         fixture(argv[1],name,i+4);
     }
-    geometry_contract();previews(argv[1]);controls_contract(argv[1]);sun_motion_contract(argv[1]);secret_contract(argv[1]);puts("PASS: host DSP/adapter/mailbox/screen checks");
+    geometry_contract();previews(argv[1]);controls_contract(argv[1]);sun_motion_contract(argv[1]);approved_suns_contract(argv[1]);secret_contract(argv[1]);puts("PASS: host DSP/adapter/mailbox/screen checks");
     return 0;
 }
