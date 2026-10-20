@@ -4,7 +4,8 @@ from PIL import Image, ImageDraw, ImageFont
 import xml.etree.ElementTree as ET
 import re,math
 S=4
-font='/System/Library/Fonts/Menlo.ttc'
+# Same substitute family/weight and text metrics as op1r's host renderer.
+font=Path(__file__).resolve().parent/'fonts/DejaVuSans-Bold.ttf'
 def render(path):
  im=Image.new('RGB',(320*S,160*S),'black');draw=ImageDraw.Draw(im)
  def walk(el,offset=(0,0),fill="black"):
@@ -31,8 +32,8 @@ def render(path):
     elif cmd!='z':raise ValueError(cmd)
    draw.polygon(pts,fill=fill)
   elif tag=='text':
-   size=float(a['font-size']);f=ImageFont.truetype(font,round(size*S))
-   draw.text(xy(float(a['x']),float(a['y'])-size),el.text or '',font=f,fill=a['fill'])
+   size=float(a['font-size']);f=ImageFont.truetype(str(font),round(size*0.78*S))
+   draw.text(xy(float(a['x']),float(a['y'])-size*0.28),el.text or '',font=f,fill=a['fill'],anchor='ls')
   for child in el:walk(child,(ox,oy),fill)
  walk(ET.parse(path).getroot())
  return im.resize((320,160),Image.Resampling.LANCZOS)
