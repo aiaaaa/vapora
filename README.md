@@ -10,19 +10,15 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 
 VAPORA is a six-voice PADsynth-based instrument with two independently phased, detuned playback heads per voice, 14 sound characters, and 15 curated presets. Its screen combines a moving triangular perlin space, stars, and a setting sun.
 
-**Version 1.1.0** refines lines. The approved sound engine and preset bank are unchanged.
+Two detuned playback heads read broad, evolving PADsynth spectra for each note. Morph between two related colors, add a pitched interval, and let the tone drift. Fourteen characters cover warm ensembles, breathy choirs, hollow flutes, glassy textures and deep drones. VAPORA plays up to six notes, follows velocity, and uses the OP-1’s normal T2 envelope and T3 effect.
+
+**Version 1.1.0** refines visual lines. The approved sound engine and preset bank are unchanged.
 
 ## Manual
 
 [Open the standalone manual](MANUAL.md)
 
-Two detuned playback heads read broad, evolving PADsynth spectra for each note. Morph between two related colors, add a pitched interval, and let the tone drift. Fourteen characters cover warm ensembles, breathy choirs, hollow flutes, glassy textures and deep drones. VAPORA plays up to six notes, follows velocity, and uses the OP-1’s normal T2 envelope and T3 effect.
-
 **Load:** press **synth**, then **Shift + T1**. Turn **blue** to **vapora** and press **T1**. To load a factory sound, open the preset browser with **Shift + a sound key**, choose **vapora**, then the preset.
-
-![VAPORA instrument page with Holy Dust and the sun fully open](media/vapora-screen.png)
-
-*Holy Dust with Brightness at maximum. Host-rendered illustration; on the OP-1, the readout uses the instrument’s native font.*
 
 ### Controls
 
