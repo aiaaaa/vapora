@@ -1,4 +1,4 @@
-# Build VAPORA 1.1
+# Build VAPORA 1.1.4
 
 Download the [matching Hundekraft 3.0.2 source and SDK](https://hundekraft.github.io/op1-workshop/source/hundekraft-3.0.2-source.tar.gz) and verify its [published checksum](https://hundekraft.github.io/op1-workshop/source/hundekraft-3.0.2-source.tar.gz.sha256).
 
@@ -22,8 +22,16 @@ python3 -m pip install -r synth_sdk/plugins/vapora/requirements.txt
 python3 synth_sdk/plugins/vapora/tools/build.py --toolchain /path/to/toolchain
 ```
 
-Outputs are `build/vapora.knl` and `build/vapora-1.1-validation/`. The build script expects this SDK directory layout. Keep it inside `synth_sdk/plugins/vapora`, rather than invoking it from the standalone GitHub checkout.
+Outputs are `build/vapora.knl` and `build/vapora-1.1.4-validation/`. The build script expects this SDK directory layout. Keep it inside `synth_sdk/plugins/vapora`, rather than invoking it from the standalone GitHub checkout.
 
-Checks cover table generation, 15 preset round trips, production DSP and screen harnesses, 19 dry audio fixtures, wave bounds, all six suns, control behavior, native imports and loader relocation against GNU ld at two addresses. Host rasterization and timing do not establish native display quality or hardware CPU limits.
+Checks cover table generation, 15 preset round trips, production DSP and screen harnesses, 19 dry audio fixtures, wave bounds, all seven suns, control behavior, native imports and loader relocation against GNU ld at two addresses. Host rasterization and timing do not establish native display quality or hardware CPU limits.
 
-Compiled release: 473,392 bytes; SHA-256 `265b82ab0ee82bf561cc89417e3afd3d729d5e442b6b622d855eb1cefd203c25`.
+Compiled release: 474,288-byte plugin; SHA-256 `9466c795c9e94e7bca3950bc0f7cd892cdba2dcebdd45fd734035d67ae73f482`.
+
+To regenerate the idle Holy Dust GIF from the production screen code:
+
+```sh
+python3 synth_sdk/plugins/vapora/tools/make_showcase.py --output build/vapora-1.1.4-showcase
+```
+
+This generates native-size and 3× exports: 160 frames, ten seconds, infinite loop. No notes are played or held. The host uses a substitute font; it does not emulate the OP-1 rasterizer.
