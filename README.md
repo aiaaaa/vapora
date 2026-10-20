@@ -16,8 +16,6 @@ VAPORA is a six-voice PADsynth-based instrument with two independently phased, d
 
 Two detuned playback heads read broad, evolving PADsynth spectra for each note. Morph between two related colors, add a pitched interval, and let the tone drift. Fourteen characters cover warm ensembles, breathy choirs, hollow flutes, glassy textures and deep drones. VAPORA plays up to six notes, follows velocity, and uses the OP-1’s normal T2 envelope and T3 effect.
 
-**Version 1.1.4** starts with Solid, followed by Lines. The approved sound engine and preset bank are unchanged.
-
 ## Manual
 
 **Load:** press **synth**, then **Shift + T1**. Turn **blue** to **vapora** and press **T1**. To load a factory sound, open the preset browser with **Shift + a sound key**, choose **vapora**, then the preset.
