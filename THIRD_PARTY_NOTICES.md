@@ -23,6 +23,9 @@
   GCC Runtime Library Exception as supplied by GCC. GNU binutils 2.42 is
   a build tool. Neither compiler executable nor toolchain sources are
   bundled in the small delivery archive.
+- **Host preview font:** DejaVu Sans Bold 2.37, unmodified, using the same
+  substitute family and weight as op1r previews. Included only for host rendering;
+  see [font license](plugin/vapora/tools/fonts/LICENSE-DejaVu.txt) and [provenance](plugin/vapora/tools/fonts/README.txt).
 - Runtime lettering calls the stock firmware text renderer through SDK wrappers. The source archive
   contains no extracted TE stock font, original firmware, device keys,
   proprietary artwork or third-party reference JPG.
