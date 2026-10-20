@@ -18,7 +18,7 @@ def main():
     ap.add_argument("--toolchain",type=Path,default=Path(os.environ.get("KENNEL_TOOLCHAIN",TASK/"toolchain")))
     ap.add_argument("--skip-regenerate",action="store_true",help="use checked-in tables")
     a=ap.parse_args()
-    out=KENNEL/"build/vapora-1.1-validation";out.mkdir(parents=True,exist_ok=True)
+    out=KENNEL/"build/vapora-1.1.4-validation";out.mkdir(parents=True,exist_ok=True)
     if not a.skip_regenerate:
         old=hashlib.sha256((ROOT/"vapora_tables.h").read_bytes()).hexdigest() if (ROOT/"vapora_tables.h").exists() else None
         gen_tables.generate()

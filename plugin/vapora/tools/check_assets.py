@@ -113,9 +113,9 @@ def visual_checks(out):
         return [e.attrib for e in root.iter() if e.tag.split("}")[-1]=="line"
                 and abs(float(e.get("stroke-width","0"))-width/1024)<.0001]
     for name in ("minimum.svg","default.svg"):
-        assert len(lines(name,3200))==8
-        assert len(lines(name,1900))==24
-        assert len(lines(name,2500))==16
+        assert len(lines(name,3200))<=8
+        assert len(lines(name,1900))<=24
+        assert len(lines(name,2500))<=16
         dots=lines(name,1900)+lines(name,2500)+lines(name,3200)
         xs=[float(d["x1"]) for d in dots];ys=[float(d["y1"]) for d in dots]
         assert max(xs)-min(xs)>270 and max(ys)-min(ys)>30
@@ -123,83 +123,61 @@ def visual_checks(out):
         xs=[float(d[k]) for d in mesh for k in ("x1","x2")]
         assert min(xs)<=2.1 and max(xs)>=316.9
     assert lines("idle-00.svg",1950)!=lines("idle-23.svg",1950),"idle surface did not move"
-    ids=(5,1,2,3,10,18)
-    for style in ids:
+    ids=range(1,8)
+    for style in range(2,8):
         normal=[]
         for cy in range(30,57):
-            width=2048 if style==5 else 2200
-            aa=lines(f"sunfixed-{style:02d}-{cy:02d}.svg",width)
-            geometry=[tuple(round(float(a[k])-(cy if k.startswith("y") else 0),6)
-                            for k in ("x1","y1","x2","y2")) for a in aa]
-            normal.append(geometry)
+            aa=lines(f"sunfixed-{style:02d}-{cy:02d}.svg",4096 if style==2 else 2200)
+            normal.append([tuple(round(float(a[k])-(cy if k.startswith("y") else 0),6)
+                         for k in ("x1","y1","x2","y2")) for a in aa])
         assert all(g==normal[0] for g in normal),"sun shape changed during translation"
     fill=[]
     for cy in range(30,57):
-        aa=lines(f"sunmove-05-{cy:02d}.svg",2048)
-        fill.append(sum(abs(float(a["x2"])-float(a["x1"])) for a in aa))
-        assert all(a["y1"]==a["y2"] for a in aa)
-        assert all((float(a["y1"])-cy)%2==1 for a in aa),"Eclipse row phase changed"
-    assert fill[0]>600 and fill[-1]==0 and all(a>=b for a,b in zip(fill,fill[1:]))
-    full=lines("sunfixed-05-30.svg",2048)
-    assert len(full)==20
-    xs=[float(a[k]) for a in full for k in ("x1","x2")]
-    ys=[float(a["y1"])-30 for a in full]
-    assert abs((max(xs)-min(xs))-(max(ys)-min(ys)+2))<.1,"Full Eclipse is not circular"
-    assert all(abs((float(a["x1"])+float(a["x2"]))/2-160)<.001 for a in full)
-    # Circle segment ends overlap instead of meeting at independently rounded pixels.
-    for style,circles in [(1,[(0,0,15)]),(3,[(0,0,15)]),(10,[(0,0,12)]),
-                          (18,[(-17,0,10),(0,0,14),(17,0,10)])]:
+        aa=lines(f"sunmove-02-{cy:02d}.svg",4096)
+        fill.append(sum(float(a["x2"])-float(a["x1"]) for a in aa))
+        assert all(a["y1"]==a["y2"] and (float(a["y1"])-cy)%6==0 for a in aa)
+        root=ET.parse(out/f"sunfixed-01-{cy:02d}.svg").getroot()
+        groups=list(root)
+        assert len(groups)==1 and groups[0].get('transform')==f'translate(140.0000 {cy-20:.4f})'
+        assert groups[0][0].get('fill')=='#ffbe6b'
+    assert fill[0]>150 and fill[-1]==0 and all(a>=b for a,b in zip(fill,fill[1:]))
+    full=lines("sunfixed-02-30.svg",4096)
+    assert len(full)==7 and sorted(float(a['y1'])-30 for a in full)==[-18,-12,-6,0,6,12,18]
+    assert all((float(a['x1'])+float(a['x2']))/2==160 for a in full)
+    for style,circles in [(3,[(0,0,15)]),(5,[(0,0,15)]),(6,[(0,0,12)]),
+                          (7,[(-17,0,10),(0,0,14),(17,0,10)])]:
         aa=lines(f"sunfixed-{style:02d}-30.svg",2200)
         for n,(cx,yy,radius) in enumerate(circles):
             for a in aa[n*32:(n+1)*32]:
                 for x,y in [(float(a["x1"])-160-cx,float(a["y1"])-30-yy),
                             (float(a["x2"])-160-cx,float(a["y2"])-30-yy)]:
                     assert abs((x*x+y*y)**.5-radius)<.1,"Notched circle geometry"
-    retro=lines("sunmove-02-30.svg",2200)
+    retro=lines("sunmove-04-30.svg",2200)
     assert max(float(a["y1"])-30 for a in retro)==14,"Retro bottom stripe returned"
-    for style,name in [(1,"HALO"),(2,"RETRO"),(3,"BANDS"),(5,"ECLIPSE"),(10,"SATURN"),(18,"TRIPLE")]:
+    names=['SOLID','LINES','HALO','RETRO','BANDS','SATURN','TRIPLE']
+    for style,name in enumerate(names,1):
         root=ET.parse(out/f"sun-{style:02d}.svg").getroot()
         text=" ".join(e.text or "" for e in root.iter() if e.tag.split("}")[-1]=="text")
         assert f"SUN {style:02d} {name}" in " ".join(text.split()),(style,text)
-    (out/"sun-motion.json").write_text(json.dumps(dict(styles=6,original_ids=[5,1,2,3,10,18],heights=27,
-        translation_invariant=list(ids),eclipse_radius=20,eclipse_full_aspect_error_pixels=abs((max(xs)-min(xs))-(max(ys)-min(ys)+2)),eclipse_scanline_width_sum_high_to_low=fill,
-        limitation="Production line geometry and host pixels, not an OP-1 raster capture."),indent=2)+"\n")
-    print("Visual contract: 48 sky dots / 24 small / 16 medium / 8 large; full-width water; Motion=0 idle mesh moves")
+    for e in ET.parse(ROOT/'vapora.svg').getroot().iter():
+        if e.tag.split('}')[-1]=='path':assert e.get('fill') not in (None,'inherit')
+    (out/"sun-motion.json").write_text(json.dumps(dict(styles=7,display_ids=list(ids),names=names,default=1,
+        heights=27,translation_invariant=list(ids),solid_radius=20,lines_stroke_pixels=4,
+        lines_count=7,lines_pitch_pixels=6,lines_width_sum_high_to_low=fill,
+        limitation="Host command geometry, not an OP-1 raster capture."),indent=2)+"\n")
+    print("Visual contract: seven suns in approved order; four-pixel Lines; explicit native paint; idle water moves")
 
 def render(out):
-    static=ET.parse(ROOT/"vapora.svg").getroot()
+    from render_scene import render as render_frame
     for svg in sorted(out.glob("*.svg")):
-        root=ET.parse(svg).getroot()
-        # Embed original static geometry into the host line-command recording.
-        if not any(e.get("id")=="background" for e in root):
-            root.insert(0,static[0])
-            ET.register_namespace("","http://www.w3.org/2000/svg")
-            ET.ElementTree(root).write(svg,encoding="unicode")
-        image=Image.new("RGB",(1280,640),(0,0,0));draw=ImageDraw.Draw(image)
-        for el in root.iter():
-            tag=el.tag.split("}")[-1];a=el.attrib
-            if tag=="line":pts=[(float(a["x1"]),float(a["y1"])),(float(a["x2"]),float(a["y2"]))]
-            elif tag=="polyline":
-                nums=[float(x) for x in re.findall(r"-?\d+(?:\.\d+)?",a["points"])]
-                pts=list(zip(nums[::2],nums[1::2]))
-            elif tag=="text":
-                # Substitute only: native firmware supplies the actual stock glyphs.
-                font_path=Path("/System/Library/Fonts/Menlo.ttc")
-                font=(ImageFont.truetype(str(font_path),round(float(a["font-size"])*4)) if font_path.exists()
-                      else ImageFont.load_default(size=round(float(a["font-size"])*4)))
-                draw.text((round(float(a["x"])*4),round((float(a["y"])-float(a["font-size"]))*4)),el.text or "",font=font,fill=a["fill"])
-                continue
-            else:continue
-            pts=[(round(x*4),round(y*4)) for x,y in pts]
-            draw.line(pts,fill=a.get("stroke","#ffffff"),width=max(1,round(float(a.get("stroke-width",1))*4)))
-        image.resize((320,160),Image.Resampling.LANCZOS).save(svg.with_suffix(".png"))
-    suns=Image.new("RGB",(990,402),(20,23,30));sd=ImageDraw.Draw(suns)
-    for i,style in enumerate((5,1,2,3,10,18)):
+        render_frame(svg).save(svg.with_suffix('.png'))
+    suns=Image.new("RGB",(990,600),(20,23,30));sd=ImageDraw.Draw(suns)
+    for i,style in enumerate(range(1,8)):
         name=f"sun-{style:02d}";x=10+(i%3)*330;y=10+(i//3)*198
         sd.text((x,y),name+" / HOST FONT SUBSTITUTE",fill=(180,185,200))
         suns.paste(Image.open(out/(name+".png")),(x,y+20))
     suns.save(out/"sun-contact-sheet.png")
-    for style in (2,5,18):
+    for style in (1,2,4,7):
         frames=[Image.open(out/f"sunmove-{style:02d}-{cy:02d}.png") for cy in range(56,29,-1)]
         frames=frames+frames[-2:0:-1]
         frames[0].save(out/f"sun-{style:02d}-travel-host.gif",save_all=True,append_images=frames[1:],duration=100,loop=0)

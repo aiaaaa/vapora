@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-"""Minimal native SVG backing; waves, sun and sky are drawn by screen C."""
+"""Native cubic disk/cover for Solid; all other suns are direct C lines."""
 from pathlib import Path
-import sys
 ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT.parents[1]/"display"))
-from svgart import shape
 
 def generate():
-    objects=[]
-    text='<svg xmlns="http://www.w3.org/2000/svg" width="320" height="160" viewBox="0 0 320 160">\n'
-    text+='<g id="background">\n'+'\n'.join(objects)+'\n</g>\n</svg>\n'
+    curve="M 40 20 C 40 31.0457 31.0457 40 20 40 C 8.9543 40 0 31.0457 0 20 C 0 8.9543 8.9543 0 20 0 C 31.0457 0 40 8.9543 40 20 z"
+    text='<svg xmlns="http://www.w3.org/2000/svg" width="320" height="160" viewBox="0 0 320 160"><g id="background"><g id="eclipse_curve">'
+    text+=f'<path d="{curve}" fill="#ffbe6b"/><g id="cover_curve"><path d="{curve}" fill="#000000"/></g></g></g></svg>\n'
     (ROOT/"vapora.svg").write_text(text)
-    print("SVG",len(text.encode()),"bytes")
+    print("SVG",len(text.encode()),"bytes; explicit paint on each filled contour")
 if __name__=="__main__":generate()
