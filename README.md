@@ -4,13 +4,13 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 
 ![Holy Dust: the sun sets and rises above VAPORA’s animated waves](media/holy-dust.gif)
 
-*Holy Dust, with a Brightness sweep. Ten-second looping host preview; the OP-1 supplies the actual menu font. No audio in this GIF.*
+*Holy Dust, with a Brightness sweep.*
 
 ## Overview
 
-VAPORA is a six-voice PADsynth-based instrument with two independently phased, detuned playback heads per voice, 14 sound characters, and 15 curated presets. Its screen combines a moving triangular ocean, stars, and six selectable suns. Played notes bend the connecting lines.
+VAPORA is a six-voice PADsynth-based instrument with two independently phased, detuned playback heads per voice, 14 sound characters, and 15 curated presets. Its screen combines a moving triangular perlin space, stars, and a setting sun.
 
-**Version 1.1.0** refines the suns. The approved sound engine and preset bank are unchanged.
+**Version 1.1.0** refines lines. The approved sound engine and preset bank are unchanged.
 
 ## Manual
 
@@ -24,15 +24,6 @@ Two detuned playback heads read broad, evolving PADsynth spectra for each note. 
 
 *Holy Dust with Brightness at maximum. Host-rendered illustration; on the OP-1, the readout uses the instrument’s native font.*
 
-### Reading the screen
-
-1. **The water:** blue changes the balance between broad swells and tighter ridges. Green changes the spacing and layered movement of the mesh.
-2. **The sun:** white raises it as the sound brightens. Eclipse opens into a full disk near the top and closes as it sinks. Push white for another design.
-3. **The stars:** they slow down and dim in daylight, then brighten and drift more actively as the sun drops.
-4. **The movement:** orange increases the wave motion. Its secondary Speed setting changes how quickly the water moves, with a restrained visual range.
-5. **The connecting lines:** played notes bend the diagonal links between the wave points. Pitch changes that curvature; the underlying swells continue independently.
-6. **The readout:** the colored dial and single text row show the control you most recently turned or selected. The dial color matches its knob.
-
 ### Controls
 
 | Encoder | Turn | Push, then turn |
@@ -42,7 +33,7 @@ Two detuned playback heads read broad, evolving PADsynth spectra for each note. 
 | **White** | **Brightness, 0–100%:** open the tone filter and raise the sun. | **Sun:** each push advances to the next design. Turning white still edits Brightness. |
 | **Orange** | **Motion, 0–100%:** add slow movement to the sound’s morph and brightness, and increase the ocean’s movement. | **Speed, about 0.02–2 Hz:** set the rate of the internal movement. The screen scales this to a gentler visual rate. |
 
-Push blue, green or orange again to return to its main control. Each has its own selection. After a white push, let the sun change before turning white. The chosen sound settings save with the preset; the selected sun is a visual choice and is not saved with the sound.
+Push blue, green or orange again to return to its main control. Each has its own selection. White does not have a push then turn setting due to current SDK setup.
 
 **Characters:** Warm, Swarm, Breath, Flute, Pressure, Surf, Porcelain, Sub, Velvet, Cathedral, Nebula, Aurora, Oceanic and Glassveil. Morph explores the two endpoints within a character; use Character for a larger change in sound.
 
@@ -52,21 +43,7 @@ Push blue, green or orange again to return to its main control. Each has its own
 
 ### Try this
 
-Load the named factory preset first: it also recalls the character, interval, speed, envelope and effect settings. The four percentages below are approximate knob positions, in blue–green–white–orange order.
-
-| Preset | Blue: Morph | Green: Thickness | White: Brightness | Orange: Motion | Character |
-| --- | --- | --- | --- | --- | --- |
-| A Fifth Tide | 58% | 85% | 63% | 43% | Warm |
-| Holy Dust | 43% | 87% | 89% | 58% | Cathedral |
-| Deep Pressure | 17% | 75% | 98% | 12% | Pressure |
-
-**A Fifth Tide:** start with a held note or an open chord. Its fifth interval adds a second pitch; sweep Morph slowly to hear the texture change, then reduce Thickness for a more focused sound.
-
-**Holy Dust:** hold a low note with a fifth above it. Slowly turn white down and back up: the tone darkens and opens while the sun sets and rises. Push orange to try a slower Speed, then push again to return to Motion.
-
-**Deep Pressure:** use widely spaced low notes and let the T2 envelope swell. This preset includes Reverb; install Hundekraft’s separate `reverb` effect to hear the saved treatment. Switch the T3 effect off when comparing the dry texture.
-
-**Tip:** shape the attack and release on **T2**. VAPORA’s internal Motion is separate from the **T4** LFO; use T4 when you want an additional sweep of a main encoder. Reverb and other effects are selected on **T3**.
+Load STONE HALL and play it at -3 octave range.
 
 ### Presets and saving
 
@@ -87,10 +64,6 @@ Open the [Hundekraft Workshop](https://hundekraft.github.io/op1-workshop/), add 
 For a new installation, unzip the preset pack and copy its `synth/vapora` folder into the instrument’s `synth` folder in normal disk mode. Eject and allow synchronization to finish. If you already have the final 15 presets, **update only the plugin; do not recopy the bank**.
 
 Deep Pressure uses the separate Hundekraft `reverb` effect. The other factory presets are dry. The OP-1 supplies the T2 envelope and optional T3 effect.
-
-## Factory sounds
-
-A Fifth Tide · Asteroid Swarm · Breath Choir · Cavern Flute · Deep Pressure · Holy Dust · Ice Chapel · Last Light · Moon Choir · Pink Surf · Porcelain Orbit · Stone Hall · Sub Lantern · Tidal Arc · XFIN
 
 ## Build and validation
 
