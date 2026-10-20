@@ -1,11 +1,18 @@
-# VAPORA 1.1 — visual refinement candidate
+# VAPORA 1.1.4
 
-The sound and 15-preset set are the approved 1.0 baseline. Version 1.1 changes
-only sun rendering; do not reinstall presets for this update.
+The sound and 15-preset set are the approved 1.0 baseline. Version 1.1.4 updates
+only the approved sun designs and order; do not reinstall presets for this update.
 
 Native six-voice PADsynth-based instrument for the original OP-1 / Hundekraft
 3.0.2. Two independently phased, detuned playback heads per voice. The OP-1
 supplies the T2 envelope and optional T3 effect.
+
+## Suns
+
+01 Solid (default) → 02 Lines → 03 Halo → 04 Retro → 05 Bands → 06 Saturn → 07 Triple.
+Solid is the approved trial 10; Lines is the approved trial 21 at 4px thickness.
+Push white to cycle; turn white to move/open the sun with Brightness.
+The Holy Dust showcase is an idle ten-second down/up sweep with no notes played or held.
 
 ## Sound and CPU
 
@@ -71,24 +78,16 @@ T3 can be disabled to compare Deep Pressure dry.
 
 ## Visual changes
 
-The cycle starts at **05 ECLIPSE**, followed by **01 HALO, 02 RETRO,
-03 BANDS, 10 SATURN, 18 TRIPLE**. These are stable original-sheet IDs,
-not positions in the reduced list. Broken is not included. 18 remains enlarged.
-Retro's lowest detached stripe is removed.
+The cycle starts at **01 SOLID**, followed by **02 LINES, 03 HALO, 04 RETRO,
+05 BANDS, 06 SATURN, 07 TRIPLE**. Solid is the approved native cubic disk/cover
+from trial 10; Lines is the approved seven-stroke trial 21, with fixed 4px
+width and 2px gaps. Both use a 20px circle envelope and open/close with Brightness.
+The remaining five designs preserve their approved geometry; Retro's lowest
+stripe stays removed and Triple remains enlarged.
 
-Eclipse is approximately 33% larger (radius 20 instead of 15). Its two-pixel
-rows use precomputed fractional circle spans and an exact two-pixel stroke:
-no overlapping thick rows or alternating grid phase. One fixed-size disk moves
-across it; there is no radius switch near closure. Coverage follows Brightness
-at subpixel precision independently of the whole-pixel vertical position.
-Maximum Brightness now reaches the fully open geometry and the full disk has
-matching width/height bounds. Low Brightness fully eclipses it.
-
-Circle outlines retain fractional vertices and slightly overlap adjacent segment
-ends instead of separately snapping endpoints to whole pixels. This avoids
-geometric notches without adding draw calls. Host checks cover all six designs
-at every vertical position with coverage held fixed, radial accuracy and the
-Eclipse aspect ratio. Native OP-1 raster verification remains necessary.
+The two selected methods were approved by the user on the OP-1 in comparison
+builds. Their geometry is checked unchanged in this combined build. Final
+installation/order checks for 1.1.4 remain separate from those approvals.
 
 The circled upper mountains are raised symmetrically: corner peaks 3 px,
 shoulders 4 px, next inner top vertices 3 px. Top shoulder movement grows from
@@ -104,7 +103,8 @@ Let the instrument complete installation and restart. The 15 approved presets,
 including `a fifth tide` and `XFIN`, are already final: do not copy the bank again.
 This release does not alter sound words, Character assignments, DSP or tables.
 
-Inspect Eclipse at minimum, maximum and slow Brightness sweeps, then Halo,
+Check Solid starts by default, then Lines and the remaining designs. Sweep
+Brightness at minimum, maximum and slowly between them. Inspect Halo,
 Bands, Saturn and Triple. Check that circles are round and their edges do not
 notch or flicker. Compare the device against the host preview knowing that the
 preview uses a substitute font and a different rasterizer. No physical OP-1
@@ -119,7 +119,7 @@ host envelopes. Deep Pressure's saved Reverb is heard only on the instrument.
 |---|---|---|
 | Blue | Morph | Character: 14 choices, one step apart |
 | Green | Thickness | Interval: ten choices |
-| White | Brightness | Press cycles six suns |
+| White | Brightness | Press cycles seven suns |
 | Orange | Motion | Speed: 0.02–2 Hz |
 
 The most recently edited control appears in the single readout row. Secondary

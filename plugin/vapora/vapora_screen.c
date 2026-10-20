@@ -18,7 +18,7 @@ static int view_slot=-1,view_selector=-1,ready;
 static int32_t smooth_pitch[PS_VOICES], excitation[PS_VOICES];
 static uint32_t note_phase[PS_VOICES], particle_phase;
 static int active_knob, active_sun, control_ready;
-static int sun_design; /* Original 05 Eclipse starts the cycle. */
+static int sun_design; /* 01 Solid is the power-on default. */
 static int16_t control_words[8];
 static uint8_t control_pages[4];
 static uint8_t text_objects[4][OP1_TEXT_SIZE] __attribute__((aligned(4)));
@@ -101,10 +101,10 @@ static void waterline(void *r,op1_pt a,op1_pt b,const uint8_t *c)
         if(ca){a.x=x;a.y=y;}else{b.x=x;b.y=y;}
     }
 }
+#include "vapora_suns.h"
 static void init(void *scr)
 {
-    (void)scr;
-    /* Artwork has no mutable nodes, so no parsed-node pointer is needed. */
+    sun_init(scr);
     int e=0;
     for(int k=0;k<PS_EDGES;k++){diagonal[k]=0;bend[k]=0;}
     for(int row=0;row<PS_ROWS;row++)for(int col=0;col<PS_COLS;col++){
@@ -271,10 +271,10 @@ static void track_controls(const int16_t *raw,int new_view,int white_press)
     }
     if(white_press){q(2,1);sun_design=(sun_design+1)%PS_SUN_DESIGNS;active_knob=2;active_sun=1;}
 }
-#include "vapora_suns.h"
 #ifdef VAPORA_HOST
-void ps_test_draw_sun(int cy,int design){draw_sun(op1_raster(),cy,design,(56-cy)*32767/26);}
-void ps_test_draw_sun_at(int cy,int design,int opening){draw_sun(op1_raster(),cy,design,opening);}
+void ps_test_draw_sun_at(int cy,int design,int opening)
+{sun_prepare(cy,design,opening,0);op1_screen_draw(0,0);draw_sun(op1_raster(),cy,design,opening);}
+void ps_test_draw_sun(int cy,int design){ps_test_draw_sun_at(cy,design,(56-cy)*32767/26);}
 #endif
 static void controls(void *r,const ps_params *p)
 {
@@ -344,10 +344,11 @@ static void update(void *scr,int dt)
         particle_phase+=(uint32_t)(((uint64_t)step*(160u+((unsigned)night*320u>>15)))/1000u);
         if(!secret)geometry(&p);
     }
+    int cy=ps_sun_y(p.q[PS_BRIGHT]);
+    sun_prepare(cy,sun_design,p.q[PS_BRIGHT],secret);
     op1_screen_draw(scr,dt);
     void *r=op1_raster();if(!r)return;
     if(secret){v(r,tick);return;}
-    int cy=ps_sun_y(p.q[PS_BRIGHT]);
     int night=32767-p.q[PS_BRIGHT];
     for(int k=0;k<PS_PARTICLES;k++){
         unsigned seed=(unsigned)k*0x9e3779b9u+0x53544152u;
@@ -359,7 +360,9 @@ static void update(void *scr,int dt)
         y+=(wander*(2+(night>>13)))>>10;
         y=ps_clamp(y,5,55);
         int dx=x-160,dy=y-cy;
-        int radius=ps_sun_ids[sun_design]==18?30:ps_sun_ids[sun_design]==2?24:ps_sun_ids[sun_design]==5?22:18;
+        int shape=ps_sun_shapes[sun_design];
+        int radius=shape==18?30:shape==2?24:(shape==21||shape==22)?22:18;
+        if(shape==21&&dx*dx+dy*dy<24*24)continue; /* Avoid black particle strokes over a filled sun. */
         int light=ps_clamp((dx*dx+dy*dy-radius*radius)*6,0,255);
         light=(light*(192+(night>>9)))>>8;
         int size=k%6,large=size==0,medium=size==1||size==2;

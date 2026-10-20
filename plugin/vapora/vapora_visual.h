@@ -1,13 +1,14 @@
 /* One place for native layout, stroke and activity budgets. */
 #ifndef VAPORA_VISUAL_H
 #define VAPORA_VISUAL_H
-enum { PS_COLS=11, PS_ROWS=6, PS_EDGES=165, PS_PARTICLES=48, PS_SUN_DESIGNS=6,
+enum { PS_COLS=11, PS_ROWS=6, PS_EDGES=165, PS_PARTICLES=48, PS_SUN_DESIGNS=7,
        PS_LEFT=2, PS_RIGHT=317, PS_TOP=24, PS_BOTTOM=126,
        PS_LABEL_Y=130, PS_TEXT_SIZE=12, PS_DIAL_Y=136,
        PS_TEXT_STROKE=1450, PS_MESH_STROKE=1950,
        PS_SUN_STROKE=2200, PS_SUN_FILL_STROKE=2048, PS_DOT_STROKE=1900, PS_MED_DOT_STROKE=2500, PS_BIG_DOT_STROKE=3200, PS_SUN_RADIUS=15 };
-/* Stable original-sheet IDs; cycle positions must never replace these labels. */
-static const uint8_t ps_sun_ids[PS_SUN_DESIGNS]={5,1,2,3,10,18};
+/* Release 1.1.4: new user-facing order; shape IDs preserve approved artwork. */
+static const uint8_t ps_sun_ids[PS_SUN_DESIGNS]={1,2,3,4,5,6,7};
+static const uint8_t ps_sun_shapes[PS_SUN_DESIGNS]={21,22,1,2,3,10,18};
 static inline int ps_sun_y(int q)
 { return 56-(ps_clamp(q,0,32767)*26+16383)/32767; }
 static const int ps_depth[PS_ROWS]={64,72,82,94,108,120};

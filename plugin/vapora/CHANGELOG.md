@@ -1,3 +1,12 @@
+# 1.1.4 — approved Solid and Lines suns
+
+- Default 01 Solid preserves the approved solid Eclipse from trial 10.
+- 02 Lines preserves trial 21: seven direct 4px horizontal strokes with 2px gaps.
+- Cycle: 01 Solid → 02 Lines → 03 Halo → 04 Retro → 05 Bands → 06 Saturn → 07 Triple.
+- Keep the other approved artwork, wave behavior, sound engine, tails and 15 presets unchanged.
+- Replace the Holy Dust showcase with a ten-second idle brightness sweep: no played or held notes.
+- Native SVG shapes use explicit paint; host snapshots remain approximations of the hardware raster.
+
 # 1.1.0 — sun rendering refinement
 
 - Mark the approved sound and 15 presets as the 1.0 baseline; no sonic or preset changes.
