@@ -7,6 +7,9 @@ typedef struct {
     volatile ps_snapshot snapshot;
 } ps_mailbox;
 extern ps_mailbox ps_mail[PS_VOICES];
+/* GUI-only hold indication, keyed by note serial so voice reuse cannot sustain
+ * an earlier impact. Written by audio callbacks, read atomically by the GUI. */
+extern volatile uint32_t ps_held_serial[PS_VOICES];
 /* Single-core Blackfin: aligned volatile accesses + compiler ordering.
  * Audio can preempt GUI, GUI never preempts audio publication. No retries,
  * locks, waiting or GUI writes to the mailbox. Not a portable SMP protocol. */

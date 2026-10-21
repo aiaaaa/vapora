@@ -1,5 +1,27 @@
+# 1.2.2 — slower held return
+
+- Holding broadens the ripple's trailing return up to twice its width and
+  softens its small rebound from 1/8 toward 1/16 strength.
+- Preserve the sharp leading edge, outward speed, quick tap behavior and the
+  existing 1.75-second maximum lifetime. No continuous held-note oscillation.
+- Audio, presets, Character sound names and all other visuals remain unchanged.
+- Published as 1.2.2, superseding the interrupted 1.2 update. GIFs remain untouched.
+
+# 1.2.1 — local evaluation: hold-sensitive ripples
+
+- Tap keeps the short outward ripple. Holding any note from that hit/chord
+  earns a small fade extension, capped at 375ms: about 1.4s to 1.75s total.
+- The same front travels farther while fading; holding never retriggers or
+  freezes it. Partial chord release, voice reuse and indefinite holds are bounded.
+- Add visual-only held-note serial tracking through the SDK note-off callback;
+  audio rendering, envelopes, saved mappings and presets remain unchanged.
+- Character readout uses the sound-family names (Warm, Swarm, Breath, etc.);
+  its mapped wave style is unchanged.
+- Evaluation stays local. Public 1.2 publication is paused; no GIF updates.
+
 # 1.2 — waves, stars and sun each get their own controls
 
+- Character readout retains the sound-family names (Warm, Swarm, Breath, etc.).
 - Character selects 14 wave styles alongside the existing 14 sound families;
   Morph adjusts the chosen wave's movement. Blue push switches Morph/Character.
 - Each key or grouped chord creates a sharp, randomly placed ripple that spreads

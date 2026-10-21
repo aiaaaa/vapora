@@ -253,6 +253,10 @@ uint32_t ps_test_impact_count(void){return impact_count;}
 void ps_test_impact_last(op1_pt *p)
 {int i=(impact_next+PS_IMPACTS-1)%PS_IMPACTS;p->x=impacts[i].x;p->y=impacts[i].y;}
 void ps_test_impact_tick(uint32_t step){impacts_tick(step);}
+int ps_test_impact_profile(int offset,uint32_t extension)
+{return impact_profile(offset,12288,extension);}
+void ps_test_impact_last_state(uint32_t *age,uint32_t *extension)
+{int i=(impact_next+PS_IMPACTS-1)%PS_IMPACTS;*age=impacts[i].age;*extension=impacts[i].extension;}
 void ps_test_geometry_phase(uint32_t ocean,uint32_t idle)
 {ocean_phase=ocean;idle_phase=idle;}
 /* Inspect production geometry at a fixed phase, without advancing the clock. */
@@ -307,7 +311,7 @@ static void controls(void *r,const ps_params *p,const int16_t *raw)
         q=sun_design*32767/(PS_SUN_DESIGNS-1);
     }else if(k==0&&op1_eng_page[0]){
         label="CHARACTER";o=sq_num(o,(unsigned)p->character+1,2);o=sq_cat(o," ");
-        sq_cat(o,wave_names[p->character]);
+        sq_cat(o,ps_character_names[p->character]);
         q=(ps_secondary(raw[5])-1)*32767/32766;
     }
     else if(k==1&&op1_eng_page[k]){label="INTERVAL";s=ps_interval_names[p->interval];q=p->interval*32767/(PS_INTERVALS-1);}

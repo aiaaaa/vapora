@@ -1,10 +1,11 @@
-# VAPORA 1.2
+# VAPORA 1.2.2 — release
 
 Native six-voice PADsynth instrument for the original OP-1 / Hundekraft 3.0.2.
 Two independently phased, detuned playback heads per voice; 14 sound Characters
 and 15 factory presets. The OP-1 supplies velocity, T2 envelope and optional T3
 processing. This release changes screen behavior while retaining audio code,
-table data, sound-word mappings and all preset files.
+table data, sound-word mappings and all preset files. A note-off callback now
+tracks held serials solely for the screen; it does not alter DSP or T2 release.
 
 ## Controls and visuals
 
@@ -35,7 +36,8 @@ missed; a Shift already held on screen re-entry does not toggle the readout.
 ## Character waves
 
 Character selects the following visual styles in existing audio Character order.
-Morph changes their movement. The pointer follows one 270-degree sweep over the
+The readout names the sound Character (Warm, Swarm, Breath, etc.), not its
+wave style. Morph changes wave movement. The pointer follows one 270-degree sweep over the
 raw encoder word while the names retain the firmware's usual cycling.
 
 | Character | Wave style | Existing sound |
@@ -59,7 +61,12 @@ raw encoder word while the names retain the firmware's usual cycling.
 Each key or grouped chord creates a sharp hit at a random interior location.
 One ripple moves outward about 4.5 grid cells as its amplitude falls to zero;
 a small trailing wake is one eighth of the main pulse's strength. It settles in
-about 1.4 seconds rather than repeatedly bouncing at the original point. Held
+about 1.4 seconds after a tap. Holding a participating note slows the fade
+slightly and lets the same front travel farther, capped at about 1.75 seconds.
+Holding also broadens the trailing return up to twice its width and softens
+the rebound, while preserving the sharp incoming edge and the 1.75s cap.
+Release stops earning extension; an unrelated held note or reused voice cannot
+sustain an older hit. Even an indefinitely held chord settles completely. Held
 notes never produce continuous audio-trace bending. Overlapping hits share an
 8px bound, with local-spacing limits and absorption near the rim.
 
@@ -154,14 +161,14 @@ python3 tools/build.py --toolchain /path/to/toolchain --skip-previews
 ```
 
 Use the dependencies in `requirements.txt`. Omit `--skip-previews` to render
-host media; the 1.2 publication intentionally retains the earlier GIFs pending
-a separate manual update. No media generation is required to build the plugin.
+host media. The 1.2.2 release retains the existing GIF for a separate manual update.
+No media generation is required to build the plugin.
 
 Checks cover deterministic tables, 15 AIF round trips, production DSP and screen
 ASan/UBSan tests, three-minute six-voice state, 19 dry audio fixtures, overlapping
 note impacts, Shift toggling, wave bounds/side-triangle continuity, all ten star
 fields, all seven suns, native imports and relocation against GNU ld at two
-addresses. Native build and host validation pass; final 1.2 device installation,
+addresses. Native build and host validation pass; final 1.2.2 device installation,
 Shift timing and combined graphics/audio performance remain untested.
 
 See `HARDWARE_CHECKLIST.md`, `CPU_AUDIT.md`, `TOOLCHAIN.md`, `CHANGELOG.md` and

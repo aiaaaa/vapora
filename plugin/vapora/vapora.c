@@ -8,6 +8,7 @@
 static ps_voice voices[PS_VOICES];
 static uint32_t serial, ticks[PS_VOICES];
 ps_mailbox ps_mail[PS_VOICES];
+volatile uint32_t ps_held_serial[PS_VOICES];
 
 static int valid_voice(void *self)
 {
@@ -25,7 +26,13 @@ static void note_on(void *self,const int16_t *words)
     /* Only the private part, never the firmware vtable. */
     uint32_t *private=(uint32_t *)((uint8_t *)self+4);
     private[0]=0x50414453u; private[1]=serial;
+    ps_held_serial[i]=serial;
     ticks[i]=(uint32_t)i; /* spread chord telemetry instead of six publications together */
+}
+static void note_off(void *self)
+{
+    int i=valid_voice(self);if(i<0)return;
+    ps_held_serial[i]=0; /* visual gate only; firmware still owns the T2 release */
 }
 static void render(void *self,int16_t *out,const int16_t *words)
 {
@@ -50,5 +57,5 @@ static void render(void *self,int16_t *out,const int16_t *words)
         PS_BARRIER(); ++m->sequence;
     }
 }
-const op1_engine_t ENGINE_vapora={note_on,render,0,
+const op1_engine_t ENGINE_vapora={note_on,render,note_off,
     {OP1_PRESS_PAGE,OP1_PRESS_PAGE,OP1_PRESS_PAGE,OP1_PRESS_PAGE}};
