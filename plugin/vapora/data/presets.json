@@ -415,14 +415,23 @@
     "character": "CATHEDRAL",
     "group": "CINEMATIC",
     "interval_semitones": 0,
-    "description": "Formant-rich cathedral sustain",
+    "description": "Formant-rich cathedral sustain; octave -3; Plate enabled: Decay 99, Pre 99, Tone 00, Mix 33",
     "preview_envelope_ms": [
       3600,
       2200,
       30000,
       3500
     ],
-    "octave": 0
+    "octave": -3,
+    "fx": {
+      "type": "plate",
+      "q15": [
+        32767,
+        0,
+        32767,
+        10922
+      ]
+    }
   },
   {
     "name": "tidal arc",
