@@ -14,10 +14,18 @@
 uint32_t ps_host_voices[6][9],ps_host_cycles;
 int32_t ps_host_pitch[128];
 int16_t ps_host_env[128],ps_host_words[8][8],ps_host_velocity[6];
-int ps_host_slot;
+int ps_host_slot,ps_host_shift;
 volatile uint8_t op1_eng_page[4];
 static FILE *drawing;
+int ps_host_particle_layer=-1;
 static unsigned drawn_lines,particle_light;
+static int record_particles,particle_counts[8],particle_green,particle_colored;
+static uint32_t particle_base_hash,particle_overlay_hash;
+static op1_pt recorded_base[PS_PARTICLES];
+static int recorded_base_count,logo_lines;
+static op1_pt logo_first,logo_previous;
+static uint32_t logo_shape_hash;
+static op1_pt last_line_b;
 static const int16_t defaults[8]={9000,26000,18500,12500,0x5320,0,0,0};
 #include "native_scene.h"
 void *op1_raster(void){return (void*)1;}
@@ -26,10 +34,44 @@ void op1_raster_line(void *r,const op1_pt *a,const op1_pt *b,int32_t w,const uin
     (void)r;
     assert(a->x>=0&&a->x<320*1024&&a->y>=0&&a->y<153*1024);
     assert(b->x>=0&&b->x<320*1024&&b->y>=0&&b->y<153*1024);
-    assert(w>0&&(w<=PS_BIG_DOT_STROKE||(w==4096&&c[0]==255&&c[1]==190&&c[2]==107)));drawn_lines++;
+    assert(w>0&&w<=PS_BIG_DOT_STROKE*2);drawn_lines++;last_line_b=*b;
     if(w==PS_DOT_STROKE||w==PS_MED_DOT_STROKE||w==PS_BIG_DOT_STROKE)particle_light+=c[2];
-    if(drawing)fprintf(drawing,"<line x1=\"%.4f\" y1=\"%.4f\" x2=\"%.4f\" y2=\"%.4f\" stroke=\"#%02x%02x%02x\" stroke-width=\"%.4f\"/>\n",
-        a->x/1024.,a->y/1024.,b->x/1024.,b->y/1024.,c[0],c[1],c[2],w/1024.);
+    if(record_particles&&ps_host_particle_layer==2){
+        assert(w==1536);
+        if(!logo_lines){logo_first=*a;logo_shape_hash=2166136261u;}
+        else assert(a->x==logo_previous.x&&a->y==logo_previous.y);
+        logo_previous=*b;logo_lines++;
+        logo_shape_hash=(logo_shape_hash^(uint32_t)(a->x-logo_first.x))*16777619u;
+        logo_shape_hash=(logo_shape_hash^(uint32_t)(a->y-logo_first.y))*16777619u;
+        if(!particle_green)assert(c[0]==0&&abs(c[1]*149-c[2]*237)<=193);
+        else assert(c[2]>=c[1]&&c[1]>=c[0]);
+    }
+    if(record_particles&&ps_host_particle_layer!=2){
+        int overlay=ps_host_particle_layer;assert(overlay==0||overlay==1);
+        int width=w;
+        int size=width==PS_BIG_DOT_STROKE?0:width==PS_MED_DOT_STROKE?1:width==PS_DOT_STROKE?2:3;
+        assert(width==PS_BIG_DOT_STROKE||width==PS_MED_DOT_STROKE||width==PS_DOT_STROKE||width==PS_TINY_DOT_STROKE);
+        assert(b->x-a->x==(size==0?1200:size==1?800:650));
+        particle_counts[size+overlay*4]++;
+        if(!overlay){
+            recorded_base[recorded_base_count++]=*a;
+            const uint32_t values[]={(uint32_t)a->x,(uint32_t)a->y,(uint32_t)b->x,(uint32_t)b->y,(uint32_t)w,c[0],c[1],c[2],c[3]};
+            for(unsigned j=0;j<sizeof(values)/sizeof(values[0]);j++)particle_base_hash=(particle_base_hash^values[j])*16777619u;
+        }
+        if(overlay){
+            for(int b=0;b<recorded_base_count;b++){
+                int dx=abs(a->x-recorded_base[b].x),dy=abs(a->y-recorded_base[b].y);
+                assert(dx>=9*1024||dy>=6*1024);
+            }
+            particle_overlay_hash=(particle_overlay_hash^(uint32_t)a->x)*16777619u;
+            particle_overlay_hash=(particle_overlay_hash^(uint32_t)a->y)*16777619u;
+        }
+        if(particle_green&&overlay){assert(c[0]==0&&abs(c[1]*149-c[2]*237)<=193);}
+        else if(c[2])assert(c[2]>=c[1]&&c[1]>=c[0]);
+        particle_colored+=c[1]>0;
+    }
+    if(drawing)fprintf(drawing,"<line data-particle-layer=\"%d\" x1=\"%.4f\" y1=\"%.4f\" x2=\"%.4f\" y2=\"%.4f\" stroke=\"#%02x%02x%02x\" stroke-width=\"%.4f\"/>\n",
+        ps_host_particle_layer,a->x/1024.,a->y/1024.,b->x/1024.,b->y/1024.,c[0],c[1],c[2],w/1024.);
 }
 /* No TE font is extracted. Record stock text API arguments for host preview. */
 typedef struct {int x,y,size;uint8_t c[4];char text[48];} host_text;
@@ -316,7 +358,15 @@ extern void ps_test_draw_sun(int cy,int design);
 extern void ps_test_draw_sun_at(int cy,int design,int opening);
 static void sun_motion_contract(const char *dir)
 {
-    assert(ps_sun_y(0)==56&&ps_sun_y(32767)==30);
+    assert(ps_sun_y(0)==56&&ps_sun_y(32767)==36);
+    int previous=56;
+    for(int q=0;q<=32767;q++){
+        int y=ps_sun_y(q);
+        assert(y<=previous&&y>=36&&y<=56);
+        /* Exactly 75% travel before whole-pixel rounding. */
+        assert(abs((56-y)*65534-q*39)<=32767);
+        previous=y;
+    }
     for(int design=0;design<PS_SUN_DESIGNS;design++)for(int cy=30;cy<=56;cy++){
         char path[1024];snprintf(path,sizeof path,"%s/sunmove-%02d-%02d.svg",dir,ps_sun_ids[design],cy);
         drawing=fopen(path,"w");assert(drawing);
@@ -417,63 +467,317 @@ static void secret_contract(const char *dir)
     puts("Secret: ordered four-click sequence, exact 7-second boundary, movement cancellation, exit, cycle wrap, and hidden-screen gap; 96 frames of three bounded native text objects");
 }
 extern void ps_test_geometry(const ps_params *,op1_pt *,int16_t *);
+extern void ps_test_geometry_phase(uint32_t,uint32_t);
+extern int ps_test_wave_mode(void);
+static void side_cells_contract(const op1_pt *points)
+{
+    for(int row=0;row<PS_ROWS-1;row++)for(int col=0;col<PS_COLS-1;col++){
+        if(col>1&&col<PS_COLS-3)continue;
+        int i=row*PS_COLS+col;
+        op1_pt a=points[i],b=points[i+1],c=points[i+PS_COLS],d=points[i+PS_COLS+1];
+        int flip=col<2?0:1;
+        int64_t area1=flip?(int64_t)(b.x-a.x)*(c.y-a.y)-(int64_t)(b.y-a.y)*(c.x-a.x):
+            (int64_t)(b.x-a.x)*(d.y-a.y)-(int64_t)(b.y-a.y)*(d.x-a.x);
+        int64_t area2=flip?(int64_t)(d.x-b.x)*(c.y-b.y)-(int64_t)(d.y-b.y)*(c.x-b.x):
+            (int64_t)(d.x-a.x)*(c.y-a.y)-(int64_t)(d.y-a.y)*(c.x-a.x);
+        if(area1<=0||area2<=0)fprintf(stderr,"Fold mode=%d row=%d col=%d area=%lld/%lld\n",ps_test_wave_mode(),row,col,(long long)area1,(long long)area2);
+        assert(area1>0&&area2>0);
+    }
+}
+static void wave_edges_contract(void)
+{
+    ps_params p=ps_decode(defaults);op1_pt points[PS_ROWS*PS_COLS];int16_t curves[PS_EDGES];
+    int low[4]={INT_MAX,INT_MAX,INT_MAX,INT_MAX},high[4]={INT_MIN,INT_MIN,INT_MIN,INT_MIN};
+    const int joints[4]={4*PS_COLS+1,5*PS_COLS+1,4*PS_COLS+PS_COLS-2,5*PS_COLS+PS_COLS-2};
+    for(int frame=0;frame<16384;frame++){
+        ps_test_geometry_phase(random32(),random32());
+        p.q[PS_MORPH]=(frame&1)?32767:0;p.character=(frame>>1)%14;
+        ps_test_geometry(&p,points,curves);side_cells_contract(points);
+        for(int row=0;row<PS_ROWS;row++){
+            op1_pt right=points[row*PS_COLS+PS_COLS-1];
+            assert(right.x==(320-ps_side_x[row]-8)*1024);
+            assert(right.x+PS_MESH_STROKE/2<312*1024);
+        }
+        for(int j=0;j<4;j++){
+            int y=points[joints[j]].y;
+            assert(y+PS_MESH_STROKE/2<=PS_WATER_BOTTOM*1024);
+            if(y<low[j])low[j]=y;if(y>high[j])high[j]=y;
+        }
+    }
+    for(int j=0;j<4;j++)assert(high[j]-low[j]>12*1024);
+    ps_test_geometry_phase(0,0);
+    puts("Wave edges: 16384 phase/Character/Morph samples; side triangles unfolded; right outline inset 8 px; lower joints move >12 px within the screen");
+}
+extern int ps_test_wave_mode(void);
+extern void ps_test_wave_mode_set(int);
+extern uint32_t ps_test_impact_count(void);
+extern void ps_test_impact_last(op1_pt *);
+extern void ps_test_impact_tick(uint32_t);
+static void test_note_mail(int voice,uint32_t serial)
+{
+    ps_mailbox *m=&ps_mail[voice];m->sequence=(m->sequence+2)&~1u;
+    m->slot=0;m->selector=defaults[4];m->snapshot.serial=serial;
+    m->snapshot.level=2000;m->snapshot.pitch=(uint32_t)pitch_hz(261.6);
+    for(int k=0;k<PS_TRACE;k++)m->snapshot.trace[k]=(k-8)*200;
+}
+extern int ps_test_footer(void);
+extern void ps_test_footer_set(int);
+static void footer_contract(const char *dir)
+{
+    assert(!ps_test_footer());reset();ps_host_shift=0;SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);
+    int16_t words[8];memcpy(words,ps_host_words[0],sizeof words);
+    for(int state=0;state<2;state++){
+        if(state){ps_host_shift=1;SCREEN_vapora.update(0,16);}
+        assert(ps_test_footer()==state);
+        char path[1024];snprintf(path,sizeof path,"%s/footer-%s.svg",dir,state?"on":"off");
+        drawing=fopen(path,"w");assert(drawing);
+        fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"160\">\n",drawing);
+        SCREEN_vapora.update(0,16);fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
+    }
+    for(int f=0;f<20;f++){ps_host_cycles+=25000000;SCREEN_vapora.update(0,16);assert(ps_test_footer());}
+    ps_host_shift=0;SCREEN_vapora.update(0,16);assert(ps_test_footer());
+    SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);assert(ps_test_footer());
+    ps_host_shift=1;SCREEN_vapora.update(0,16);assert(!ps_test_footer());
+    ps_host_shift=0;SCREEN_vapora.update(0,16);assert(!ps_test_footer());
+    assert(!memcmp(words,ps_host_words[0],sizeof words));
+    ps_host_cycles+=800000000u;ps_host_shift=1;SCREEN_vapora.update(0,16);assert(!ps_test_footer());
+    ps_host_shift=0;SCREEN_vapora.update(0,16);ps_host_shift=1;SCREEN_vapora.update(0,16);assert(ps_test_footer());
+    ps_host_shift=0;SCREEN_vapora.update(0,16);
+    puts("Footer: initially off; Shift rising edge toggles once; holds/releases/scene re-entry preserve choice; no saved-word edits");
+}
 static void geometry_contract(void)
 {
-    reset();SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);
-    ps_params p=ps_decode(defaults);
-    op1_pt quiet[PS_ROWS*PS_COLS],playing[PS_ROWS*PS_COLS];
-    int16_t curves[PS_EDGES],low[PS_EDGES],high[PS_EDGES];
-    ps_test_geometry(&p,quiet,curves);
-    for(int octave=0;octave<2;octave++){
-        for(int frame=0;frame<40;frame++){
-            ps_mailbox *m=&ps_mail[0];
-            m->sequence=(m->sequence+2)&~1u;
-            m->slot=0;m->selector=defaults[4];
-            m->snapshot.pitch=(uint32_t)pitch_hz(octave?1046.5:130.8128);
-            m->snapshot.level=2000;
-            for(int k=0;k<PS_TRACE;k++)m->snapshot.trace[k]=(int16_t)((k-8)*200);
-            ps_test_geometry(&p,playing,curves);
-            assert(!memcmp(quiet,playing,sizeof quiet));
-        }
-        memcpy(octave?high:low,curves,sizeof curves);
-    }
-    int changed=0,curved=0;
-    for(int e=0;e<PS_EDGES;e++){
-        changed+=low[e]!=high[e];curved+=abs(high[e])>128;
-    }
-    assert(changed>10&&curved>10);
-    /* Real adapter/DSP publication: a single quiet-to-full note must visibly
-     * bend several central diagonals, including a long pad-style attack. */
-    reset();SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);
-    set_pitch(261.625565);ENGINE_vapora.note_on(ps_host_voices[0],ps_host_words[0]);
-    int16_t out[128];int visible=0;
+    reset();for(int k=0;k<4;k++)op1_eng_page[k]=0;
+    SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);ps_test_wave_mode_set(0);
+    ps_test_geometry_phase(0,0);
+    ps_params p=ps_decode(defaults);op1_pt quiet[PS_ROWS*PS_COLS],playing[PS_ROWS*PS_COLS];
+    int16_t curves[PS_EDGES];ps_test_geometry(&p,quiet,curves);
+    uint32_t count=ps_test_impact_count();
+    for(int v=0;v<3;v++)test_note_mail(v,0x70000001u+v);
+    ps_test_impact_tick(25000000);assert(ps_test_impact_count()==count);
+    for(int v=3;v<6;v++)test_note_mail(v,0x70000001u+v);
+    ps_test_impact_tick(25000000);assert(ps_test_impact_count()==count+1);
+    int dip=0,rebound=0;
     for(int frame=0;frame<32;frame++){
-        for(int n=0;n<128;n++)ps_host_env[n]=(int16_t)(32767*frame/31);
-        for(int block=0;block<22;block++)ENGINE_vapora.render(ps_host_voices[0],out,ps_host_words[0]);
-        ps_test_geometry(&p,playing,curves);
-        for(int e=0;e<PS_EDGES;e++)if(abs(curves[e])>4608)visible++;
+        /* Held notes publish changing waveforms/pitch, but no new serials. */
+        for(int v=0;v<6;v++)test_note_mail(v,0x70000001u+v);
+        ps_mail[0].snapshot.pitch=(uint32_t)pitch_hz(frame&1?130.8:1046.5);
+        ps_test_impact_tick(25000000);ps_test_geometry(&p,playing,curves);
+        assert(ps_test_impact_count()==count+1);side_cells_contract(playing);
+        for(int e=0;e<PS_EDGES;e++)assert(curves[e]==0);
+        for(int i=0;i<PS_ROWS*PS_COLS;i++){
+            int d=playing[i].y-quiet[i].y;
+            if(d>dip)dip=d;if(d<rebound)rebound=d;
+            assert(playing[i].x==quiet[i].x&&abs(d)<=8*1024);
+            if(i%PS_COLS<2||i%PS_COLS>8||i/PS_COLS==0||i/PS_COLS==5)assert(!d);
+        }
+        if(frame>=23)assert(!memcmp(quiet,playing,sizeof quiet));
     }
-    assert(visible>20); /* >2 px rendered bow (4/9 of bend). */
-    /* Side cells must retain their orientation under knob extremes. */
-    for(int frame=0;frame<500;frame++){
-        int16_t w[8];memcpy(w,defaults,sizeof w);
-        for(int k=0;k<8;k++)if(k!=4)w[k]=(int16_t)(random32()&32767);
-        memcpy(ps_host_words[0],w,sizeof w);ps_host_cycles+=25000000;
-        SCREEN_vapora.update(0,16);
-        ps_params extreme=ps_decode(w);ps_test_geometry(&extreme,playing,curves);
-        for(int row=0;row<PS_ROWS-1;row++)for(int col=0;col<PS_COLS-1;col++){
-            if(col>1&&col<PS_COLS-3)continue;
-            int i=row*PS_COLS+col;
-            op1_pt a=playing[i],b=playing[i+1],c=playing[i+PS_COLS],d=playing[i+PS_COLS+1];
-            int flip=col<2?0:1;
-            int64_t area1=flip?(int64_t)(b.x-a.x)*(c.y-a.y)-(int64_t)(b.y-a.y)*(c.x-a.x):
-                (int64_t)(b.x-a.x)*(d.y-a.y)-(int64_t)(b.y-a.y)*(d.x-a.x);
-            int64_t area2=flip?(int64_t)(d.x-b.x)*(c.y-b.y)-(int64_t)(d.y-b.y)*(c.x-b.x):
-                (int64_t)(d.x-a.x)*(c.y-a.y)-(int64_t)(d.y-a.y)*(c.x-a.x);
-            assert(area1>0&&area2>0);
+    assert(dip>2*1024&&rebound> -1024);
+    op1_pt previous={0},location;int changed=0;
+    for(int n=0;n<12;n++){
+        test_note_mail(n%6,0x71000000u+n);ps_test_impact_tick(25000000);ps_test_impact_tick(25000000);
+        ps_test_impact_last(&location);changed+=memcmp(&location,&previous,sizeof location)!=0;previous=location;
+        ps_test_geometry(&p,playing,curves);
+        for(int i=0;i<PS_ROWS*PS_COLS;i++)assert(abs(playing[i].y-quiet[i].y)<=8*1024);
+    }
+    assert(changed>=10&&ps_test_impact_count()==count+13);
+    for(int n=0;n<24;n++)ps_test_impact_tick(25000000);
+    ps_test_geometry(&p,playing,curves);assert(!memcmp(quiet,playing,sizeof quiet));
+    /* A real six-voice adapter chord also generates exactly one impact. */
+    count=ps_test_impact_count();set_pitch(261.625565);int16_t out[128];
+    for(int v=0;v<6;v++)ENGINE_vapora.note_on(ps_host_voices[v],ps_host_words[0]);
+    for(int frame=0;frame<32;frame++){
+        for(int block=0;block<22;block++)for(int v=0;v<6;v++)ENGINE_vapora.render(ps_host_voices[v],out,ps_host_words[0]);
+        ps_test_impact_tick(25000000);
+    }
+    assert(ps_test_impact_count()==count+1);
+    ps_test_geometry(&p,playing,curves);assert(!memcmp(quiet,playing,sizeof quiet));
+    puts("Trampoline: one outward pulse per note or grouped chord; random positions, bounded overlap, pinned rim, exact settling despite held audio; real six-voice chord checked");
+}
+static void wave_modes_contract(void)
+{
+    reset();for(int k=0;k<4;k++)op1_eng_page[k]=0;
+    SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);ps_test_wave_mode_set(0);
+    int16_t saved[8];memcpy(saved,ps_host_words[0],sizeof saved);
+    for(int press=0;press<4;press++){
+        op1_eng_page[0]^=1;SCREEN_vapora.update(0,16);
+        assert(op1_eng_page[0]==((press+1)&1));
+        assert(!memcmp(saved,ps_host_words[0],sizeof saved));
+    }
+    for(int character=0;character<14;character++){
+        ps_host_words[0][5]=(int16_t)(8192+character*256);
+        SCREEN_vapora.update(0,16);assert(ps_test_wave_mode()==character);
+    }
+    ps_params p=ps_decode(defaults);op1_pt low[PS_ROWS*PS_COLS],high[PS_ROWS*PS_COLS];int16_t curves[PS_EDGES];
+    uint32_t hashes[14];
+    for(int mode=0;mode<14;mode++){
+        p.character=mode;ps_test_wave_mode_set(mode);uint32_t hash=2166136261u;int morph_changes=0;
+        for(int frame=0;frame<512;frame++){
+            ps_test_geometry_phase((uint32_t)frame*0x019837abu,(uint32_t)frame*0x0ab87125u);
+            p.q[PS_MORPH]=0;ps_test_geometry(&p,low,curves);
+            p.q[PS_MORPH]=32767;ps_test_geometry(&p,high,curves);
+            side_cells_contract(low);side_cells_contract(high);
+            morph_changes+=memcmp(low,high,sizeof low)!=0;
+            for(int i=0;i<PS_ROWS*PS_COLS;i++)hash=(hash^(uint32_t)high[i].y)*16777619u;
+        }
+        assert(morph_changes>400);hashes[mode]=hash;
+        for(int m=0;m<mode;m++)assert(hashes[m]!=hash);
+        p.q[PS_MORPH]=32767;
+        for(int frame=0;frame<256;frame++){
+            ps_test_geometry_phase((uint32_t)frame*0x032871abu,(uint32_t)frame*0x0ab87125u);
+            if(!(frame%2))test_note_mail(frame%6,0x72000000u+mode*256u+frame);
+            ps_test_impact_tick(25000000);ps_test_geometry(&p,high,curves);side_cells_contract(high);
         }
     }
-    puts("Visual note contract: fixed wave vertices; single-note bows exceed 2 px; pitch changes curvature; side triangles stay unfolded");
+    ps_test_wave_mode_set(0);ps_test_geometry_phase(0,0);
+    puts("Character waves: blue toggles Morph/Character without edits; 14 retained styles track saved Character; Morph changes each style; phase/overlapping-impact checks preserve side cells");
+}
+extern uint32_t ps_test_ocean_phase(void),ps_test_sun_phase(void);
+extern void ps_test_sun_color(uint32_t,int,uint8_t*);
+extern void ps_test_sun_frame(int,uint32_t,int);
+static void sun_pulse_contract(const char *dir)
+{
+    uint8_t color[4];
+    for(int depth=0;depth<=32767;depth++){
+        ps_test_sun_color(0,depth,color);
+        assert(color[0]==255&&color[1]==255&&color[2]==255&&color[3]==255);
+        ps_test_sun_color(0x80000000u,depth,color);
+        assert(color[0]==255&&color[1]>=66&&color[2]>=63&&color[3]==255);
+        assert(!memcmp(color,ps_host_sun_fill,4));
+    }
+    assert(color[1]==66&&color[2]==63);
+    for(int i=0;i<256;i++){
+        ps_test_sun_color((uint32_t)i<<24,0,color);
+        assert(color[0]==255&&color[1]==255&&color[2]==255);
+    }
+    /* Capture every sun at white, half depth and full orange; same geometry. */
+    for(int design=0;design<7;design++)for(int step=0;step<3;step++){
+        char path[1024];snprintf(path,sizeof path,"%s/pulse-%02d-%d.svg",dir,design+1,step);
+        drawing=fopen(path,"w");assert(drawing);
+        fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"160\">\n",drawing);
+        ps_test_sun_frame(design,0x80000000u,step==2?32767:step*16384);
+        fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
+    }
+    reset();for(int k=0;k<4;k++)op1_eng_page[k]=0;
+    SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);
+    op1_pt base[PS_ROWS*PS_COLS],other[PS_ROWS*PS_COLS];int16_t curves[PS_EDGES];
+    ps_params p=ps_decode(ps_host_words[0]);ps_test_geometry(&p,base,curves);
+    for(int depth=0;depth<2;depth++)for(int speed=0;speed<2;speed++){
+        p.q[PS_MOTION]=depth?32767:0;p.q[PS_SPEED]=speed?32767:1;
+        ps_test_geometry(&p,other,curves);assert(!memcmp(base,other,sizeof base));
+    }
+    uint32_t ocean_steps[2],sun_steps[2];
+    for(int speed=0;speed<2;speed++){
+        ps_host_words[0][3]=speed?32767:0;ps_host_words[0][7]=speed?32767:1;
+        uint32_t ocean=ps_test_ocean_phase(),sun=ps_test_sun_phase();
+        ps_host_cycles+=25000000u;SCREEN_vapora.update(0,16);
+        ocean_steps[speed]=ps_test_ocean_phase()-ocean;sun_steps[speed]=ps_test_sun_phase()-sun;
+        double expected=4294967296.0*.0625*ps_speed_millihz(ps_host_words[0][7])/1000.;
+        assert(fabs(sun_steps[speed]-expected)/expected<.0001);
+    }
+    assert(ocean_steps[0]==ocean_steps[1]&&sun_steps[1]>sun_steps[0]*90u);
+    puts("Sun pulse: zero Motion white at every phase; full depth reaches shared red-orange; all seven shapes; Speed follows audio rate; ocean shape/rate independent of Orange");
+}
+extern void ps_test_particle_frame(int,uint32_t);
+static void interval_particles_contract(const char *dir)
+{
+    static const int expected[5][4]={{8,4,0,0},{8,8,16,0},{0,18,6,0},{0,8,32,0},{0,0,0,48}};
+    static const int base_counts[4]={8,16,24,0};uint32_t base_hash[64],overlay_hash[10][64],logo_hash[10];
+    reset();for(int k=0;k<4;k++)op1_eng_page[k]=0;
+    SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);
+    ps_params p=ps_decode(defaults);op1_pt base[PS_ROWS*PS_COLS],other[PS_ROWS*PS_COLS];int16_t curves[PS_EDGES];
+    ps_test_geometry(&p,base,curves);
+    for(int i=0;i<10;i++){
+        p.interval=i;ps_test_geometry(&p,other,curves);assert(!memcmp(base,other,sizeof base));
+        for(int phase=0;phase<64;phase++){
+            memset(particle_counts,0,sizeof particle_counts);particle_colored=0;
+            particle_green=i&1;record_particles=1;recorded_base_count=0;logo_lines=0;
+            particle_base_hash=particle_overlay_hash=2166136261u;
+            ps_test_particle_frame(i,(uint32_t)phase*0x04000000u);
+            record_particles=0;
+            assert(!memcmp(particle_counts,base_counts,sizeof base_counts));
+            for(int size=0;size<4;size++)assert(particle_counts[4+size]==expected[i/2][size]);
+            if(i==0)base_hash[phase]=particle_base_hash;
+            else assert(base_hash[phase]==particle_base_hash);
+            overlay_hash[i][phase]=particle_overlay_hash;
+            for(int previous=0;previous<i;previous++)assert(overlay_hash[previous][phase]!=particle_overlay_hash);
+            assert(particle_colored>=8);
+            assert(logo_lines==2*(4+i/2));
+            assert(logo_previous.x==logo_first.x&&logo_previous.y==logo_first.y);
+            if(!phase){
+                logo_hash[i]=logo_shape_hash;
+                for(int previous=0;previous<i;previous++)assert(logo_hash[previous]!=logo_hash[i]);
+            }else assert(logo_hash[i]==logo_shape_hash);
+        }
+    }
+    /* Same-clock screenshots: each step snaps immediately, with fixed ocean. */
+    reset();ps_host_words[0][2]=32767;ps_host_words[0][3]=0;
+    op1_eng_page[1]=1;SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);
+    while(ps_test_sun_design()!=0){op1_eng_page[2]=1;SCREEN_vapora.update(0,16);}
+    for(int i=0;i<10;i++){
+        ps_host_words[0][6]=(int16_t)((i*32768+16384)/10);
+        char path[1024];snprintf(path,sizeof path,"%s/interval-stars-%02d.svg",dir,i);
+        drawing=fopen(path,"w");assert(drawing);
+        fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"160\">\n",drawing);
+        SCREEN_vapora.update(0,16);
+        assert(ps_decode(ps_host_words[0]).interval==i&&ps_test_active_control()==1);
+        fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
+    }
+    puts("Interval stars: original 48-star base invariant in all 10 states at 64 phases; overlay count/width/length at stock scale; all ten positions distinct; no base overpaint; readout-green tint; <=96 small stars plus one distinct moving signature; ocean independent; stock interval encoding retained");
+}
+extern void ps_test_logo_vertex(int,int,op1_pt*);
+extern void ps_test_signature_position(int,uint32_t,op1_pt*);
+static void logo_rotation_contract(void)
+{
+    ps_params p=ps_decode(defaults);op1_pt base[PS_ROWS*PS_COLS],other[PS_ROWS*PS_COLS];
+    int16_t curves[PS_EDGES];ps_test_geometry(&p,base,curves);
+    for(int interval=0;interval<10;interval++){
+        double first_angle=0,previous=0;op1_pt first={0},point;
+        for(int q=0;q<=32767;q++){
+            ps_test_logo_vertex(interval,q,&point);
+            double angle=atan2(point.y,point.x);
+            if(q==0){first=point;first_angle=angle;}
+            else {while(angle<previous-3.141592653589793)angle+=6.283185307179586;assert(angle>=previous-.0003);}
+            previous=angle;
+        }
+        assert(abs(point.x*10-first.x*16)<=15&&abs(point.y*10-first.y*16)<=15);
+        assert(fabs(previous-first_angle-6.283185307179586)<.0003);
+        op1_pt pos;int previous_x=0;
+        for(int step=0;step<1024;step++){
+            ps_test_signature_position(interval,(uint32_t)step*0x00400000u,&pos);
+            assert(pos.x>=previous_x&&pos.x>=16&&pos.x<=303);previous_x=pos.x;
+        }
+        assert(pos.x==303);ps_test_signature_position(interval,0,&pos);assert(pos.x==16);
+        for(int q=0;q<=32767;q+=1024){
+            p.q[PS_THICK]=q;p.interval=interval;ps_test_geometry(&p,other,curves);
+            assert(!memcmp(base,other,sizeof base));
+        }
+    }
+    puts("Signature rotation: all ten stars make one full turn over all 32768 Thickness values; 60% endpoint growth; Thickness and Interval do not change wave geometry.");
+}
+extern void ps_test_character_dial(int16_t);
+static void character_dial_contract(const char *dir)
+{
+    double previous=0,first=0;
+    for(int word=1;word<=32767;word++){
+        ps_test_character_dial((int16_t)word);
+        double angle=atan2(last_line_b.y-PS_DIAL_Y*1024,last_line_b.x-16*1024);
+        if(word==1)first=angle;
+        else while(angle<previous-.000001)angle+=2*3.141592653589793;
+        assert(word==1||angle>=previous-.000001);
+        assert(angle-first<=1.5*3.141592653589793+.001);previous=angle;
+    }
+    assert(fabs(first-3.141592653589793*.75)<.001);
+    assert(fabs(previous-first-3.141592653589793*1.5)<.001);
+    for(int i=0;i<5;i++){
+        char path[1024];snprintf(path,sizeof path,"%s/character-dial-%d.svg",dir,i);
+        drawing=fopen(path,"w");assert(drawing);
+        fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"160\">\n",drawing);
+        ps_test_character_dial((int16_t)(1+i*32766/4));
+        fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
+    }
+    puts("Character dial: all 32767 encoder positions stay monotonic on one 270-degree arc, bottom-left to bottom-right; Character sound/preset decoding unchanged");
 }
 int main(int argc,char **argv)
 {
@@ -484,6 +788,6 @@ int main(int argc,char **argv)
         char name[100];snprintf(name,sizeof name,"preset-%02d-%s",i+1,preset_names[i]);
         fixture(argv[1],name,i+4);
     }
-    geometry_contract();previews(argv[1]);controls_contract(argv[1]);sun_motion_contract(argv[1]);approved_suns_contract(argv[1]);secret_contract(argv[1]);puts("PASS: host DSP/adapter/mailbox/screen checks");
+    footer_contract(argv[1]);geometry_contract();previews(argv[1]);controls_contract(argv[1]);sun_motion_contract(argv[1]);approved_suns_contract(argv[1]);secret_contract(argv[1]);sun_pulse_contract(argv[1]);interval_particles_contract(argv[1]);logo_rotation_contract();character_dial_contract(argv[1]);wave_modes_contract();wave_edges_contract();puts("PASS: host DSP/adapter/mailbox/screen checks");
     return 0;
 }

@@ -10,7 +10,7 @@ enum {OP1_BLOCK=128,OP1_VOICES=6,OP1_SAMPLE_RATE=44100,
 extern uint32_t ps_host_voices[6][9],ps_host_cycles;
 extern int32_t ps_host_pitch[128];
 extern int16_t ps_host_env[128],ps_host_words[8][8],ps_host_velocity[6];
-extern int ps_host_slot;
+extern int ps_host_slot,ps_host_shift;
 extern volatile uint8_t op1_eng_page[4];
 #define OP1_VOICE_BASE ((uintptr_t)ps_host_voices)
 #define OP1_PITCH_INC ps_host_pitch
@@ -33,6 +33,7 @@ typedef struct {
 } op1_engine_t;
 typedef struct {void(*init)(void*);void(*update)(void*,int);} op1_screen_t;
 void *op1_find_node(void*,const char*);
+uint8_t *op1_node_fill_rgba(void*,const char*);
 void op1_node_set_visible(void*,int);
 void op1_node_set_transform(void*,const int32_t*);
 void op1_screen_draw(void*,int);

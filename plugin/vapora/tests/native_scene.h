@@ -1,6 +1,9 @@
 /* Host recording of the native Solid nodes; not an OP-1 raster emulator. */
 typedef struct {int visible;int32_t m[9];} ps_host_node;
 static ps_host_node ps_native_nodes[2];
+static uint8_t ps_host_sun_fill[4]={255,255,255,255};
+uint8_t *op1_node_fill_rgba(void *scr,const char *id)
+{(void)scr;assert(!strcmp(id,"sunfill"));return ps_host_sun_fill;}
 void *op1_find_node(void *scr,const char *id)
 {
     (void)scr;
@@ -25,6 +28,7 @@ void op1_screen_draw(void *scr,int dt)
     (void)scr;(void)dt;
     if(!ps_native_nodes[0].visible)return;
     double x=ps_native_nodes[0].m[6]/1024.,y=ps_native_nodes[0].m[7]/1024.;
-    ps_host_disk(x,y,"#ffbe6b");
+    char color[8];snprintf(color,sizeof color,"#%02x%02x%02x",ps_host_sun_fill[0],ps_host_sun_fill[1],ps_host_sun_fill[2]);
+    ps_host_disk(x,y,color);
     if(ps_native_nodes[1].visible)ps_host_disk(x+ps_native_nodes[1].m[6]/1024.,y,"#000000");
 }
