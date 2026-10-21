@@ -37,8 +37,6 @@ Push blue, green or orange again to return to its main control. Each has its own
 
 **Characters:** Warm, Swarm, Breath, Flute, Pressure, Surf, Porcelain, Sub, Velvet, Cathedral, Nebula, Aurora, Oceanic and Glassveil. Morph explores the two endpoints within a character; use Character for a larger change in sound.
 
-**Wave styles, in Character order:** Original, Ripples, Roll, Fold, Orbit, Rings, Rain, Pulse, Tide, Ribbons, Weave, Dunes, Echo and Jelly. The Character readout shows the sound-family name (Warm, Swarm, Breath, etc.); the wave styles remain mapped in the same order. Morph controls their movement. A key or chord makes a sharp ripple at a random position, spreading outward and fading with a small trailing wake. Holding a note lets its ripple travel a little farther and ease back more slowly with less rebound. Quick taps stay sharp; even an indefinite hold fades within about 1.75 seconds. The lower side joints have more freedom, and the right outline sits fully on screen.
-
 **Shift:** toggle the bottom control dial/readout on and off. It starts hidden and stays in the chosen state after release. The black backing appears only when shown; waves continue into that area when hidden. The choice lasts for the session, not across a fresh plugin load or in saved sounds.
 
 **Intervals:** octave below, fifth below, unison, minor third, major third, fifth, major sixth, minor seventh, major seventh and octave above. Start with unison for a conventional pad; a fifth or octave adds a second pitch to each played note.
