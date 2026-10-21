@@ -84,7 +84,7 @@ The existing images and GIFs are retained. They are host renderings, not OLED ca
 
 ### Version notes
 
-**Version 1.2.3** raises VAPORA’s fixed output gain by 3× (about +9.54 dB), keeping its velocity response and envelopes. Stone Hall now starts at octave −3 with Plate enabled: Decay 99, Pre 99, Tone 00, Mix 33. Other presets and visuals are unchanged. Start with a lower master volume when comparing the louder output.
+**Version 1.2.3** raises VAPORA’s fixed output gain by 3× to match Stock synth output levels (about +9.54 dB), keeping its velocity response and envelopes. Stone Hall now starts at octave −3 with Plate enabled: Decay 99, Pre 99, Tone 00, Mix 33. Other presets and visuals are unchanged. Start with a lower master volume when comparing the louder output.
 
 **Version 1.2.2** gives the waves, stars and sun distinct visual controls, with spreading note ripples and adds Shift-toggle readout.
 
