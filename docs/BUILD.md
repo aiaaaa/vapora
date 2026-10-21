@@ -26,7 +26,7 @@ Outputs are `build/vapora.knl` and `build/vapora-1.2.2-validation/`. The build s
 
 Checks cover table generation, 15 preset round trips, production DSP and screen harnesses, 19 dry audio fixtures, wave bounds, all seven suns, control behavior, native imports and loader relocation against GNU ld at two addresses. Host rasterization and timing do not establish native display quality or hardware CPU limits.
 
-Compiled release: 481,192-byte plugin; SHA-256 `edfd7ef4636b41e9c9ec2002b0df15616be261dc750082d39f5b2807e1ccf0ca`.
+Compiled release: 481,192-byte plugin; SHA-256 `07af22d44ec11b626fe80da448f6b079f93dad8f6bc54fda15806dd945185090`.
 
 The release build uses `--skip-previews`: all SVG drawing-command checks still
 run, but no GIFs or other preview media are generated. Omit that option when
