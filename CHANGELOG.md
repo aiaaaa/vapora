@@ -1,3 +1,12 @@
+# 1.2.3 — output level and Stone Hall Plate
+
+- Raise fixed output gain by 3× (about +9.54 dB); preserve velocity, envelopes, tables and visuals. No compressor or automatic gain adjustment.
+- Stone Hall starts at octave −3 and saves Plate enabled: Decay 99, Pre 99, Tone 00, Mix 33. Its synth controls and envelope are unchanged. The other fourteen preset files are identical to 1.2.2.
+- Existing users update the plugin and replace only Stone Hall’s preset; new installations use the full updated bank.
+- Native build, loader/relocation checks, ASan/UBSan tests and a 13,440-case six-voice dry-sum sweep pass. No clipping in the sweep; about 1.9 dB headroom in its loudest case. These checks do not guarantee arbitrary phase combinations or downstream effect headroom.
+- Move README version notes from Overview to the bottom of Build and validation. Preserve the user’s manual edits and media.
+- Reverb DSP is unchanged. Controlled device timing and final Plate/octave save-and-reload checks remain pending.
+
 # 1.2.2 — hold-sensitive ripples and slower return
 
 - Supersedes the interrupted 1.2 publication and local 1.2.1 evaluation.

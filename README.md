@@ -24,8 +24,6 @@ VAPORA is a six-voice PADsynth-based instrument with two independently phased, d
 
 Two detuned playback heads read broad, evolving PADsynth spectra for each note. Morph between two related colors, add a pitched interval, and let the tone drift. Fourteen characters cover warm ensembles, breathy choirs, hollow flutes, glassy textures and deep drones. VAPORA plays up to six notes, follows velocity, and uses the OP-1’s normal T2 envelope and T3 effect.
 
-**Version 1.2.2** gives the waves, stars and sun distinct visual controls, with spreading note ripples and adds Shift-toggle readout.
-
 ## Manual
 
 **Shift** button will toggle a on screen active variable readout, can be helpful at first TRY IT!
@@ -57,31 +55,38 @@ Load STONE HALL and play it at -3 octave range.
 
 The factory bank contains 15 sounds: A Fifth Tide, Asteroid Swarm, Breath Choir, Cavern Flute, Deep Pressure, Holy Dust, Ice Chapel, Last Light, Moon Choir, Pink Surf, Porcelain Orbit, Stone Hall, Sub Lantern, Tidal Arc and XFIN.
 
-Save an edited sound with the OP-1’s usual sound-key gesture. Deep Pressure is the only factory preset with a saved T3 effect; the other fourteen are dry. If the final bank is already installed, the 1.2.2 update needs only the plugin file, with no preset copying.
+Save an edited sound with the OP-1’s usual sound-key gesture. Deep Pressure saves Reverb enabled. Stone Hall starts at octave −3 and saves Plate enabled with **Decay 99, Pre 99, Tone 00, Mix 33**. The other thirteen presets are dry.
 
 ## Download and install
 
-- [VAPORA 1.2.2 plugin](downloads/vapora.knl)
+- [VAPORA 1.2.3 plugin](downloads/vapora.knl)
 - [15 factory presets](downloads/vapora-core15-presets.zip) — for new installations
+- [Stone Hall preset update](downloads/vapora-stone-hall-plate.zip) — replace only Stone Hall in an existing bank
 - [Checksums](downloads/SHA256SUMS)
 
 Requires the **original OP-1 with Hundekraft 3.0.2**. This is not an OP-1 field plugin.
 
 Open the [Hundekraft Workshop](https://hundekraft.github.io/op1-workshop/), add `vapora.knl` under **Your plugins**, connect the instrument, and use **Update OP-1**. Follow the Workshop’s transfer/restart instructions.
 
-For a new installation, unzip the preset pack and copy its `synth/vapora` folder into the instrument’s `synth` folder in normal disk mode. Eject and allow synchronization to finish. If you already have the final 15 presets, **update only the plugin; do not recopy the bank**.
+For a new installation, unzip the preset pack and copy its `synth/vapora` folder into the instrument’s `synth` folder in normal disk mode. Eject and allow synchronization to finish. If you already have the final 15 presets, **update the plugin and replace only `synth/vapora/stone hall.aif`** from the Stone Hall update. Keep the other fourteen presets. Eject, allow synchronization to finish, then reload Stone Hall. Keep a copy first if you edited your existing Stone Hall.
 
-Deep Pressure uses the separate Hundekraft `reverb` effect. The other factory presets are dry. The OP-1 supplies the T2 envelope and optional T3 effect.
+Deep Pressure uses the separate Hundekraft `reverb` effect; Stone Hall uses `plate`. Install those effects to use their saved settings. The OP-1 supplies the T2 envelope and optional T3 effect.
 
 ## Build and validation
 
 [Build instructions](docs/BUILD.md) include the pinned SDK, Blackfin toolchain and host checks. All corresponding plugin source, generators, editable geometry and preset recipes are in [plugin/vapora](plugin/vapora).
 
-Native Blackfin compilation, package/import/relocation checks and sanitizer host checks passed. Audio sources, tables, saved parameter mappings and all 15 preset files are unchanged from 1.1.4; all 19 dry audio fixtures match the local 1.1.15 revision exactly. Geometry, Shift behavior, spreading impacts, stars and all seven suns are checked on the host. The author previously evaluated the sounds and selected Solid and Lines on hardware; the final 1.2.2 installation and combined graphics/audio performance still need a device check. No controlled device CPU benchmark is claimed.
+Native Blackfin compilation, package/import/relocation checks and sanitizer host checks passed. The output-level sweep covers 13,440 six-voice cases with no clipped samples and about 1.9 dB headroom in the loudest tested dry sum. Geometry, Shift behavior, spreading impacts, stars and all seven suns are checked on the host. Controlled device CPU/GUI timing and Stone Hall’s Plate/octave save-and-reload check remain pending. Host audio fixtures do not render the saved effects.
 
-The existing GIF is retained from 1.1.4 for a separate manual update. It is a host rendering, not an OLED capture, and does not show the new 1.2.2 behavior.
+The existing images and GIFs are retained. They are host renderings, not OLED captures.
 
 [Release notes](CHANGELOG.md) · [Validation records](validation) · [Hundekraft handoff notes](docs/HUNDEKRAFT.md)
+
+### Version notes
+
+**Version 1.2.3** raises VAPORA’s fixed output gain by 3× (about +9.54 dB), keeping its velocity response and envelopes. Stone Hall now starts at octave −3 with Plate enabled: Decay 99, Pre 99, Tone 00, Mix 33. Other presets and visuals are unchanged. Start with a lower master volume when comparing the louder output.
+
+**Version 1.2.2** gives the waves, stars and sun distinct visual controls, with spreading note ripples and adds Shift-toggle readout.
 
 ## Credits and license
 
