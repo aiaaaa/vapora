@@ -17,8 +17,10 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--toolchain",type=Path,default=Path(os.environ.get("KENNEL_TOOLCHAIN",TASK/"toolchain")))
     ap.add_argument("--skip-regenerate",action="store_true",help="use checked-in tables")
+    ap.add_argument("--skip-previews",action="store_true",help="validate drawing commands without rendering media")
     a=ap.parse_args()
-    out=KENNEL/"build/vapora-1.1.4-validation";out.mkdir(parents=True,exist_ok=True)
+    version=json.loads((ROOT/"plugin.json").read_text())["version"]
+    out=KENNEL/f"build/vapora-{version}-validation";out.mkdir(parents=True,exist_ok=True)
     if not a.skip_regenerate:
         old=hashlib.sha256((ROOT/"vapora_tables.h").read_bytes()).hexdigest() if (ROOT/"vapora_tables.h").exists() else None
         gen_tables.generate()
@@ -38,7 +40,7 @@ def main():
              ROOT/"vapora.c",ROOT/"vapora_dsp.c",ROOT/"vapora_screen.c",
              "-lm","-o",out/"check"],log)
         run([out/"check",out],log)
-        assets=check_assets.check(out)
+        assets=check_assets.check(out,render_previews=not a.skip_previews)
         run([sys.executable,KENNEL/"synth_sdk/harness/svg_check.py",ROOT],log)
         # Keep prior candidate before replacement, even during development.
         target=KENNEL/"build/vapora.knl"

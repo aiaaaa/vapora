@@ -8,7 +8,7 @@ import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 ROOT=Path(__file__).resolve().parents[1]
 
-def check(out):
+def check(out,render_previews=True):
     text=(ROOT/"vapora_tables.h").read_text()
     arrays={}
     for name,n,body in re.findall(r"int16_t (ps_t\d+_\d+)\[(\d+)\] = \{(.*?)\};",text,re.S):
@@ -81,9 +81,9 @@ def check(out):
     (out/"assets.json").write_text(json.dumps(report,indent=2)+"\n")
     diversity(out)
     visual_checks(out)
-    render(out)
+    if render_previews:render(out)
     print(f"{len(arrays)} tables: DC/peaks/spectral limits checked; coherent morph midpoint RMS",morph)
-    print(f"{len(audio)} WAV fixtures wrapped without normalization; scene/sun/animation previews at 320x160")
+    print(f"{len(audio)} WAV fixtures wrapped without normalization; scene/sun drawing commands checked")
     return report
 
 def diversity(out):
@@ -108,20 +108,22 @@ def diversity(out):
     print("Nearest spectral pairs:",pairs[:5])
 
 def visual_checks(out):
-    def lines(name,width):
+    def lines(name,width,layer=None):
         root=ET.parse(out/name).getroot()
         return [e.attrib for e in root.iter() if e.tag.split("}")[-1]=="line"
-                and abs(float(e.get("stroke-width","0"))-width/1024)<.0001]
+                and abs(float(e.get("stroke-width","0"))-width/1024)<.0001
+                and (layer is None or e.get("data-particle-layer")==str(layer))]
     for name in ("minimum.svg","default.svg"):
-        assert len(lines(name,3200))<=8
-        assert len(lines(name,1900))<=24
-        assert len(lines(name,2500))<=16
-        dots=lines(name,1900)+lines(name,2500)+lines(name,3200)
+        assert len(lines(name,3200,0))<=8
+        assert len(lines(name,1900,0))<=24
+        assert len(lines(name,2500,0))<=16
+        dots=lines(name,1900,0)+lines(name,2500,0)+lines(name,3200,0)
         xs=[float(d["x1"]) for d in dots];ys=[float(d["y1"]) for d in dots]
         assert max(xs)-min(xs)>270 and max(ys)-min(ys)>30
         mesh=lines(name,1950)
         xs=[float(d[k]) for d in mesh for k in ("x1","x2")]
-        assert min(xs)<=2.1 and max(xs)>=316.9
+        # Rightmost pointed vertices now sit 8px in from their former x=318.
+        assert 1.9<=min(xs)<=2.1 and 309.9<=max(xs)<=310.1
     assert lines("idle-00.svg",1950)!=lines("idle-23.svg",1950),"idle surface did not move"
     ids=range(1,8)
     for style in range(2,8):
@@ -139,7 +141,7 @@ def visual_checks(out):
         root=ET.parse(out/f"sunfixed-01-{cy:02d}.svg").getroot()
         groups=list(root)
         assert len(groups)==1 and groups[0].get('transform')==f'translate(140.0000 {cy-20:.4f})'
-        assert groups[0][0].get('fill')=='#ffbe6b'
+        assert groups[0][0].get('fill')=='#ffffff'
     assert fill[0]>150 and fill[-1]==0 and all(a>=b for a,b in zip(fill,fill[1:]))
     full=lines("sunfixed-02-30.svg",4096)
     assert len(full)==7 and sorted(float(a['y1'])-30 for a in full)==[-18,-12,-6,0,6,12,18]
@@ -162,7 +164,8 @@ def visual_checks(out):
     for e in ET.parse(ROOT/'vapora.svg').getroot().iter():
         if e.tag.split('}')[-1]=='path':assert e.get('fill') not in (None,'inherit')
     (out/"sun-motion.json").write_text(json.dumps(dict(styles=7,display_ids=list(ids),names=names,default=1,
-        heights=27,translation_invariant=list(ids),solid_radius=20,lines_stroke_pixels=4,
+        geometry_test_heights=27,brightness_center_low=56,brightness_center_high=36,
+        travel_scale=0.75,translation_invariant=list(ids),solid_radius=20,lines_stroke_pixels=4,
         lines_count=7,lines_pitch_pixels=6,lines_width_sum_high_to_low=fill,
         limitation="Host command geometry, not an OP-1 raster capture."),indent=2)+"\n")
     print("Visual contract: seven suns in approved order; four-pixel Lines; explicit native paint; idle water moves")
@@ -180,7 +183,7 @@ def render(out):
     for style in (1,2,4,7):
         frames=[Image.open(out/f"sunmove-{style:02d}-{cy:02d}.png") for cy in range(56,29,-1)]
         frames=frames+frames[-2:0:-1]
-        frames[0].save(out/f"sun-{style:02d}-travel-host.gif",save_all=True,append_images=frames[1:],duration=100,loop=0)
+        frames[0].save(out/f"sun-{style:02d}-geometry-stress-host.gif",save_all=True,append_images=frames[1:],duration=100,loop=0)
     names=["minimum","default","maximum","character","interval","speed","all-alternates","voice-onset","single-low","single-semitone","single-high"]
     sheet=Image.new("RGB",(660,1200),(20,23,30));d=ImageDraw.Draw(sheet)
     for i,n in enumerate(names):
