@@ -23,16 +23,27 @@ VAPORA supplies these materials. Its stable ID is `vapora`, manifest `order` is 
 ## Prepared description
 
 
-VAPORA is a six-voice PADsynth-based instrument for the original OP-1 / Hundekraft 3.0.2, with two detuned playback heads per voice, 14 sound characters and 15 curated cinematic presets. Its procedural screen combines a triangular ocean, stars and seven sun designs, with note-dependent connector curvature. Version 1.1.4 defaults to Solid, then Lines, while preserving the approved sound and presets.
+VAPORA 1.2 is a six-voice PADsynth instrument for the original OP-1 / Hundekraft
+3.0.2, with two detuned playback heads per voice, 14 sound Characters and 15
+cinematic presets. Character selects fourteen wave styles; Morph moves them.
+Notes make temporary outward ripples. Interval controls an added star field
+and signature; Thickness rotates and grows the signature. Motion/Speed control
+the sun's white-to-red-orange pulse. Shift toggles a default-hidden readout.
+The original star layer, sound engine and installed preset bank are preserved.
 
-
-The package includes a 474,288-byte `.knl`, corresponding source, deterministic generators, preset recipes, controls, licenses and validation records. Blackfin compilation, package/import/relocation checks and sanitizer host tests passed. The sounds have been evaluated by the author on hardware; the user selected Solid and Lines on hardware; the combined 1.1.4 installation/order check remains pending. The preview GIF is an idle Holy Dust brightness sweep, with no played or held notes. It uses a host renderer and substitute font.
+The package includes a 480,652-byte `.knl`, corresponding source,
+deterministic generators, preset recipes, controls, licenses and validation
+records. Native Blackfin build, package/import/relocation checks and sanitizer
+host tests pass. The author previously evaluated sounds and selected Solid and
+Lines on hardware. The final 1.2 installation and combined performance remain
+untested. The public GIF is retained from 1.1.4 for a separate manual update;
+it uses a host renderer and substitute font. The static screen is updated.
 
 
 ## Before a maintainer handoff
 
 
-Confirm the combined 1.1.4 installation and seven-design cycle on the OP-1 and record remaining hardware checks honestly. The SDK also recommends checking sustained chords and heavy effects, save/reload/restart, replacement, removal and reinstall. Do not present unperformed checks as passed.
+Confirm the final 1.2 installation and seven-design cycle on the OP-1 and record remaining hardware checks honestly. The SDK also recommends checking sustained chords and heavy effects, save/reload/restart, replacement, removal and reinstall. Do not present unperformed checks as passed.
 
 
 No maintainer message, issue or pull request has been submitted. The author handles any final submission.

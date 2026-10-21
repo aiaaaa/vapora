@@ -1,4 +1,4 @@
-# Build VAPORA 1.1.4
+# Build VAPORA 1.2
 
 Download the [matching Hundekraft 3.0.2 source and SDK](https://hundekraft.github.io/op1-workshop/source/hundekraft-3.0.2-source.tar.gz) and verify its [published checksum](https://hundekraft.github.io/op1-workshop/source/hundekraft-3.0.2-source.tar.gz.sha256).
 
@@ -19,19 +19,23 @@ For generation and full host validation, use Python 3 with the dependencies in `
 python3 -m venv .venv
 . .venv/bin/activate
 python3 -m pip install -r synth_sdk/plugins/vapora/requirements.txt
-python3 synth_sdk/plugins/vapora/tools/build.py --toolchain /path/to/toolchain
+python3 synth_sdk/plugins/vapora/tools/build.py --toolchain /path/to/toolchain --skip-previews
 ```
 
-Outputs are `build/vapora.knl` and `build/vapora-1.1.4-validation/`. The build script expects this SDK directory layout. Keep it inside `synth_sdk/plugins/vapora`, rather than invoking it from the standalone GitHub checkout.
+Outputs are `build/vapora.knl` and `build/vapora-1.2-validation/`. The build script expects this SDK directory layout. Keep it inside `synth_sdk/plugins/vapora`, rather than invoking it from the standalone GitHub checkout.
 
 Checks cover table generation, 15 preset round trips, production DSP and screen harnesses, 19 dry audio fixtures, wave bounds, all seven suns, control behavior, native imports and loader relocation against GNU ld at two addresses. Host rasterization and timing do not establish native display quality or hardware CPU limits.
 
-Compiled release: 474,288-byte plugin; SHA-256 `9466c795c9e94e7bca3950bc0f7cd892cdba2dcebdd45fd734035d67ae73f482`.
+Compiled release: 480,652-byte plugin; SHA-256 `0b1c496f4b1529af8edf9934600807ac1b836c0f24c10a6de71668f0b36eeb59`.
 
-To regenerate the idle Holy Dust GIF from the production screen code:
+The release build uses `--skip-previews`: all SVG drawing-command checks still
+run, but no GIFs or other preview media are generated. Omit that option when
+media exports are wanted. The existing public GIF is intentionally retained
+from 1.1.4 pending a separate manual update.
 
-```sh
-python3 synth_sdk/plugins/vapora/tools/make_showcase.py --output build/vapora-1.1.4-showcase
-```
-
-This generates native-size and 3× exports: 160 frames, ten seconds, infinite loop. No notes are played or held. The host uses a substitute font; it does not emulate the OP-1 rasterizer.
+Additional checks cover default-hidden Shift toggling, conditional readout
+backing, outward note/chord ripples, fourteen Character styles, ten Interval
+fields/signatures, all 32768 Thickness values, and 16384 random side-geometry
+samples. Audio sources and all presets match the published 1.1.4 bank; all 19
+PCM fixtures match local 1.1.15 exactly. Version 1.2's production visual sources
+are byte-identical to the approved local 1.1.15 candidate.
