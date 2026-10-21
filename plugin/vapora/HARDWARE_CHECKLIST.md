@@ -1,6 +1,20 @@
-# VAPORA 1.2.2 release
+# VAPORA 1.2.3 hardware checks
 
-Sound and the 15 presets remain frozen. Update only the plugin.
+Output is approximately 9.54 dB louder. Stone Hall now saves Plate enabled;
+the other 14 preset files remain unchanged. Update the plugin and replace only
+Stone Hall's AIF. Start with the master volume lower for this comparison.
+
+- With Plate installed, load Stone Hall and verify T3 is enabled and shows
+  Decay 99, Pre 99, Tone 00 and Mix 33, with octave -3. Confirm these survive reload.
+
+- Compare single notes and six-note chords with 1.2.2 and other synths at the
+  same master setting. Listen for clean peaks, comfortable level and dynamics.
+- Check all Characters at high Brightness/Thickness, including low notes,
+  dense clusters, retriggers and long releases. Host sweeps are not a proof
+  for every possible note/control/phase combination on the device.
+- Check saved FX (especially Deep Pressure Reverb), master Drive and tape
+  recording levels: the stronger signal also feeds those downstream stages.
+- Keep the 1.2.2 plugin available for a direct comparison or rollback.
 
 - Push Blue to toggle Morph/Character; verify the 14 retained styles in order.
 - Turn Character: the wave style and existing audio Character change together.
@@ -60,8 +74,9 @@ Sound and the 15 presets remain frozen. Update only the plugin.
 - Character's pointer makes one 270-degree sweep; page presses do not edit sound words.
 - Check peak graphics/audio load with the densest overlay, six voices and T3 FX.
 - Dial alignment, Brightness height/opening and slower daytime particles remain.
-- Preserve all 15 installed sounds; no preset copying or renaming is needed.
-- Confirm ordinary playback and screen switching. DSP code/tables and presets
-  are byte-identical; the adapter adds visual-only note-on/off hold tracking; host checks do not establish hardware CPU timing.
+- Preserve the other 14 installed sounds; replace only Stone Hall's preset.
+- Confirm ordinary playback and screen switching. Tables and screen code are
+  unchanged; DSP has the fixed output gain increase. Host checks do not
+  establish hardware CPU timing.
 
-No format, reset, or preset reload is part of this update.
+No format or reset is part of this update. Reload Stone Hall after replacement.

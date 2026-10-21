@@ -1,10 +1,11 @@
-# VAPORA 1.2.2 — release
+# VAPORA 1.2.3
 
 Native six-voice PADsynth instrument for the original OP-1 / Hundekraft 3.0.2.
 Two independently phased, detuned playback heads per voice; 14 sound Characters
 and 15 factory presets. The OP-1 supplies velocity, T2 envelope and optional T3
-processing. This release changes screen behavior while retaining audio code,
-table data, sound-word mappings and all preset files. A note-off callback now
+processing. This release raises fixed output gain by 3x (about +9.54 dB), retaining
+table data, sound-word mappings and visuals. Stone Hall now saves Plate enabled;
+the other fourteen preset files are unchanged. A note-off callback now
 tracks held serials solely for the screen; it does not alter DSP or T2 release.
 
 ## Controls and visuals
@@ -126,7 +127,8 @@ Wave colors, base stars and the other dial paints remain unchanged.
 ## Presets and installation
 
 Update `vapora.knl` through Workshop **Your plugins / Update OP-1**. Existing
-users of the final 15-preset bank should update only the plugin. New users can
+users of the final 15-preset bank should update the plugin and replace only
+`synth/vapora/stone hall.aif` for the Plate binding. New users can
 install the separate factory bank into `synth/vapora` in normal disk mode.
 Do not replace current presets with older R6 evaluation files: their Character
 words select different sources. `data/core_set.json` locks the final names and
@@ -134,12 +136,15 @@ Character assignments; `PRESET_CATALOG.csv` and `presets/recipes.json` document
 this bank. Save edits using the OP-1's usual sound-key gesture.
 
 Deep Pressure saves the separate Hundekraft Reverb effect (time 70%, tone 46%,
-diffusion 73%, mix 31%). It requires that effect to be installed. The other
-fourteen presets are dry. Host fixtures do not include native T2 or T3 effects.
+diffusion 73%, mix 31%). Stone Hall saves Plate enabled with readouts
+Decay 99, Pre 99, Tone 00 and Mix 33, and starts at octave -3. Each requires its respective effect to be
+installed. The other thirteen presets are dry. Host fixtures do not include
+native T2 or T3 effects.
 
 ## Sound and implementation
 
-The two-head, six-voice DSP remains unchanged. Offline PADsynth tables contain
+The two-head, six-voice DSP has a fixed 3x output boost relative to 1.2.2.
+There is no compressor or automatic level adjustment. Offline PADsynth tables contain
 broadened spectral components; these are not extra runtime oscillators. There
 are 20 endpoints and 448,800 sample bytes, including the original two long Warm
 tables and six 8,192-sample cinematic spectra. Half-rate synthesis, block-rate
@@ -161,15 +166,26 @@ python3 tools/build.py --toolchain /path/to/toolchain --skip-previews
 ```
 
 Use the dependencies in `requirements.txt`. Omit `--skip-previews` to render
-host media. The 1.2.2 release retains the existing GIF for a separate manual update.
-No media generation is required to build the plugin.
+host media; the 1.2.3 build generates no GIFs. No media generation is required
+to build the plugin.
 
 Checks cover deterministic tables, 15 AIF round trips, production DSP and screen
 ASan/UBSan tests, three-minute six-voice state, 19 dry audio fixtures, overlapping
 note impacts, Shift toggling, wave bounds/side-triangle continuity, all ten star
 fields, all seven suns, native imports and relocation against GNU ld at two
-addresses. Native build and host validation pass; final 1.2.2 device installation,
-Shift timing and combined graphics/audio performance remain untested.
+addresses. Native build and host validation pass. Controlled hardware CPU/GUI
+timing and Stone Hall Plate save/reload verification remain pending.
+
+Additional dry headroom sweep (13,440 six-voice cases):
+
+```sh
+clang -O2 -std=c11 -I . tests/output_level.c vapora_dsp.c -lm -o /tmp/vapora-level-check
+/tmp/vapora-level-check
+```
+
+The sweep tests actual independently phased voices, including repeated-note
+unisons. It does not guarantee arbitrary phase-aligned sums or downstream FX
+headroom. Compare on hardware before publication.
 
 See `HARDWARE_CHECKLIST.md`, `CPU_AUDIT.md`, `TOOLCHAIN.md`, `CHANGELOG.md` and
 retained license/third-party notices. PADsynth algorithm by Nasca Octavian Paul.

@@ -1,11 +1,26 @@
-# 1.2.2 — slower held return
+# 1.2.3 — output level and Stone Hall Plate
+
+- Raise fixed voice output gain from 3840/32768 to 11520/32768: 3x amplitude,
+  approximately +9.54 dB. No compression, limiting or automatic gain changes.
+- Preserve tables, filter/morph behavior, velocity response, envelopes, visuals
+  and parameter mappings.
+- Preset addendum: Stone Hall saves Plate enabled with Decay 99, Pre 99,
+  Tone 00 and Mix 33, with its starting octave saved as -3. Replace only its AIF; the other 14 presets are unchanged.
+- Replace the overly conservative six-identical-copies headroom assumption
+  with actual six-voice sums. Add 13,440 full-envelope cases covering all
+  Characters/Intervals, Morph positions, Thickness endpoints, registers,
+  Motion settings, phase seeds, chords, clusters and repeated-note unisons.
+- Check level matching and downstream FX/tape gain on the physical OP-1.
+  No compression, reverb DSP changes or GIF updates are included.
+
+# 1.2.2 — local evaluation: slower held return
 
 - Holding broadens the ripple's trailing return up to twice its width and
   softens its small rebound from 1/8 toward 1/16 strength.
 - Preserve the sharp leading edge, outward speed, quick tap behavior and the
   existing 1.75-second maximum lifetime. No continuous held-note oscillation.
 - Audio, presets, Character sound names and all other visuals remain unchanged.
-- Published as 1.2.2, superseding the interrupted 1.2 update. GIFs remain untouched.
+- Local only; public publication stays paused and GIFs remain untouched.
 
 # 1.2.1 — local evaluation: hold-sensitive ripples
 

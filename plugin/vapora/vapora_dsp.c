@@ -121,7 +121,9 @@ void ps_render(ps_voice *v,int16_t out[PS_BLOCK],const int32_t pitch[PS_BLOCK],
     uint32_t base=ps_loop_increment(pitch[0])*2;
     uint32_t maininc=base+(uint32_t)(((int32_t)(base>>8)*drift)>>7);
     uint32_t auxinc=auxiliary(base,v->ratio,detune);
-    int gain=(ps_clamp(velocity,0,32767)*3840)>>15;
+    /* 1.2.3: +9.54 dB relative to 1.2.2. Fixed gain preserves dynamics;
+     * six-voice dry sums are checked in tests/output_level.c. */
+    int gain=(ps_clamp(velocity,0,32767)*11520)>>15;
     uint32_t ph0=v->phase[0],ph1=v->phase[1];
     int lp1=v->lp1,lp2=v->lp2;
     for(int n=0;n<PS_BLOCK;n+=2){
