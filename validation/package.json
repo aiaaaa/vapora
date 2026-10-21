@@ -1,10 +1,10 @@
 {
-  "file_size": 481192,
-  "text_size": 21708,
+  "file_size": 481200,
+  "text_size": 21716,
   "rodata_size": 451108,
   "data_size": 64,
   "bss_size": 4024,
-  "load_size": 476904,
+  "load_size": 476912,
   "svg_size": 473,
   "reloc_count": 635,
   "imports": [
@@ -12,7 +12,7 @@
     "_sq_num",
     "_sq_cat"
   ],
-  "sha256": "07af22d44ec11b626fe80da448f6b079f93dad8f6bc54fda15806dd945185090",
+  "sha256": "3bd3df2bb1104da34829e1840567235321ccedae87c8386f8868aefd5cc8ddee",
   "compiler": "bfin-elf-gcc (GCC) 13.3.0",
   "binutils": "GNU ld (GNU Binutils) 2.42",
   "package_checks": "Python/C relocation and GNU ld equal at 2 bases; C descriptors valid; imports exported; no DSP helpers",

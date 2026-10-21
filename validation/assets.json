@@ -1023,156 +1023,156 @@
   "audio": [
     {
       "file": "held-c4.wav",
-      "peak": 2042,
-      "rms": 566.8662761418516,
-      "above_internal_nyquist_energy_ratio": 3.615281708291851e-07,
-      "nominal_c4_loop_correlation": 0.1137009968088487,
-      "sha256": "3483ab979c13e3f6667d879799d45d1d22e59d2a1c1dcb44cc788d473b6ab330"
+      "peak": 6131,
+      "rms": 1701.562533354474,
+      "above_internal_nyquist_energy_ratio": 7.657301733708015e-08,
+      "nominal_c4_loop_correlation": 0.11374685606612348,
+      "sha256": "f2aec00d0d76e4b84576fec9a3c46f016f98b62095275c886321684fd3db8ed0"
     },
     {
       "file": "high-octave.wav",
-      "peak": 356,
-      "rms": 125.0580075779171,
-      "above_internal_nyquist_energy_ratio": 0.00037571116246419263,
-      "nominal_c4_loop_correlation": 0.03937592445064209,
-      "sha256": "6eedca969c705dfd9f7e3240c43d529dcebafc45699e7468d115f017d5eaa7a3"
+      "peak": 1068,
+      "rms": 375.84849199729166,
+      "above_internal_nyquist_energy_ratio": 0.0003700346944302431,
+      "nominal_c4_loop_correlation": 0.03940725455019975,
+      "sha256": "2b18048999a66eb8819b0a2bbb63c6f8af34666441465874294dd7fdaeb78b1e"
     },
     {
       "file": "macro-sweep.wav",
-      "peak": 2102,
-      "rms": 443.5158438589661,
-      "above_internal_nyquist_energy_ratio": 8.770788138525082e-07,
-      "nominal_c4_loop_correlation": -0.012796318670234633,
-      "sha256": "47890011bb7c95f9cb53d2a02e784f21517330daf059f8231d77268f1c95c814"
+      "peak": 6310,
+      "rms": 1331.3788771646775,
+      "above_internal_nyquist_energy_ratio": 1.043710687247915e-07,
+      "nominal_c4_loop_correlation": -0.01279005006058673,
+      "sha256": "7452af8afbb56743c889a5a64f71272ee5cff2ae7b04394ee2fd4fd03e122f62"
     },
     {
       "file": "preset-01-asteroid-swarm.wav",
-      "peak": 1885,
-      "rms": 452.5490491717946,
-      "above_internal_nyquist_energy_ratio": 1.0041383417326476e-06,
-      "nominal_c4_loop_correlation": 0.06998558500164125,
-      "sha256": "bfff192165f96ae9db5d57937a97e81ff0a5af5b39b6de25271b405b11b0e690"
+      "peak": 5659,
+      "rms": 1357.8877627275956,
+      "above_internal_nyquist_energy_ratio": 2.228395285084718e-07,
+      "nominal_c4_loop_correlation": 0.06998700129597935,
+      "sha256": "5775ec3da9f00a6288e1d936ab44f207c3ff3af887934f50d08889d3bcdbf5bc"
     },
     {
       "file": "preset-02-breath-choir.wav",
-      "peak": 1750,
-      "rms": 357.9197143764901,
-      "above_internal_nyquist_energy_ratio": 2.540255059435825e-05,
-      "nominal_c4_loop_correlation": 0.035778562442011615,
-      "sha256": "806ee633d306796f0da5696348e993b5368e1db4b3595b69e4cda726f487a729"
+      "peak": 5248,
+      "rms": 1074.0959123981484,
+      "above_internal_nyquist_energy_ratio": 2.4738040728324744e-05,
+      "nominal_c4_loop_correlation": 0.03577343851159135,
+      "sha256": "28db32a23e0f0af812651bcff959970c8374e17a026719d87902a42d9408838b"
     },
     {
       "file": "preset-03-cavern-flute.wav",
-      "peak": 1262,
-      "rms": 521.3102167508821,
-      "above_internal_nyquist_energy_ratio": 5.368527137414424e-07,
-      "nominal_c4_loop_correlation": 0.5216774243317047,
-      "sha256": "861e798eb47d8265521f57cb5eb9278d9b5c4e493fa3ee3c07a450dee0aed4c8"
+      "peak": 3784,
+      "rms": 1564.2092706316782,
+      "above_internal_nyquist_energy_ratio": 1.398635608992937e-07,
+      "nominal_c4_loop_correlation": 0.5216838170702636,
+      "sha256": "3850f1d6ce8896ac7bd1a844f15372fda233b5614f6ef88e37ab3e0d91829eb7"
     },
     {
       "file": "preset-04-deep-pressure.wav",
-      "peak": 1667,
-      "rms": 436.3620342707917,
-      "above_internal_nyquist_energy_ratio": 1.2257916468503437e-06,
-      "nominal_c4_loop_correlation": 0.6903317114420927,
-      "sha256": "4d0fbd9bab4b683a1f28e6c52d809a039985a15321d52bb274e1211cf86d7cde"
+      "peak": 5001,
+      "rms": 1309.3222121733236,
+      "above_internal_nyquist_energy_ratio": 1.7964992721174452e-07,
+      "nominal_c4_loop_correlation": 0.690335984546928,
+      "sha256": "14e0e82fb1b71e5120a3ba5344c343e7c706f3794b2567c03b811119aa5b468d"
     },
     {
       "file": "preset-05-pink-surf.wav",
-      "peak": 2426,
-      "rms": 452.01536484575144,
-      "above_internal_nyquist_energy_ratio": 1.209002667061057e-06,
-      "nominal_c4_loop_correlation": 0.7239170759444243,
-      "sha256": "6b285f363dd94751880c088145290415d79a15973d52a4de2d5d7378fba3f90a"
+      "peak": 7277,
+      "rms": 1356.2875289697356,
+      "above_internal_nyquist_energy_ratio": 4.908339703995356e-07,
+      "nominal_c4_loop_correlation": 0.7239173191666153,
+      "sha256": "5b930073958a00f0b10413d0baaeb662ea63197204246e22d87f2510c840f59f"
     },
     {
       "file": "preset-06-porcelain-orbit.wav",
-      "peak": 1524,
-      "rms": 380.52353246194065,
-      "above_internal_nyquist_energy_ratio": 2.200708504119679e-05,
-      "nominal_c4_loop_correlation": 0.08722107610918232,
-      "sha256": "604f48b352ed3ecdf2da75da3e45258f5447e306622b311e2ffe1cc46e11706a"
+      "peak": 4576,
+      "rms": 1141.7625854178996,
+      "above_internal_nyquist_energy_ratio": 2.1382478421224586e-05,
+      "nominal_c4_loop_correlation": 0.08721750922025982,
+      "sha256": "ee3e8213194d05db0e0894340d50f467d2e28c0997616958fec27e2efff8f948"
     },
     {
       "file": "preset-07-sub-lantern.wav",
-      "peak": 980,
-      "rms": 390.4929886259472,
-      "above_internal_nyquist_energy_ratio": 6.434272513563726e-07,
-      "nominal_c4_loop_correlation": 0.9961648785683622,
-      "sha256": "22f255930474196c3fbbc9863f0a8a8ed2e6443ed345dafabea6a22dbb520476"
+      "peak": 2945,
+      "rms": 1171.6551636821791,
+      "above_internal_nyquist_energy_ratio": 7.205746110689822e-08,
+      "nominal_c4_loop_correlation": 0.9961659863387338,
+      "sha256": "9faabbd3115ff64182654f91140bc9e3e145dafb734cb6a4e5a4b174a5a42486"
     },
     {
       "file": "preset-08-a-fifth-tide.wav",
-      "peak": 2503,
-      "rms": 563.4099663673506,
-      "above_internal_nyquist_energy_ratio": 1.1202466148792132e-06,
-      "nominal_c4_loop_correlation": 0.17730898083235827,
-      "sha256": "19472506c6aec5a6699f929071784afb319d8c0a41e0c8f797c0f860fcbf2634"
+      "peak": 7507,
+      "rms": 1691.1821918189974,
+      "above_internal_nyquist_energy_ratio": 8.128688865089757e-07,
+      "nominal_c4_loop_correlation": 0.17739892841125446,
+      "sha256": "8897331de09cbbaff56e87de1b333f720786ec97af565daa53b67e5755e646f7"
     },
     {
       "file": "preset-09-holy-dust.wav",
-      "peak": 2315,
-      "rms": 459.5915557119627,
-      "above_internal_nyquist_energy_ratio": 3.764255608023196e-06,
-      "nominal_c4_loop_correlation": 0.06147470292774101,
-      "sha256": "98e21074c74101969c4c282f461155a3e1f99177438debe171a639629daf33a9"
+      "peak": 6949,
+      "rms": 1379.0097931321727,
+      "above_internal_nyquist_energy_ratio": 3.0676503243643615e-06,
+      "nominal_c4_loop_correlation": 0.06148199350682191,
+      "sha256": "40733b064510d205eb606f48e2ff11e99a7afc7de11aacf7b39735264e4ecfcb"
     },
     {
       "file": "preset-10-XFIN.wav",
-      "peak": 2035,
-      "rms": 487.8367967363327,
-      "above_internal_nyquist_energy_ratio": 5.957070788302668e-06,
-      "nominal_c4_loop_correlation": -0.4277525184739039,
-      "sha256": "03a4d566f6909e3d75a6a62278c6ea55b7d5dd8298eebdb8a37639b2c6f8c501"
+      "peak": 6103,
+      "rms": 1463.7629642602515,
+      "above_internal_nyquist_energy_ratio": 5.385306855976155e-06,
+      "nominal_c4_loop_correlation": -0.4277440805596806,
+      "sha256": "dfbe964878d1c9925ddf9e8bbf668df7be38775de77d4f26c51a7c13a52e4145"
     },
     {
       "file": "preset-11-ice-chapel.wav",
-      "peak": 1882,
-      "rms": 469.9238063519513,
-      "above_internal_nyquist_energy_ratio": 2.1265324946292225e-06,
-      "nominal_c4_loop_correlation": 0.2503895671358433,
-      "sha256": "c312ad2db7a1636c0d5fc7457b446f66c5314525c1bd29fe576a59221c1f64e6"
+      "peak": 5645,
+      "rms": 1410.0131144856134,
+      "above_internal_nyquist_energy_ratio": 1.4484761138214179e-06,
+      "nominal_c4_loop_correlation": 0.25038930365316425,
+      "sha256": "b7d774cfe5a052e079ebaaff8c465fb542913a35b99b93da6c85177470b8a871"
     },
     {
       "file": "preset-12-last-light.wav",
-      "peak": 2009,
-      "rms": 444.40802988830995,
-      "above_internal_nyquist_energy_ratio": 8.632636987559269e-07,
-      "nominal_c4_loop_correlation": -0.27247875344479344,
-      "sha256": "f51484394462815dfc5405db2fbdfa11061863826faf2435e626be419eb904ea"
+      "peak": 6027,
+      "rms": 1333.4499781949553,
+      "above_internal_nyquist_energy_ratio": 1.3204120815957333e-07,
+      "nominal_c4_loop_correlation": -0.2724881232860249,
+      "sha256": "ee50efe1265534a551121b6cec89b3475f6e6b5eaab7b985c0d89d20160c0916"
     },
     {
       "file": "preset-13-moon-choir.wav",
-      "peak": 2126,
-      "rms": 469.00643742417304,
-      "above_internal_nyquist_energy_ratio": 9.165580329104245e-07,
-      "nominal_c4_loop_correlation": -0.31659797150792485,
-      "sha256": "24fb093d9abc7e8277d29e552d9c0f6826bf07808cbc9074f99ced1baa7fc5a6"
+      "peak": 6379,
+      "rms": 1407.2596759572411,
+      "above_internal_nyquist_energy_ratio": 3.324207667327452e-07,
+      "nominal_c4_loop_correlation": -0.31659978932876215,
+      "sha256": "59c24edca8d9ecb4c79823c49654438d4ee0283895de8ba825488993ba3e73bd"
     },
     {
       "file": "preset-14-stone-hall.wav",
-      "peak": 2203,
-      "rms": 466.6450232438112,
-      "above_internal_nyquist_energy_ratio": 1.3735429681509437e-06,
-      "nominal_c4_loop_correlation": 0.16313056576594534,
-      "sha256": "668bdadc4b831ea7a4682457659e354c7e100f142b915a2b8fadf0856996a902"
+      "peak": 6915,
+      "rms": 1487.1754712296492,
+      "above_internal_nyquist_energy_ratio": 7.292293234001753e-08,
+      "nominal_c4_loop_correlation": -0.032289414450113775,
+      "sha256": "b9a71f1befd239118b2137e87838725b4e9900e9a6ce2c9a0d6967e1cc8d1b3d"
     },
     {
       "file": "preset-15-tidal-arc.wav",
-      "peak": 2126,
-      "rms": 481.48697112646175,
-      "above_internal_nyquist_energy_ratio": 1.6498163951936856e-05,
-      "nominal_c4_loop_correlation": -0.5391992966380349,
-      "sha256": "86cc5786733c162d08390ace3f6f9bf46b063d5b788532b465bc9d0bbb4c8ee3"
+      "peak": 6377,
+      "rms": 1444.7069076826372,
+      "above_internal_nyquist_energy_ratio": 1.59486467847234e-05,
+      "nominal_c4_loop_correlation": -0.5391953781600437,
+      "sha256": "29e3352efc9cc8878c7889abd95e9285c3d1a6da717eef0f3bbd6ef5487db2f4"
     },
     {
       "file": "six-note-pad.wav",
-      "peak": 6268,
-      "rms": 1343.9521017357906,
-      "above_internal_nyquist_energy_ratio": 1.9344657811177276e-06,
-      "nominal_c4_loop_correlation": -0.03919649574770978,
-      "sha256": "ea1648da86df9c819899a05cc410708a9de69a9141b3fec6e1a0171f05cf4fee"
+      "peak": 18833,
+      "rms": 4034.1309019126074,
+      "above_internal_nyquist_energy_ratio": 4.457240325174741e-07,
+      "nominal_c4_loop_correlation": -0.03918580527581897,
+      "sha256": "9e6b9ca1234e0bd4fb5667b69fa5695047a7ff2228f760a426df7362b0d334f8"
     }
   ],
-  "note": "WAVs use production DSP and simulated per-preset attack/decay/sustain/release. No stock T2 renderer or FX: Deep Pressure's saved Reverb is not rendered in these dry fixtures. No per-file normalization. Correlation is diagnostic, not an audition."
+  "note": "WAVs use production DSP and simulated per-preset attack/decay/sustain/release. No stock T2 renderer or FX: Deep Pressure's saved Reverb and Stone Hall's saved Plate are not rendered in these dry fixtures. No per-file normalization. Correlation is diagnostic, not an audition."
 }
