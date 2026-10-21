@@ -1,4 +1,4 @@
-# Build VAPORA 1.2.2
+# Build VAPORA 1.2.3
 
 Download the [matching Hundekraft 3.0.2 source and SDK](https://hundekraft.github.io/op1-workshop/source/hundekraft-3.0.2-source.tar.gz) and verify its [published checksum](https://hundekraft.github.io/op1-workshop/source/hundekraft-3.0.2-source.tar.gz.sha256).
 
@@ -22,21 +22,27 @@ python3 -m pip install -r synth_sdk/plugins/vapora/requirements.txt
 python3 synth_sdk/plugins/vapora/tools/build.py --toolchain /path/to/toolchain --skip-previews
 ```
 
-Outputs are `build/vapora.knl` and `build/vapora-1.2.2-validation/`. The build script expects this SDK directory layout. Keep it inside `synth_sdk/plugins/vapora`, rather than invoking it from the standalone GitHub checkout.
+Outputs are `build/vapora.knl` and `build/vapora-1.2.3-validation/`. The build script expects this SDK directory layout. Keep it inside `synth_sdk/plugins/vapora`, rather than invoking it from the standalone GitHub checkout.
 
 Checks cover table generation, 15 preset round trips, production DSP and screen harnesses, 19 dry audio fixtures, wave bounds, all seven suns, control behavior, native imports and loader relocation against GNU ld at two addresses. Host rasterization and timing do not establish native display quality or hardware CPU limits.
 
-Compiled release: 481,192-byte plugin; SHA-256 `07af22d44ec11b626fe80da448f6b079f93dad8f6bc54fda15806dd945185090`.
+Compiled release: 481,200-byte plugin; SHA-256 `3bd3df2bb1104da34829e1840567235321ccedae87c8386f8868aefd5cc8ddee`.
 
 The release build uses `--skip-previews`: all SVG drawing-command checks still
 run, but no GIFs or other preview media are generated. Omit that option when
-media exports are wanted. The existing public GIF is intentionally retained
-from 1.1.4 pending a separate manual update.
+media exports are wanted. The user’s existing public images and GIFs are retained unchanged.
 
 Additional checks cover default-hidden Shift toggling, conditional readout
 backing, outward note/chord ripples, fourteen Character styles, ten Interval
 fields/signatures, all 32768 Thickness values, and 16384 random side-geometry
-samples. Audio sources and all presets match the published 1.1.4 bank; all 19
-PCM fixtures match local 1.1.15 exactly. Hold checks additionally cover partial chord release, reused voices, bounded lifetime,
-unchanged tap geometry and a slower held return with reduced rebound. The published
-production sources and plugin match the local 1.2.2 evaluation package.
+samples. The oscillator tables, saved control mappings and visual source are unchanged; fixed audio gain is 3× higher. Fourteen presets are byte-identical to 1.2.2. Stone Hall additionally saves Plate and octave −3. Host fixtures are dry and omit the saved Reverb/Plate effects.
+
+The output-level sweep is separate from the general build:
+
+```sh
+cd synth_sdk/plugins/vapora
+clang -O2 -std=c11 -I . tests/output_level.c vapora_dsp.c -lm -o /tmp/vapora-output-level
+/tmp/vapora-output-level
+```
+
+It checks 13,440 full-envelope six-voice cases covering all Characters/Intervals, Morph/Thickness positions, phase seeds, registers, Motion settings, chords, clusters and repeated-note unisons. The measured peak is 26,243/32,767, with no clipping. This is a host dry-sum check, not a native mixer/FX performance measurement or a guarantee for every possible phase combination. The three-minute sustained-chord check also passes.
