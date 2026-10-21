@@ -37,11 +37,11 @@ def generate():
                octave=definition.get("octave",0),synth_version=2)
         if not definition.get("retained_from_r6"):assert len(name)<=10
         if definition.get("fx"):
-            effect=definition["fx"];assert effect["type"]=="reverb"
+            effect=definition["fx"];assert effect["type"] in ("reverb","plate")
             # Custom FX use the stock filter's raw ranges. Selector is repaired by name.
             ranges=[(64,14528),(0,24576),(0,22528),(8192,32767)]
             assert len(effect["q15"])==4 and all(0<=q<=32767 for q in effect["q15"])
-            p.update(fx_active=True,fx_type="reverb",
+            p.update(fx_active=True,fx_type=effect["type"],
                      fx_params=[lo+round(q*(hi-lo)/32767) for q,(lo,hi) in zip(effect["q15"],ranges)]+[0x5300,0,0,0])
         # 80-bit IEEE extended sample rate: 44100 = 1.3458251953125 * 2^15.
         rate=struct.pack(">HQ",16383+15,44100<<48)

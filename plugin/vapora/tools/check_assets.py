@@ -77,7 +77,7 @@ def check(out,render_previews=True):
                           sha256=hashlib.sha256(pcm.with_suffix(".wav").read_bytes()).hexdigest()))
     assert len(audio)==preset_count+4
     report=dict(tables=result,measured_spectral_profiles=spectra,morph_midpoint_rms_relative_to_endpoint=morph,audio=audio,
-                note="WAVs use production DSP and simulated per-preset attack/decay/sustain/release. No stock T2 renderer or FX: Deep Pressure's saved Reverb is not rendered in these dry fixtures. No per-file normalization. Correlation is diagnostic, not an audition.")
+                note="WAVs use production DSP and simulated per-preset attack/decay/sustain/release. No stock T2 renderer or FX: Deep Pressure's saved Reverb and Stone Hall's saved Plate are not rendered in these dry fixtures. No per-file normalization. Correlation is diagnostic, not an audition.")
     (out/"assets.json").write_text(json.dumps(report,indent=2)+"\n")
     diversity(out)
     visual_checks(out)
