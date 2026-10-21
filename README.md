@@ -17,8 +17,6 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 
 <img width="320" height="160" alt="32-white-disc-dunes" src="https://github.com/user-attachments/assets/2af2fa20-2f4f-43d8-9e24-77a9af5fd611" />
 
-<img width="320" height="160" alt="17-chord-hits-rolling-water" src="https://github.com/user-attachments/assets/7631a034-8409-41fe-bcd0-51b37b616fc7" />
-
 <img width="320" height="160" alt="21-slow-red-original" src="https://github.com/user-attachments/assets/6113adbe-6549-4903-9981-4b9c45344a5e" />
 
 
