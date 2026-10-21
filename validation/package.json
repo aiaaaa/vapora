@@ -12,7 +12,7 @@
     "_sq_num",
     "_sq_cat"
   ],
-  "sha256": "edfd7ef4636b41e9c9ec2002b0df15616be261dc750082d39f5b2807e1ccf0ca",
+  "sha256": "07af22d44ec11b626fe80da448f6b079f93dad8f6bc54fda15806dd945185090",
   "compiler": "bfin-elf-gcc (GCC) 13.3.0",
   "binutils": "GNU ld (GNU Binutils) 2.42",
   "package_checks": "Python/C relocation and GNU ld equal at 2 bases; C descriptors valid; imports exported; no DSP helpers",

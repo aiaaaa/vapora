@@ -17,7 +17,7 @@
       "_sq_num",
       "_sq_cat"
     ],
-    "sha256": "edfd7ef4636b41e9c9ec2002b0df15616be261dc750082d39f5b2807e1ccf0ca",
+    "sha256": "07af22d44ec11b626fe80da448f6b079f93dad8f6bc54fda15806dd945185090",
     "compiler": "bfin-elf-gcc (GCC) 13.3.0",
     "binutils": "GNU ld (GNU Binutils) 2.42",
     "package_checks": "Python/C relocation and GNU ld equal at 2 bases; C descriptors valid; imports exported; no DSP helpers",
@@ -49,7 +49,7 @@
     "data/retired_presets.json": "4cde00824c9fb72a4db8ca474769fb08530efdbfa3452a386c11f6de17c42fef",
     "data/tables.json": "4205cd50d6e360b44d5a151797f5104b4a4a225265f7397aff95067949cc9e83",
     "data/voices.json": "f1d7a1645187bceb1cd48492eeae32508828f50f412c5a992dd7145fcf4481be",
-    "plugin.json": "f14be79f1906b6e69fe6c439efe6b092d3563d7270fb9448e74c673b65425069",
+    "plugin.json": "19ee644caf0eea6cdcc04f3f524e7735f344d388705a63d2f726a3a028ed25d6",
     "presets/XFIN.aif": "520980b0ada42e8bf9d992bae254b495aaa6a63e74bd61935eba883c67d2f4ed",
     "presets/a fifth tide.aif": "ccb11c5d2cacbb10bc8e931830104a4469f9c26493513789488951c368697f2f",
     "presets/asteroid swarm.aif": "f83e68bd2529b8677b1e1eaee003a65cf736a97069674024db74fe9d87d66596",
@@ -106,7 +106,7 @@
     "vapora_visual.h": "767824fd198fd011456861ef8159a90cd3cc5b9c2ddc7e2a230932054a0974df",
     "vapora_wave_modes.h": "53ed8157eb11f330aa9ab12d4b4472a02de6dad54cef27f102226948498cdaef"
   },
-  "release_basis": "Exact local 1.2.2 native plugin and production sources; publication documentation updated.",
+  "release_basis": "Local 1.2.2 production code; author metadata corrected to AiAAAA. Executable payload unchanged; only author text and package CRC differ.",
   "media": "Existing GIF retained from 1.1.4; no GIF generated.",
   "hardware_note": "Final 1.2.2 installation and peak combined graphics/audio performance not tested."
 }

@@ -1,0 +1,22 @@
+{
+  "version": "1.2.2",
+  "change": "Author credit capitalization corrected to AiAAAA",
+  "previous_sha256": "edfd7ef4636b41e9c9ec2002b0df15616be261dc750082d39f5b2807e1ccf0ca",
+  "sha256": "07af22d44ec11b626fe80da448f6b079f93dad8f6bc54fda15806dd945185090",
+  "changed_byte_offsets": [
+    488,
+    489,
+    490,
+    491,
+    481168,
+    481170,
+    481171,
+    481172,
+    481173
+  ],
+  "author_offset": 481168,
+  "crc_offset": 488,
+  "executable_and_visual_payload_identical": true,
+  "package_checks": "Python/C relocation and GNU ld equality at two bases passed; descriptors and imports valid",
+  "manual_change_only_author_capitalization": true
+}
