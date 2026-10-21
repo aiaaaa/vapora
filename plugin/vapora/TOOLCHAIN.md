@@ -11,7 +11,7 @@ The SDK archive was downloaded from:
   `7c790676ad555da2b8df7a7851826055dee32b2c`.
 
 No existing compiler was found on PATH. An isolated native macOS x86-64
-toolchain was built in `<development-directory>/toolchain/`, leaving
+toolchain was built in a dedicated development directory, leaving
 existing projects/toolchains unchanged:
 
 | Component | Source | Download SHA-256 |

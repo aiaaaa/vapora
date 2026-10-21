@@ -10,22 +10,28 @@
 #include "vapora_visual.h"
 
 static op1_pt vertices[PS_ROWS*PS_COLS];
-static uint8_t edges[PS_EDGES][2],diagonal[PS_EDGES];
-static int16_t bend[PS_EDGES];
-static ps_snapshot seen[PS_VOICES];
+static uint8_t edges[PS_EDGES][2];
 static uint32_t sequence[PS_VOICES], clock_last, elapsed, ocean_phase, idle_phase;
+static uint32_t sun_phase;
 static int view_slot=-1,view_selector=-1,ready;
-static int32_t smooth_pitch[PS_VOICES], excitation[PS_VOICES];
-static uint32_t note_phase[PS_VOICES], particle_phase;
+static uint32_t particle_phase;
 static int active_knob, active_sun, control_ready;
+static int footer_visible,footer_shift_previous;
+static int shift_held(void)
+{
+#ifdef VAPORA_HOST
+    return ps_host_shift!=0;
+#else
+    /* Pinned R246/Hundekraft 3.0.2: same read-only Shift byte as kn_core/kn_pages. */
+    return *(volatile uint8_t *)0x01DD7F78!=0;
+#endif
+}
 static int sun_design; /* 01 Solid is the power-on default. */
 static int16_t control_words[8];
 static uint8_t control_pages[4];
 static uint8_t text_objects[4][OP1_TEXT_SIZE] __attribute__((aligned(4)));
 static uint8_t text_made[4];
 static char text_cache[4][48];
-static int16_t shape[PS_VOICES][PS_TRACE];
-static int32_t visual_gain[PS_VOICES];
 
 static uint32_t cycles(void)
 {
@@ -79,7 +85,7 @@ static void line(void *r,int x,int y,int xx,int yy,int w,const uint8_t *c)
 static int region(int x,int y)
 {
     return (x<PS_LEFT*64?1:x>PS_RIGHT*64?2:0)|
-           (y<PS_TOP*64?4:y>PS_BOTTOM*64?8:0);
+           (y<PS_TOP*64?4:y>PS_WATER_BOTTOM*64?8:0);
 }
 static void waterline(void *r,op1_pt a,op1_pt b,const uint8_t *c)
 {
@@ -90,7 +96,7 @@ static void waterline(void *r,op1_pt a,op1_pt b,const uint8_t *c)
         if(ca&cb)return;
         int x,y;
         if(v&12){
-            y=(v&4?PS_TOP:PS_BOTTOM)*64;
+            y=(v&4?PS_TOP:PS_WATER_BOTTOM)*64;
             if(a.y==b.y)return;
             x=a.x+(b.x-a.x)*(y-a.y)/(b.y-a.y);
         }else{
@@ -102,17 +108,17 @@ static void waterline(void *r,op1_pt a,op1_pt b,const uint8_t *c)
     }
 }
 #include "vapora_suns.h"
+#include "vapora_particles.h"
+#include "vapora_wave_modes.h"
 static void init(void *scr)
 {
-    sun_init(scr);
+    sun_init(scr);footer_shift_previous=shift_held();
     int e=0;
-    for(int k=0;k<PS_EDGES;k++){diagonal[k]=0;bend[k]=0;}
     for(int row=0;row<PS_ROWS;row++)for(int col=0;col<PS_COLS;col++){
         int i=row*PS_COLS+col;
         if(col<PS_COLS-1){edges[e][0]=i;edges[e++][1]=i+1;}
         if(row<PS_ROWS-1){edges[e][0]=i;edges[e++][1]=i+PS_COLS;}
         if(row<PS_ROWS-1&&col<PS_COLS-1){
-            diagonal[e]=1;
             int flip=col<2?0:col>=PS_COLS-3?1:((row+col)&1);
             edges[e][0]=i+flip;
             edges[e++][1]=i+PS_COLS+1-flip;
@@ -125,77 +131,71 @@ static void reset_view(int slot,int selector)
     view_slot=slot; view_selector=selector;
     for(int i=0;i<PS_VOICES;i++){
         sequence[i]=ps_mail[i].sequence; /* discard all pre-entry telemetry */
-        seen[i].serial=0; seen[i].pitch=0;seen[i].level=0;smooth_pitch[i]=0;
-        excitation[i]=0;note_phase[i]=(uint32_t)i*0x23000000u;
-        for(int j=0;j<PS_TRACE;j++)seen[i].trace[j]=0;
+        note_serial[i]=ps_mail[i].snapshot.serial;
     }
-    for(int e=0;e<PS_EDGES;e++)bend[e]=0;
+    impacts_reset();
 }
-static int pitch_spatial(uint32_t inc)
+/* Move one side vertex as far as adjacent triangles allow. Q6 areas fit
+ * int32; retain an area margin so shared edges cannot cross at high Morph. */
+static void move_side_vertex(int index,int requested)
 {
-    if(!inc)return 2*256;
-    uint32_t x=inc;unsigned n=0;
-    while(x>1&&n<31){x>>=1;n++;}
-    int fraction=n>=8?(int)((inc>>(n-8))&255):0;
-    return ps_clamp(((int)n-18)*256+fraction,2*256,12*256);
+    int row=index/PS_COLS,col=index%PS_COLS,low=-32*64,high=32*64;
+    for(int rr=row-1;rr<=row;rr++)for(int cc=col-1;cc<=col;cc++){
+        if(rr<0||rr>=PS_ROWS-1||cc<0||cc>=PS_COLS-1)continue;
+        int a=rr*PS_COLS+cc,b=a+1,c=a+PS_COLS,d=c+1;
+        int flip=cc<2?0:cc>=PS_COLS-3?1:((rr+cc)&1);
+        int triangles[2][3]={{a,b,flip?c:d},{flip?b:a,d,c}};
+        for(int t=0;t<2;t++)for(int v=0;v<3;v++)if(triangles[t][v]==index){
+            op1_pt p=vertices[index],q=vertices[triangles[t][(v+1)%3]],r=vertices[triangles[t][(v+2)%3]];
+            int px=p.x>>4,py=p.y>>4,qx=q.x>>4,qy=q.y>>4,rx=r.x>>4,ry=r.y>>4;
+            int area=(qx-px)*(ry-py)-(qy-py)*(rx-px),slope=rx-qx;
+            int margin=area/8+64;
+            if(slope>0){int bound=(margin-area)/slope+1;if(bound>low)low=bound;}
+            if(slope<0){int bound=(area-margin)/(-slope)-1;if(bound<high)high=bound;}
+        }
+    }
+    if(low<=high)vertices[index].y+=ps_clamp(requested/16,low,high)*16;
 }
-
 static void geometry(const ps_params *p)
 {
-    for(int v=0;v<PS_VOICES;v++){
-        ps_snapshot s;
-        if(ps_read_mail(v,view_slot,view_selector,&s,&sequence[v])){
-            if(s.serial!=seen[v].serial)excitation[v]=24576;
-            seen[v]=s;
-        }
-        else {
-            seen[v].level=(seen[v].level*3)>>2;
-            for(int j=0;j<PS_TRACE;j++)seen[v].trace[j]=(seen[v].trace[j]*3)>>2;
-        }
-        int target=pitch_spatial(seen[v].pitch);
-        int gain=ps_clamp(seen[v].level*64+excitation[v],0,32768);
-        excitation[v]=(excitation[v]*3)>>2;
-        /* Normalize only for the display; the stock audio envelope is untouched.
-         * A bounded onset response remains visible during slow pad attacks. */
-        visual_gain[v]=gain;
-        int norm=32768/(seen[v].level+32);
-        for(int j=0;j<PS_TRACE;j++)
-            shape[v][j]=(int16_t)((ps_clamp(seen[v].trace[j]*norm,-32768,32767)*gain)>>15);
-        note_phase[v]+=0x01800000u+(uint32_t)target*4096u;
-        smooth_pitch[v]+=(target-smooth_pitch[v])/4;
-    }
+    wave_mode=ps_clamp(p->character,0,PS_WAVE_MODES-1);
     uint32_t phase=ocean_phase,quiet=idle_phase>>21;
-    int32_t morph=p->q[PS_MORPH], motion=16384+(p->q[PS_MOTION]>>1), thick=p->q[PS_THICK];
+    int shoulder_extra[PS_ROWS*2];
+    /* Keep default ocean spacing; Thickness owns signature-star rotation. */
+    int32_t morph=p->q[PS_MORPH], motion=16384+(12500>>1), thick=26000;
     uint32_t space=0x10000000u+(uint32_t)thick*4096u;
     uint32_t column_step=(space*4u)/5u; /* 8/10 original columns; bounded uint32 */
-    uint32_t visual_ratio=(uint32_t)ps_interval_ratio(p->interval);
     for(int row=0;row<PS_ROWS;row++)for(int col=0;col<PS_COLS;col++){
         int i=row*PS_COLS+col;
         unsigned cx=(unsigned)col*112u;
         uint32_t pos=(uint32_t)col*column_step+(uint32_t)row*0x15000000u;
         uint32_t drift=phase;
-        int base=rounded_wave(pos)>>5;
-        int broad=base+((((rounded_wave(pos+drift)>>5)-base)*motion)>>15);
-        base=rounded_wave(pos*2)>>5;
-        int ridge=base+((((rounded_wave(pos*2+drift)>>5)-base)*motion)>>15);
-        int swell=broad+(((ridge-broad)*morph)>>15);
-        uint32_t paired=(uint32_t)(((uint64_t)pos*visual_ratio)>>15);
-        int pairbase=rounded_wave(paired)>>6;
-        int pair=pairbase+((((rounded_wave(paired-drift)>>6)-pairbase)*motion)>>15);
-        swell+=(pair*thick)>>15;
-        int noise=coherent(cx+(phase>>21),row*170+(phase>>21));
-        if(p->character){
-            noise=(noise+coherent(col*256+(phase>>20),row*110))/2;
+        int height;
+        if(!wave_mode){
+            int base=rounded_wave(pos)>>5;
+            int broad=base+((((rounded_wave(pos+drift)>>5)-base)*motion)>>15);
+            base=rounded_wave(pos*2)>>5;
+            int ridge=base+((((rounded_wave(pos*2+drift)>>5)-base)*motion)>>15);
+            int swell=broad+(((ridge-broad)*morph)>>15);
+            uint32_t paired=pos; /* Interval now selects the star field. */
+            int pairbase=rounded_wave(paired)>>6;
+            int pair=pairbase+((((rounded_wave(paired-drift)>>6)-pairbase)*motion)>>15);
+            swell+=(pair*thick)>>15;
+            int noise=coherent(cx+(phase>>21),row*170+(phase>>21));
+            swell+=(noise*motion)>>15;
+            /* Mode 01 retains the prior ambient surface for comparison. */
+            int idle=coherent(cx+quiet,row*170+quiet);
+            height=(idle*(row+3)*3)>>2;
+            int activity=(motion*motion)>>15;
+            int waveamp=(activity*(row+3))>>13;
+            height+=swell*waveamp;
+        }else{
+            int amplitude=2048+((morph*14336)>>15);
+            height=(wave_field(wave_mode,col,row,phase)*amplitude)>>10;
+            height=height*(row+5)/8;
         }
-        swell+=(noise*motion)>>15;
-        /* Geometry is independent of note telemetry. Orange zero now has
-         * the former 50% visual motion; pitch/audio bend diagonals below. */
-        int idle=coherent(cx+quiet,row*170+quiet);
-        int height=(idle*(row+3)*3)>>2;
-        int activity=(motion*motion)>>15;
-        int waveamp=(activity*(row+3))>>13;
-        height+=swell*waveamp;
         height=ps_clamp(height,-24*1024,24*1024);
+        if(wave_mode&&(col==1||col==PS_COLS-2))height=ps_clamp(height,-12*1024,12*1024);
         height=(height*ps_response[col])>>15;
         int side=col<PS_COLS/2?col:PS_COLS-1-col;
         if(row==0&&side==2)height=height*4/3;
@@ -203,45 +203,64 @@ static void geometry(const ps_params *p)
         int y=ps_depth[row]*1024-height;
         if(side<2){
             int edge_x=side?ps_shoulder_x[row]:ps_side_x[row];
-            x=(col<PS_COLS/2?edge_x:320-edge_x)*1024;
-            /* Top shoulders flow with the water; the corner tip stays quiet. */
-            int response=row==0?(side?5243:655):row==1&&side?2621:1311;
+            x=(col<PS_COLS/2?edge_x:320-edge_x-(side?0:8))*1024;
+            /* Start from the proven side silhouette, then free the lower
+             * shoulders to follow 100% of the swell within triangle limits. */
+            int response=row==0?(side?5243:655):side?(row==1?2621:8192):1311;
+            if(side&&row==PS_ROWS-1&&height<0)response=2730;
             y=(side?ps_shoulder_y[row]:ps_side_y[row])*1024-
                 (height*response)/(ps_response[col]);
+            if(side&&row>=2)shoulder_extra[row*2+(col>PS_COLS/2)]=
+                -(height*(32768-response))/ps_response[col];
         }else{
             x+=((((rounded_wave(pos)>>7)*(thick>>7))>>6)*ps_response[col])>>15;
         }
         if(row==0&&side==2)y-=3*1024;
         vertices[i].x=x;vertices[i].y=y;
-        if(side==2&&row){
+        if((side==2||(wave_mode&&side>2))&&row){
             int min_y=vertices[i-PS_COLS].y+6*1024;
             if(vertices[i].y<min_y)vertices[i].y=min_y;
         }
     }
-    /* Only joining diagonals react to sound. A quadratic bow preserves the
-     * endpoints; neither note level nor pitch can move the wave vertices. */
-    for(int e=0;e<PS_EDGES;e++)if(diagonal[e]){
-        int col=edges[e][0]%PS_COLS,row=edges[e][0]/PS_COLS,trace=0;
-        for(int v=0;v<PS_VOICES;v++){
-            uint32_t spatial=note_phase[v]+(uint32_t)(col+row)*
-                (uint32_t)smooth_pitch[v]*0x00020000u;
-            unsigned idx=spatial>>28;
-            trace+=(shape[v][idx]>>2)+
-                (((rounded_wave(spatial)>>2)*visual_gain[v])>>15);
-        }
-        int response=(ps_response[col]+ps_response[edges[e][1]%PS_COLS])/2;
-        int target=(ps_clamp(trace,-14*1024,14*1024)*response)>>15;
-        bend[e]+=(int16_t)((target-bend[e])/3);
+    for(int row=2;row<PS_ROWS;row++)for(int right=0;right<2;right++)
+        move_side_vertex(row*PS_COLS+(right?PS_COLS-2:1),shoulder_extra[row*2+right]);
+    /* Deform shared vertices; never bend individual edges from audio traces. */
+    int offsets[PS_ROWS*PS_COLS];
+    for(int row=1;row<PS_ROWS-1;row++)for(int col=2;col<PS_COLS-2;col++){
+        int i=row*PS_COLS+col;
+        int up=(vertices[i].y-vertices[i-PS_COLS].y)/2-1024;
+        int down=(vertices[i+PS_COLS].y-vertices[i].y)/2-1024;
+        offsets[i]=ps_clamp(impact_displacement(col,row),-(up>0?up:0),down>0?down:0);
     }
-
+    for(int row=1;row<PS_ROWS-1;row++)for(int col=2;col<PS_COLS-2;col++){
+        int i=row*PS_COLS+col;
+        if(col==2||col==PS_COLS-3)move_side_vertex(i,offsets[i]);
+        else vertices[i].y+=offsets[i];
+    }
 }
+
 #ifdef VAPORA_HOST
+void ps_test_audition_reset(int mode)
+{
+    wave_mode=mode;ocean_phase=idle_phase=particle_phase=sun_phase=0;
+    impact_rng=0x7472616du;impact_count=0;impacts_reset();active_knob=active_sun=0;
+}
+int ps_test_footer(void){return footer_visible;}
+void ps_test_footer_set(int visible){footer_visible=visible;}
+int ps_test_wave_mode(void){return wave_mode;}
+void ps_test_wave_mode_set(int mode){wave_mode=mode;impacts_reset();}
+uint32_t ps_test_impact_count(void){return impact_count;}
+void ps_test_impact_last(op1_pt *p)
+{int i=(impact_next+PS_IMPACTS-1)%PS_IMPACTS;p->x=impacts[i].x;p->y=impacts[i].y;}
+void ps_test_impact_tick(uint32_t step){impacts_tick(step);}
+void ps_test_geometry_phase(uint32_t ocean,uint32_t idle)
+{ocean_phase=ocean;idle_phase=idle;}
 /* Inspect production geometry at a fixed phase, without advancing the clock. */
 void ps_test_geometry(const ps_params *p,op1_pt *points,int16_t *curves)
 {
     geometry(p);
     for(int k=0;k<PS_ROWS*PS_COLS;k++)points[k]=vertices[k];
-    for(int k=0;k<PS_EDGES;k++)curves[k]=bend[k];
+    for(int k=0;k<PS_EDGES;k++)curves[k]=0;
 }
 #endif
 /* Raw words detect physical edits; live modulation does not steal the readout.
@@ -273,10 +292,12 @@ static void track_controls(const int16_t *raw,int new_view,int white_press)
 }
 #ifdef VAPORA_HOST
 void ps_test_draw_sun_at(int cy,int design,int opening)
-{sun_prepare(cy,design,opening,0);op1_screen_draw(0,0);draw_sun(op1_raster(),cy,design,opening);}
+{sun_color(0,0);sun_prepare(cy,design,opening,0);op1_screen_draw(0,0);draw_sun(op1_raster(),cy,design,opening);}
 void ps_test_draw_sun(int cy,int design){ps_test_draw_sun_at(cy,design,(56-cy)*32767/26);}
 #endif
-static void controls(void *r,const ps_params *p)
+static unsigned dial_phase(int q)
+{return 12u*1024u+(unsigned)ps_clamp(q,0,32767)*24u*1024u/32767u;}
+static void controls(void *r,const ps_params *p,const int16_t *raw)
 {
     static const char *const normal[4]={"MORPH","THICKNESS","BRIGHTNESS","MOTION"};
     int k=active_knob,q=p->q[k];
@@ -284,7 +305,11 @@ static void controls(void *r,const ps_params *p)
     if(active_sun){
         label="SUN";o=sq_num(o,(unsigned)ps_sun_ids[sun_design],2);o=sq_cat(o," ");sq_cat(o,ps_sun_names[sun_design]);
         q=sun_design*32767/(PS_SUN_DESIGNS-1);
-    }else if(k==0&&op1_eng_page[k]){label="CHARACTER";s=ps_character_names[p->character];q=p->character*32767/(PS_CHARACTERS-1);}
+    }else if(k==0&&op1_eng_page[0]){
+        label="CHARACTER";o=sq_num(o,(unsigned)p->character+1,2);o=sq_cat(o," ");
+        sq_cat(o,wave_names[p->character]);
+        q=(ps_secondary(raw[5])-1)*32767/32766;
+    }
     else if(k==1&&op1_eng_page[k]){label="INTERVAL";s=ps_interval_names[p->interval];q=p->interval*32767/(PS_INTERVALS-1);}
     else if(k==3&&op1_eng_page[k]){
         label="SPEED";q=p->q[PS_SPEED];int hz=ps_speed_millihz(q);
@@ -296,7 +321,7 @@ static void controls(void *r,const ps_params *p)
     for(int n=0;caption[n];n++)if(caption[n]>='A'&&caption[n]<='Z')caption[n]+='a'-'A';
     /* The stock font uses lowercase codes for letters; uppercase codes are icons. */
     static const int32_t identity[9]={1024,0,0,0,1024,0,0,0,1024};
-    if(!text_made[k]){op1_text_ctor(text_objects[k],34*1024,PS_LABEL_Y,PS_TEXT_SIZE,ps_colors[k]);text_made[k]=1;}
+    if(!text_made[k]){op1_text_ctor(text_objects[k],34*1024,PS_LABEL_Y,PS_TEXT_SIZE,k<2?ps_text_colors[k]:ps_colors[k]);text_made[k]=1;}
     int different=0,i=0;
     do {if(text_cache[k][i]!=caption[i])different=1;i++;}while(caption[i-1]&&i<48);
     if(different){for(i=0;i<48;i++){text_cache[k][i]=caption[i];if(!caption[i])break;}op1_text_set(text_objects[k],text_cache[k]);}
@@ -307,7 +332,7 @@ static void controls(void *r,const ps_params *p)
         line(r,16*1024+ps_circle[a][0]*10,PS_DIAL_Y*1024+ps_circle[a][1]*10,
              16*1024+ps_circle[b][0]*10,PS_DIAL_Y*1024+ps_circle[b][1]*10,PS_MESH_STROKE,ps_colors[k]);
     }
-    unsigned phase=12u*1024u+(unsigned)q*24u*1024u/32767u;
+    unsigned phase=dial_phase(q);
     int a=(phase>>10)&31,b=(a+1)&31,f=phase&1023;
     int dx=ps_circle[a][0]+((ps_circle[b][0]-ps_circle[a][0])*f>>10);
     int dy=ps_circle[a][1]+((ps_circle[b][1]-ps_circle[a][1])*f>>10);
@@ -316,8 +341,46 @@ static void controls(void *r,const ps_params *p)
 #ifdef VAPORA_HOST
 int ps_test_secret(void){return z==2;}
 uint32_t ps_test_particle_phase(void){return particle_phase;}
+uint32_t ps_test_ocean_phase(void){return ocean_phase;}
+uint32_t ps_test_sun_phase(void){return sun_phase;}
+void ps_test_sun_color(uint32_t phase,int depth,uint8_t *out)
+{sun_color(phase,depth);for(int k=0;k<4;k++)out[k]=ps_sun_color[k];}
+void ps_test_sun_frame(int design,uint32_t phase,int depth)
+{sun_color(phase,depth);sun_prepare(30,design,32767,0);op1_screen_draw(0,0);draw_sun(op1_raster(),30,design,32767);}
+void ps_test_particle_frame(int interval,uint32_t phase)
+{
+    ps_params p={0};p.interval=interval;
+    uint32_t old_phase=particle_phase;int old_sun=sun_design;
+    particle_phase=phase;sun_design=2; /* Halo: no solid disk exclusion. */
+    draw_particles(op1_raster(),&p,56);
+    particle_phase=old_phase;sun_design=old_sun;
+}
+void ps_test_logo_vertex(int interval,int thick,op1_pt *out)
+{*out=star_logo_vertex(&ps_star_logos[interval],0,0,0,(unsigned)thick*32768u/32767u,thick);}
+void ps_test_signature_path(int interval,uint32_t progress)
+{particle_phase=progress-star_logo_seed(interval);}
+void ps_test_signature_position(int interval,uint32_t progress,op1_pt *out)
+{
+    uint32_t old=particle_phase;particle_phase=progress-star_logo_seed(interval);
+    int x,y;star_logo_position(interval,&x,&y);out->x=x;out->y=y;particle_phase=old;
+}
+void ps_test_signature_icon(int interval)
+{
+    uint32_t old=particle_phase;int design=sun_design;sun_design=2;
+    ps_params p={0};p.interval=interval;p.q[PS_THICK]=32767;p.q[PS_BRIGHT]=32767;
+    particle_phase=0x40000000u-star_logo_seed(interval);draw_star_logo(op1_raster(),&p,36);
+    particle_phase=old;sun_design=design;ps_host_particle_layer=-1;
+}
 int ps_test_sun_design(void){return sun_design;}
 int ps_test_active_control(void){return active_sun?4:active_knob;}
+void ps_test_character_dial(int16_t word)
+{
+    int knob=active_knob,sun=active_sun,page=op1_eng_page[0];
+    int16_t raw[8]={0};raw[5]=word;ps_params p=ps_decode(raw);
+    active_knob=0;active_sun=0;op1_eng_page[0]=1;
+    controls(op1_raster(),&p,raw);
+    active_knob=knob;active_sun=sun;op1_eng_page[0]=page;
+}
 #endif
 static void update(void *scr,int dt)
 {
@@ -331,46 +394,35 @@ static void update(void *scr,int dt)
     op1_synth_knobs_live(slot,words);
     ps_params p=ps_decode(words);
     if(view_slot!=slot||view_selector!=words[4])reset_view(slot,words[4]);
+    wave_mode=p.character;
     uint32_t now=cycles(),delta=now-clock_last;clock_last=now;
+    int shift=shift_held();
+    if(delta<=100000000u&&shift&&!footer_shift_previous)footer_visible^=1;
+    footer_shift_previous=shift;
     int secret=j(now,delta),tick=0;
-    if(delta>100000000u)delta=100000000u;
+    if(delta>100000000u){
+        impacts_reset();
+        for(int i=0;i<PS_VOICES;i++){sequence[i]=ps_mail[i].sequence;note_serial[i]=ps_mail[i].snapshot.serial;}
+        delta=100000000u;
+    }
+    sun_phase+=(uint32_t)(((uint64_t)delta*ps_speed_millihz(p.q[PS_SPEED])*10737u)/1000000u);
+    sun_color(sun_phase,p.q[PS_MOTION]);
     elapsed+=delta;
     if(elapsed>=25000000u){ /* 16 geometry updates/sec at the core's 400 MHz */
         uint32_t step=elapsed;elapsed=0;tick=1;
         idle_phase+=(uint32_t)(((uint64_t)step*429u)/1000u); /* 0.040 Hz */
-        ocean_phase+=(uint32_t)(((uint64_t)step*ps_visual_speed_millihz(p.q[PS_SPEED])*10737u)/1000000u);
+        ocean_phase+=(uint32_t)(((uint64_t)step*ps_visual_speed_millihz(8192)*10737u)/1000000u);
         /* High sun: half the former daytime drift; nighttime speed unchanged. */
         int night=32767-p.q[PS_BRIGHT];
         particle_phase+=(uint32_t)(((uint64_t)step*(160u+((unsigned)night*320u>>15)))/1000u);
-        if(!secret)geometry(&p);
+        if(!secret){impacts_tick(step);geometry(&p);}else impacts_reset();
     }
     int cy=ps_sun_y(p.q[PS_BRIGHT]);
     sun_prepare(cy,sun_design,p.q[PS_BRIGHT],secret);
     op1_screen_draw(scr,dt);
     void *r=op1_raster();if(!r)return;
     if(secret){v(r,tick);return;}
-    int night=32767-p.q[PS_BRIGHT];
-    for(int k=0;k<PS_PARTICLES;k++){
-        unsigned seed=(unsigned)k*0x9e3779b9u+0x53544152u;
-        seed^=seed>>16;seed*=0x7feb352du;seed^=seed>>15;
-        int x=5+(int)(((uint64_t)(uint32_t)(seed+particle_phase)*307u)>>32);
-        int wander=coherent((particle_phase>>20)+(seed&1023),(seed>>20)&1023);
-        int y=7+(int)((seed>>16)%43);
-        y+=(rounded_wave(particle_phase+(unsigned)k*0x23000000u)>>14);
-        y+=(wander*(2+(night>>13)))>>10;
-        y=ps_clamp(y,5,55);
-        int dx=x-160,dy=y-cy;
-        int shape=ps_sun_shapes[sun_design];
-        int radius=shape==18?30:shape==2?24:(shape==21||shape==22)?22:18;
-        if(shape==21&&dx*dx+dy*dy<24*24)continue; /* Avoid black particle strokes over a filled sun. */
-        int light=ps_clamp((dx*dx+dy*dy-radius*radius)*6,0,255);
-        light=(light*(192+(night>>9)))>>8;
-        int size=k%6,large=size==0,medium=size==1||size==2;
-        uint8_t dot[4]={(uint8_t)(((large?170:medium?140:115)*light)>>8),
-            (uint8_t)(((large?220:medium?195:175)*light)>>8),(uint8_t)light,255};
-        line(r,x*1024,y*1024,x*1024+(large?1200:medium?800:650),y*1024,
-             large?PS_BIG_DOT_STROKE:medium?PS_MED_DOT_STROKE:PS_DOT_STROKE,dot);
-    }
+    draw_particles(r,&p,cy);
     draw_sun(r,cy,sun_design,p.q[PS_BRIGHT]);
     for(int e=0;e<PS_EDGES;e++){
         int row=edges[e][0]/PS_COLS,crest=vertices[edges[e][0]].y<ps_depth[row]*1024;
@@ -379,12 +431,13 @@ static void update(void *scr,int dt)
             (uint8_t)(70+row*10+(b>>1)+crest*35),
             (uint8_t)(165+row*7+(b>>2)),255};
         op1_pt a=vertices[edges[e][0]],z=vertices[edges[e][1]];
-        if(diagonal[e]&&(bend[e]>128||bend[e]<-128)){
-            op1_pt m={a.x+(z.x-a.x)/3,a.y+(z.y-a.y)/3+bend[e]*4/9};
-            op1_pt n={a.x+(z.x-a.x)*2/3,a.y+(z.y-a.y)*2/3+bend[e]*4/9};
-            waterline(r,a,m,color);waterline(r,m,n,color);waterline(r,n,z,color);
-        }else waterline(r,a,z,color);
+        waterline(r,a,z,color);
     }
-    controls(r,&p);
+    if(footer_visible){
+        static const uint8_t black[4]={0,0,0,255};
+        /* The readout owns its backing only while visible. */
+        for(int y=PS_BOTTOM+1;y<=152;y++)line(r,0,y*1024,319*1024,y*1024,1024,black);
+        controls(r,&p,raw);
+    }
 }
 const op1_screen_t SCREEN_vapora={init,update};

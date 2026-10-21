@@ -1,4 +1,9 @@
-# Oscillator and CPU audit — R7
+# Oscillator and CPU audit — VAPORA 1.2
+
+The audio implementation described below is unchanged in 1.2. Its expanded
+visuals need a combined graphics/audio check on the instrument; host tests
+do not establish that performance budget. The following records the earlier
+DSP optimizations and their source evidence.
 
 The oscillator count did not fall from multiple to one. R1, R2, R3 and R6 all
 initialize `phase[0]` and `phase[1]`; the current `ps_render` advances `ph0` and

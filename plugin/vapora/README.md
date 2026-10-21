@@ -1,159 +1,168 @@
-# VAPORA 1.1.4
+# VAPORA 1.2
 
-The sound and 15-preset set are the approved 1.0 baseline. Version 1.1.4 updates
-only the approved sun designs and order; do not reinstall presets for this update.
+Native six-voice PADsynth instrument for the original OP-1 / Hundekraft 3.0.2.
+Two independently phased, detuned playback heads per voice; 14 sound Characters
+and 15 factory presets. The OP-1 supplies velocity, T2 envelope and optional T3
+processing. This release changes screen behavior while retaining audio code,
+table data, sound-word mappings and all preset files.
 
-Native six-voice PADsynth-based instrument for the original OP-1 / Hundekraft
-3.0.2. Two independently phased, detuned playback heads per voice. The OP-1
-supplies the T2 envelope and optional T3 effect.
-
-## Suns
-
-01 Solid (default) → 02 Lines → 03 Halo → 04 Retro → 05 Bands → 06 Saturn → 07 Triple.
-Solid is the approved trial 10; Lines is the approved trial 21 at 4px thickness.
-Push white to cycle; turn white to move/open the sun with Brightness.
-The Holy Dust showcase is an idle ten-second down/up sweep with no notes played or held.
-
-## Sound and CPU
-
-VAPORA has used two playback heads since R1. No oscillator was removed to obtain
-the R3 CPU improvement. The major changes were half-rate synthesis (R2), then
-one guarded table level, one shared transition fade, block-rate coefficient
-ramps, constant-pitch preparation, inlined table reads, symmetric reconstruction
-and staggered screen telemetry (R3). EVA and Oxbow use related half-rate and
-block-preparation techniques. `CPU_AUDIT.md` records the actual source evidence.
-
-PADsynth defines offline spectral broadening, random phases and IFFT construction
-of periodic waveforms; it does not require a particular playback oscillator
-count. R6 added many short, sparse spectra for variety. R7 returns more of that
-space to broad ensemble textures: **six new 8,192-sample spectra**, with seven
-detuned Gaussian clouds per partial. Their loop lasts about 0.489 s at C4,
-0.979 s at C3. The original two 16,384-sample WARM endpoints remain unchanged.
-There are 20 endpoints and 448,800 sample bytes in total.
-
-The production DSP source, two heads, six voices, gain, filtering and release
-processing are unchanged from R6. All 15 preset release words remain 12500.
-The eight older sounds are checked against R6 at three pitches and three
-Morph positions using identical seeds: exact dry PCM. Deep Pressure adds a
-saved effect, so its final wet output intentionally changes.
-
-The earlier user report that CPU improved is device evidence, but we do not
-have a controlled OP-1 timing comparison attributing the improvement to each
-optimization. Host timing is only a regression check; it cannot establish a
-Blackfin deadline or a device CPU percentage. Reverb adds its own processing
-cost. No new claim of measured device CPU is made for R7.
-
-## Approved 15-preset core set
-
-Current names: `a fifth tide` replaces `fifth tide`; `XFIN` replaces `end titles`.
-Both are name-only changes. The final bank has 15 unique names and is already
-installed. Preserve it for this plugin-only update.
-
-This is the set to preserve and develop going forward. Keep the existing Character
-assignments stable; `data/core_set.json` locks the names and Character order.
-
-Older sounds: Asteroid Swarm, Breath Choir, Cavern Flute, Deep Pressure, Pink Surf,
-Porcelain Orbit, Sub Lantern and A Fifth Tide.
-
-Selected cinematic sounds: Holy Dust, XFIN, Ice Chapel, Last Light,
-Moon Choir, Stone Hall and Tidal Arc. The other 13 R7 evaluation presets are
-retired from the active bank. Archived deliveries remain unchanged.
-
-The audio engine and all 14 Character sources are unchanged from R7. The core
-bank is compatible with R7. The seven retained R6 sounds use corrected R7
-Character words; A Fifth Tide keeps the original WARM assignment. Do not overwrite
-these files with the R6 versions: their old Character words select other sounds.
-
-The October 20 disk inspection found one file per preset name, but the seven
-older keeper files still carried R6 Character words. Browser doubles were
-reported despite no duplicate files or hidden trash on the exported disk. Their
-internal cause is not proven. Process removal in a separate disk synchronization
-before importing the corrected bank; verify the browser on the instrument.
-
-Presets save one T3 effect with its settings, not a multi-effect chain or the
-master effect. **Deep Pressure saves Reverb on** (time 70%, tone 46%, diffusion
-73%, mix 31%). It needs Hundekraft's `reverb` plugin installed. The other retained
-sounds and the seven selected cinematic pads are dry, so their source character can be evaluated.
-T3 can be disabled to compare Deep Pressure dry.
-
-## Visual changes
-
-The cycle starts at **01 SOLID**, followed by **02 LINES, 03 HALO, 04 RETRO,
-05 BANDS, 06 SATURN, 07 TRIPLE**. Solid is the approved native cubic disk/cover
-from trial 10; Lines is the approved seven-stroke trial 21, with fixed 4px
-width and 2px gaps. Both use a 20px circle envelope and open/close with Brightness.
-The remaining five designs preserve their approved geometry; Retro's lowest
-stripe stays removed and Triple remains enlarged.
-
-The two selected methods were approved by the user on the OP-1 in comparison
-builds. Their geometry is checked unchanged in this combined build. Final
-installation/order checks for 1.1.4 remain separate from those approvals.
-
-The circled upper mountains are raised symmetrically: corner peaks 3 px,
-shoulders 4 px, next inner top vertices 3 px. Top shoulder movement grows from
-4% to 16%, the next row blends at 8%, and top corner tips drop to 2% response.
-The next inner top vertices gain one-third more motion. Other facets retain
-the prior geometry. The wave clipping / readout blackout boundary drops 5 px
-to y=126; the dial and text stay aligned. Daytime particle speed is unchanged.
-
-## Install and evaluate
-
-Update only `vapora.knl` through Workshop **Your plugins / Update OP-1**.
-Let the instrument complete installation and restart. The 15 approved presets,
-including `a fifth tide` and `XFIN`, are already final: do not copy the bank again.
-This release does not alter sound words, Character assignments, DSP or tables.
-
-Check Solid starts by default, then Lines and the remaining designs. Sweep
-Brightness at minimum, maximum and slowly between them. Inspect Halo,
-Bands, Saturn and Triple. Check that circles are round and their edges do not
-notch or flicker. Compare the device against the host preview knowing that the
-preview uses a substitute font and a different rasterizer. No physical OP-1
-rendering or CPU measurement has been performed for this release.
-
-The archive's individual dry WAVs are validation fixtures, with approximate
-host envelopes. Deep Pressure's saved Reverb is heard only on the instrument.
-
-## Controls and existing input limitation
+## Controls and visuals
 
 | Encoder | Turn | Press, then turn |
 |---|---|---|
-| Blue | Morph | Character: 14 choices, one step apart |
-| Green | Thickness | Interval: ten choices |
-| White | Brightness | Press cycles seven suns |
-| Orange | Motion | Speed: 0.02–2 Hz |
+| Blue | Morph: sound blend and wave movement | Character: sound family and wave style |
+| Green | Thickness: detune/fullness; signature rotation and size | Interval: second-head pitch and added star field |
+| White | Brightness: filter and sun height/opening | Each press cycles the seven suns |
+| Orange | Motion: sound modulation and sun pulse depth | Speed: modulation and sun pulse rate |
 
-The most recently edited control appears in the single readout row. Secondary
-zero means the 8192 default. The host owns velocity and T2 amplitude envelopes.
-Animation state is not stored in hidden sound parameters.
+Blue, green and orange presses toggle their main/secondary control. White turns
+always return to Brightness after the next redraw. White and orange share
+secondary word 7 in this core: wait for the sun change before turning white.
+A turn before redraw can reach Speed; clicks within one redraw can coalesce.
+The firmware's stock knob scrolling and saved-word encoding are retained.
 
-White and orange share secondary word 7 in this core. The plugin clears the
-white toggle at redraw: wait for the sun change before turning white. A turn
-before that redraw can reach Speed; clicks within one redraw can coalesce.
-The standalone API cannot expose continuous button holds. The approved secret
-remains: normal pages, blue → green → orange → white clicks, then seven seconds
-without changes. The three bouncing labels exit on a knob action.
+Shift toggles the complete bottom control readout and dial, initially hidden.
+It stays in the chosen state across screens and slots during the session;
+visibility is not saved in sounds or across a fresh plugin load. Knob edits do
+not reveal a hidden readout. Its black backing appears only when shown. The
+underlying waves always use the full available area, clipped at y=151 instead
+of the former y=126 boundary. Hiding the readout exposes those same waves.
+
+Shift reads the pinned Hundekraft 3.0.2 core's read-only state byte. No firmware
+patch or companion is required. A Shift tap entirely between redraws can be
+missed; a Shift already held on screen re-entry does not toggle the readout.
+
+## Character waves
+
+Character selects the following visual styles in existing audio Character order.
+Morph changes their movement. The pointer follows one 270-degree sweep over the
+raw encoder word while the names retain the firmware's usual cycling.
+
+| Character | Wave style | Existing sound |
+|---|---|---|
+| 01 | Original | Warm |
+| 02 | Ripples | Swarm |
+| 03 | Roll | Breath |
+| 04 | Fold | Flute |
+| 05 | Orbit | Pressure |
+| 06 | Rings | Surf |
+| 07 | Rain | Porcelain |
+| 08 | Pulse | Sub |
+| 09 | Tide | Velvet |
+| 10 | Ribbons | Cathedral |
+| 11 | Weave | Nebula |
+| 12 | Dunes | Aurora |
+| 13 | Echo | Oceanic |
+| 14 | Jelly | Glassveil |
+
+
+Each key or grouped chord creates a sharp hit at a random interior location.
+One ripple moves outward about 4.5 grid cells as its amplitude falls to zero;
+a small trailing wake is one eighth of the main pulse's strength. It settles in
+about 1.4 seconds rather than repeatedly bouncing at the original point. Held
+notes never produce continuous audio-trace bending. Overlapping hits share an
+8px bound, with local-spacing limits and absorption near the rim.
+
+Lower side joints target the full wave displacement, up from 25%, subject to
+neighboring triangle limits. Bottom joints can travel into the former readout
+strip. The right outline is inset 8px to keep the pointed corners visible.
+Thickness, Interval, Motion and Speed have no direct wave-geometry effect.
+
+## Interval stars and Thickness
+
+The original 48 cool stars (8 large, 16 medium, 24 small) retain their layout,
+sizes, colors and drift. Interval adds a distinct seeded field on top; changing
+Interval immediately replaces its placement. Returning to an Interval restores
+its arrangement at the current animation phase. Added strokes avoid the base.
+
+| Interval | Added distribution (before sun occlusion), stock size | Color |
+|---|---|---|
+| Octave below | 8 large, 4 medium | Cool |
+| Fifth below | 8 large, 4 medium | Green |
+| Unison | 8 large, 8 medium, 16 small | Cool |
+| Minor third | 8 large, 8 medium, 16 small | Green |
+| Major third | 18 medium, 6 small | Cool |
+| Fifth | 18 medium, 6 small | Green |
+| Major sixth | 8 medium, 32 small | Cool |
+| Minor seventh | 8 medium, 32 small | Green |
+| Major seventh | 48 tiny | Cool |
+| Octave above | 48 tiny | Green |
+
+
+Each Interval also adds a unique outline star, 14–18px at minimum Thickness:
+paired four-, five-, six-, seven- and eight-point silhouettes with differing
+proportions and rotations. Blue signatures appear over green added stars, green
+signatures over cool stars. The signature drifts the full left-to-right path,
+wraps to the far left and passes behind the sun. Original stars draw over it.
+Thickness rotates once through 360 degrees and grows the outline from 100% to
+160%; its line width remains 1.5px. Audio behavior is unchanged.
+
+## Sun
+
+01 Solid (default) → 02 Lines → 03 Halo → 04 Retro → 05 Bands → 06 Saturn →
+07 Triple, then Solid. Solid uses the approved native cubic disk/cover; Lines
+uses seven horizontal strokes with 4px widths and 2px gaps. Other approved
+shapes remain, including the removed lowest Retro stripe and enlarged Triple.
+
+Brightness raises the center from y=56 to y=36, a 25% shorter rise than before,
+and controls opening. Motion zero keeps the sun white. Increasing Motion sets
+pulse depth toward red-orange #ff423f; Speed sets about 0.02–2 Hz. This visual
+LFO is free-running, not a phase-accurate meter of individual audio voices.
+The DSP still applies Motion to morph, detune and brightness. The ocean uses its
+former default ambient Motion/Speed independently of the orange controls.
+
+Blue readouts use #698eff; green readouts and added green stars use #00ed95.
+Orange readout, dial and pulse endpoint share #ff423f. These are reference
+software colors from the OP-1 Design Kit, not calibrated OLED measurements.
+Wave colors, base stars and the other dial paints remain unchanged.
+
+## Presets and installation
+
+Update `vapora.knl` through Workshop **Your plugins / Update OP-1**. Existing
+users of the final 15-preset bank should update only the plugin. New users can
+install the separate factory bank into `synth/vapora` in normal disk mode.
+Do not replace current presets with older R6 evaluation files: their Character
+words select different sources. `data/core_set.json` locks the final names and
+Character assignments; `PRESET_CATALOG.csv` and `presets/recipes.json` document
+this bank. Save edits using the OP-1's usual sound-key gesture.
+
+Deep Pressure saves the separate Hundekraft Reverb effect (time 70%, tone 46%,
+diffusion 73%, mix 31%). It requires that effect to be installed. The other
+fourteen presets are dry. Host fixtures do not include native T2 or T3 effects.
+
+## Sound and implementation
+
+The two-head, six-voice DSP remains unchanged. Offline PADsynth tables contain
+broadened spectral components; these are not extra runtime oscillators. There
+are 20 endpoints and 448,800 sample bytes, including the original two long Warm
+tables and six 8,192-sample cinematic spectra. Half-rate synthesis, block-rate
+preparation, guarded table transitions and staggered telemetry remain as
+recorded in `CPU_AUDIT.md`. No device CPU percentage is inferred from host tests.
+
+Animation state is not stored in hidden sound parameters. The existing secret
+remains: from normal pages, press blue → green → orange → white, then wait seven
+seconds without changes. The three bouncing labels exit on a knob action.
 
 ## Rebuild and validation
 
 Pinned Kennel `7c790676ad555da2b8df7a7851826055dee32b2c`, Hundekraft 3.0.2,
-Blackfin GCC 13.3.0 / binutils 2.42. From this source directory:
+Blackfin GCC 13.3.0 / binutils 2.42. Place this directory at
+`ext/kennel/synth_sdk/plugins/vapora` inside the matching SDK. From this directory:
 
 ```sh
-python3 tools/build.py --toolchain /path/to/toolchain
+python3 tools/build.py --toolchain /path/to/toolchain --skip-previews
 ```
 
-The full build checks deterministic tables, quantization/band limits, 15 AIF
-round trips, ASan/UBSan production DSP and GUI harnesses, three-minute six-voice
-state, 19 dry WAVs, geometry bounds, folded-triangle prevention, sun translation
-and eclipse progression, the secret trigger, native compilation, imports and
-loader relocation against GNU ld at two addresses. Exact sizes and hashes are
-in `validation/package.json` and `build-record.json`.
+Use the dependencies in `requirements.txt`. Omit `--skip-previews` to render
+host media; the 1.2 publication intentionally retains the earlier GIFs pending
+a separate manual update. No media generation is required to build the plugin.
 
-Additional repeatable comparisons:
+Checks cover deterministic tables, 15 AIF round trips, production DSP and screen
+ASan/UBSan tests, three-minute six-voice state, 19 dry audio fixtures, overlapping
+note impacts, Shift toggling, wave bounds/side-triangle continuity, all ten star
+fields, all seven suns, native imports and relocation against GNU ld at two
+addresses. Native build and host validation pass; final 1.2 device installation,
+Shift timing and combined graphics/audio performance remain untested.
 
-```sh
-python3 tools/check_retained.py /path/to/r6/source/vapora /path/to/validation
-python3 tools/compare_host_cpu.py /path/to/r6/source/vapora /path/to/validation/host-cpu-comparison.json
-```
-
-See `HARDWARE_CHECKLIST.md`, `CPU_AUDIT.md`, the revision record and licenses.
+See `HARDWARE_CHECKLIST.md`, `CPU_AUDIT.md`, `TOOLCHAIN.md`, `CHANGELOG.md` and
+retained license/third-party notices. PADsynth algorithm by Nasca Octavian Paul.

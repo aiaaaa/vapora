@@ -5,7 +5,21 @@
 #define VAPORA_SUNS_H
 static const char *const ps_sun_names[PS_SUN_DESIGNS]={
     "SOLID","LINES","HALO","RETRO","BANDS","SATURN","TRIPLE"};
-static const uint8_t ps_sun_color[4]={255,190,107,255};
+static uint8_t ps_sun_color[4]={255,255,255,255};
+static uint8_t *solid_fill;
+/* One free-running display LFO represents the shared rate/depth controls.
+ * Audio voices retain their independent phases; this is not a voice meter. */
+static void sun_color(uint32_t phase,int depth)
+{
+    /* Share the Orange lane token with its text and dial (#ff423f). */
+    const uint8_t *orange=ps_colors[3];
+    int pulse=(rounded_wave(phase)+32768)/2;
+    int amount=(pulse*ps_clamp(depth,0,32767)+16383)/32767;
+    for(int k=0;k<3;k++){
+        ps_sun_color[k]=(uint8_t)(255-((255-orange[k])*amount+16383)/32767);
+        if(solid_fill&&solid_fill[k]!=ps_sun_color[k])solid_fill[k]=ps_sun_color[k];
+    }
+}
 static void sun_line(void *r,int cy,int x,int y,int xx,int yy)
 {line(r,160*1024+x,cy*1024+y,160*1024+xx,cy*1024+yy,PS_SUN_STROKE,ps_sun_color);}
 static void sun_arc(void *r,int cy,int cx,int yy,int rx,int ry,int start,int count,int stride)
@@ -25,6 +39,8 @@ static void sun_init(void *scr)
 {
     solid_group=op1_find_node(scr,"eclipse_curve");
     solid_cover=op1_find_node(scr,"cover_curve");
+    solid_fill=op1_node_fill_rgba(scr,"sunfill");
+    sun_color(0,0);
     if(solid_group)op1_node_set_visible(solid_group,0);
 }
 static int sun_offset(int opening)

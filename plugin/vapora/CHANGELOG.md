@@ -1,3 +1,140 @@
+# 1.2 — waves, stars and sun each get their own controls
+
+- Character selects 14 wave styles alongside the existing 14 sound families;
+  Morph adjusts the chosen wave's movement. Blue push switches Morph/Character.
+- Each key or grouped chord creates a sharp, randomly placed ripple that spreads
+  outward and fades, with a small trailing wake and no persistent audio bending.
+- Lower side joints move much farther; the right outline sits 8 pixels inward.
+- Shift toggles the complete bottom dial/readout, starting hidden. Its black
+  backing exists only while shown; hidden waves continue below the old cutoff.
+- Interval selects ten distinct added star fields and signature-star outlines.
+  The original 48-star layer keeps its layout, sizes and colors. Changes visibly
+  relocate only the added layer, with contrasting signature and background colors.
+- Thickness rotates the signature 360 degrees and grows it up to 60%. It crosses
+  the full sky, wraps to the far left and can pass behind the sun.
+- Motion sets the sun's white-to-red-orange pulse depth; Speed sets its rate.
+  Sun rise is 25% shorter with the same lowest point. Seven designs remain.
+- Blue and green readouts use the software reference palette; green added stars
+  share the readout green. Character's pointer makes one 270-degree sweep.
+- Thickness, Interval, Motion and Speed have no direct wave-geometry effect.
+- Sound generation, saved parameter mappings, stock encoder scrolling and the
+  15-preset bank are unchanged. Existing installations need only the plugin.
+- Native build, package/relocation/import checks and sanitizer tests pass.
+  Final 1.2 installation and combined device performance remain to be checked.
+- Existing GIFs are retained for a separate manual media update.
+
+# 1.1.15 — spreading impacts, freer side joints and readout backing
+
+- Replace fixed spring oscillation with a sharp outward-moving pulse, quadratic
+  fade and an eighth-strength trailing wake. Keep chord grouping and held-note settling.
+- Render waves below the former y=126 cutoff. Draw the black backing only when
+  Shift shows the readout; preserve default-off and latched visibility.
+- Increase lower side-joint target response from 25% to 100%; free bottom travel
+  and constrain neighboring triangle areas to preserve visual continuity.
+- Retain the 14 Character styles, star layers, sun, audio code/data and all presets.
+
+# 1.1.14 — selected Character waves, Shift readout and sharper trampoline
+
+- Remove Swell, Cross, Breath, Tilt, Twist and Saddle from the visual choices.
+- Map the retained 14 styles in order to the existing 14 Character indices.
+- Restore Blue's Morph/Character page toggle; retain audio and saved mappings.
+- Shift toggles the complete bottom readout/dial, hidden by default, latched in RAM.
+- Stronger, tighter, earlier trampoline hits with a faster rebound and settling.
+
+# 1.1.13 — Morph wave audition and trampoline notes
+
+- Blue press cycles 20 numbered visual wave modes; Blue turn remains Morph.
+- Mode 01 retains the original movement; 19 alternatives vary movement.
+- Remove Character's wave influence in every mode; retain its audio behavior.
+- Temporarily replace Character-page access without changing its saved word.
+- Replace continuous audio-shaped diagonal bending with local note/chord impacts.
+- Group nearby chord publications, overlap damped rebounds, and settle held notes.
+- Keep original/added stars, sun, 60% star growth, audio and presets unchanged.
+
+# 1.1.12 — moving wave joints, visible right tips and larger signature
+
+- Increase lower shoulder response to the shared wave swell from 4% to 25%.
+- Bound the bottom joints' downward swing to keep them above the readout.
+- Shift all rightmost outline vertices 8 pixels left; joined edges follow.
+- Increase maximum signature growth from 30% to 60%; retain one full rotation.
+- Widen signature travel margins by 2px per side to fit the larger outline.
+- Keep central geometry, small stars, sun, sound, controls and presets intact.
+
+# 1.1.11 — continuous star path, opposite colors and growth
+
+- Signature stars cross the whole sky left to right and wrap to the far left.
+  Remove collision placement/search; clip behind Solid and draw behind line suns.
+- Blue signatures accompany green added stars; green signatures accompany cool.
+- Thickness adds 0–30% size growth alongside its existing full rotation.
+- Preserve original and added small-star fields, sound, presets, and wave behavior.
+
+# 1.1.10 — Interval signature stars and Thickness rotation
+
+- One distinct larger outline star per Interval, drifting with the added layer.
+- Immediate silhouette and position changes; preserve the original 48 stars.
+- Thickness rotates the signature through 360 degrees over its full range.
+- Freeze direct Thickness wave response at the prior default; Interval also
+  remains independent of wave geometry. Sound and saved controls are unchanged.
+- Retain reduced small-star overlays, guide text colors and shorter sun rise.
+
+# 1.1.9 — reduced added stars, lower sun rise and readout colors
+
+- Blue text uses #698eff; Green text and added stars use #00ed95.
+  Preserve waves, original stars and existing dial colors.
+- Bundle half-count, half-size added stars with the preserved original base.
+- Reduce upward sun travel by 25% before whole-pixel rounding; lowest center
+  stays at y=56, highest becomes y=36 instead of y=30. Applies to all seven suns.
+- Preserve Brightness opening, red-orange pulse, Interval position jumps, cool/green pairing,
+  Character pointer, stock controls, sound engine and preset bytes.
+
+# 1.1.8 — red-orange and separate Interval layers
+
+- Reduce only the added layer to half its doubled count, width and length:
+  stock-scale overlay profiles, with the original base untouched.
+
+- Give each Interval its own added-star positions, including cool/green pairs.
+- Keep added strokes clear of the original 48 stars so they cannot recolor or
+  hide the base. Preserve original base positions, colors, sizes and drift.
+- Share #ff423f between Orange text, dial, and the sun pulse endpoint.
+- Use the design kit screen token; previous text was #ff9740 and sun #ffbe6b.
+- Preserve the white pulse endpoint, depth/rate, all sun geometry, original base stars,
+  Character pointer, DSP, preset bytes, and stock encoder behavior.
+- Local trial; assess the deeper color on the physical OLED before accepting it.
+
+# 1.1.7 — layered stars and bounded Character pointer
+
+- Restore the original 48 cool stars as an Interval-independent base.
+- Add the ten Interval patterns on top, doubling count, line length and width.
+  Green overlays share the readout palette; they never recolor the base.
+- Separate stable overlay positions; total 72–144 stars before sun occlusion.
+- Character pointer follows full encoder travel on one 270-degree arc. Names,
+  saved decoding, knob sensitivity, audio and presets remain unchanged.
+- Check base invariance at eight phases, exact doubled overlays, and all 32767
+  Character pointer positions. Native peak graphics/audio cost remains untested.
+
+# 1.1.6 — Interval star fields
+
+- Ten immediate Interval states: five distributions paired with cool/Green tint.
+- Green reuses the Interval readout's palette token (#00e19b), with sky shading.
+- Sparse large stars through dense tiny stars; no more than 48 particles.
+- Move Interval's direct visual response from ocean geometry to particles.
+- Preserve Morph/Thickness/note responses and the 1.1.5 sun color pulse.
+- Retain stock knob sensitivity, saved interval encoding, DSP and all presets.
+- Host checks cover all ten distributions/colors, ocean independence and audio
+  equality. Native display and CPU checks remain pending.
+
+# 1.1.5 — white sun with Orange-controlled pulse
+
+- Motion sets sun color depth from white to the existing orange; Speed sets the
+  pulse rate using the same rate mapping as the audio LFO.
+- Apply the color to all seven designs, including the retained native Solid fill.
+- Keep ambient ocean motion at the former default depth/rate. Orange no longer
+  changes ocean geometry or travel speed. Morph, Thickness, Interval and note
+  responses remain intact.
+- Preserve DSP, tables, preset bytes, sun geometry and Brightness behavior.
+- Host checks cover color endpoints/depth, all designs, rate and ocean independence.
+  Hardware rendering and CPU qualification remain pending.
+
 # 1.1.4 — approved Solid and Lines suns
 
 - Default 01 Solid preserves the approved solid Eclipse from trial 10.
