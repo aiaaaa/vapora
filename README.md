@@ -1,15 +1,23 @@
+
 # VAPORA
 
 Cinematic pads and spectral textures for the original OP-1, built for Hundekraft.
 
 **A reworking of [PADsynth](https://zynaddsubfx.sourceforge.io/doc/PADsynth/PADsynth.htm), the synthesis algorithm by Nasca Octavian Paul, for the original OP-1.**
 
-<img width="960" height="480" alt="19-chord-ripples-eclipse-rise" src="https://github.com/user-attachments/assets/da88f280-a692-40f1-9bc1-18a3dc74669a" />
+<img width="320" height="160" alt="27-red-eclipse-rain" src="https://github.com/user-attachments/assets/36889e82-f60a-476f-bbf2-0d537a1db341" />
+
+<img width="320" height="160" alt="22-slow-red-ripples" src="https://github.com/user-attachments/assets/de574889-9111-43bc-acd0-af45425d0160" />
+
+<img width="320" height="160" alt="32-white-disc-dunes" src="https://github.com/user-attachments/assets/2af2fa20-2f4f-43d8-9e24-77a9af5fd611" />
+
+<img width="320" height="160" alt="19-chord-ripples-eclipse-rise" src="https://github.com/user-attachments/assets/485b07e4-f327-4b0e-aeaa-639e7189a1b8" />
 
 *Holy Dust, with an synth BRIGHTNESS sweep (filter)*
 
-<img width="960" height="480" alt="17-chord-hits-rolling-water" src="https://github.com/user-attachments/assets/7a47a349-d404-45af-903d-20dda6d5da74" />
+<img width="320" height="160" alt="17-chord-hits-rolling-water" src="https://github.com/user-attachments/assets/7631a034-8409-41fe-bcd0-51b37b616fc7" />
 
+<img width="320" height="160" alt="21-slow-red-original" src="https://github.com/user-attachments/assets/6113adbe-6549-4903-9981-4b9c45344a5e" />
 
 
 
