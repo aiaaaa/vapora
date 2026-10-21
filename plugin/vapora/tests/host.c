@@ -26,6 +26,7 @@ static int recorded_base_count,logo_lines;
 static op1_pt logo_first,logo_previous;
 static uint32_t logo_shape_hash;
 static op1_pt last_line_b;
+static char last_drawn_text[48];
 static const int16_t defaults[8]={9000,26000,18500,12500,0x5320,0,0,0};
 #include "native_scene.h"
 void *op1_raster(void){return (void*)1;}
@@ -85,6 +86,7 @@ void op1_text_set(void *obj,const char *s)
 void op1_text_draw(void *obj,void *r,const int32_t *m)
 {
     (void)r;host_text *t=obj;int x=t->x+m[6],y=t->y+(m[7]>>10);
+    strcpy(last_drawn_text,t->text);
     assert(x>=0&&x/1024+(int)strlen(t->text)*8<320&&y>=0&&y+t->size<153);
     if(drawing){
         fprintf(drawing,"<text x=\"%.4f\" y=\"%d\" font-size=\"%d\" fill=\"#%02x%02x%02x\">",x/1024.,y+t->size,t->size,t->c[0],t->c[1],t->c[2]);
@@ -595,6 +597,79 @@ static void geometry_contract(void)
     ps_test_geometry(&p,playing,curves);assert(!memcmp(quiet,playing,sizeof quiet));
     puts("Trampoline: one outward pulse per note or grouped chord; random positions, bounded overlap, pinned rim, exact settling despite held audio; real six-voice chord checked");
 }
+extern void ps_test_audition_reset(int);
+extern void ps_test_impact_last_state(uint32_t*,uint32_t*);
+extern int ps_test_impact_profile(int,uint32_t);
+static void hold_return_contract(void)
+{
+    int tap_previous=ps_test_impact_profile(0,0),held_previous=ps_test_impact_profile(0,150000000u);
+    int tap_drop=0,held_drop=0,tap_rebound=0,held_rebound=0;
+    assert(tap_previous==held_previous&&tap_previous>0);
+    for(int x=0;x<=1800;x++){
+        /* Incoming motion and the sharp peak must be identical. */
+        assert(ps_test_impact_profile(x,0)==ps_test_impact_profile(x,150000000u));
+        int tap=ps_test_impact_profile(-x,0),held=ps_test_impact_profile(-x,150000000u);
+        if(tap_previous-tap>tap_drop)tap_drop=tap_previous-tap;
+        if(held_previous-held>held_drop)held_drop=held_previous-held;
+        if(tap<tap_rebound)tap_rebound=tap;if(held<held_rebound)held_rebound=held;
+        tap_previous=tap;held_previous=held;
+    }
+    assert(held_drop<tap_drop*3/4);
+    assert(held_rebound>tap_rebound*3/4&&held_rebound<0);
+    assert(ps_test_impact_profile(-480,150000000u)>0);
+    assert(ps_test_impact_profile(-480,0)<=0);
+    assert(tap_previous==0&&held_previous==0);
+    puts("Held return: identical sharp front; trailing descent slope reduced >25%; rebound reduced >25%; both spatial tails finite");
+}
+static void hold_ripple_contract(void)
+{
+    /* Same start/geometry for tap, short hold, long hold, chord and reused voice. */
+    uint32_t credit[5];int settled[5];int64_t energy[5];
+    for(int scenario=0;scenario<5;scenario++){
+        reset();for(int k=0;k<4;k++)op1_eng_page[k]=0;
+        for(int v=0;v<PS_VOICES;v++)ps_held_serial[v]=0;
+        SCREEN_vapora.init(0);SCREEN_vapora.update(0,16);ps_test_audition_reset(0);
+        ps_test_geometry_phase(0,0);ps_params p=ps_decode(defaults);
+        op1_pt rest[PS_ROWS*PS_COLS],points[PS_ROWS*PS_COLS];int16_t curves[PS_EDGES];
+        ps_test_geometry(&p,rest,curves);
+        for(int v=0;v<(scenario==3?3:1);v++){
+            uint32_t serial=0x7e000000u+(unsigned)scenario*8u+(unsigned)v;
+            test_note_mail(v,serial);ps_held_serial[v]=scenario?serial:0;
+        }
+        ps_test_impact_tick(25000000);ps_test_impact_tick(25000000);
+        assert(ps_test_impact_count()==1);settled[scenario]=0;energy[scenario]=0;
+        for(int f=0;f<48;f++){
+            if(scenario==1&&f==8)ps_held_serial[0]=0;
+            if(scenario==3&&f==8){ps_held_serial[0]=0;ps_held_serial[1]=0;}
+            /* A different held serial on the same voice must not feed this hit. */
+            if(scenario==4&&f==8)ps_held_serial[0]++;
+            ps_test_impact_tick(25000000);ps_test_geometry(&p,points,curves);
+            uint32_t age,extension;ps_test_impact_last_state(&age,&extension);
+            credit[scenario]=extension;
+            assert(extension<=6*25000000u&&ps_test_impact_count()==1);
+            if(!settled[scenario]&&age-extension>=22*25000000u)settled[scenario]=f+1;
+            side_cells_contract(points);
+            for(int i=0;i<PS_ROWS*PS_COLS;i++){
+                int d=abs(points[i].y-rest[i].y);assert(d<=8*1024);
+                if(f>=16)energy[scenario]+=d;
+            }
+            if(f>=27)assert(!memcmp(rest,points,sizeof rest));
+        }
+    }
+    assert(credit[0]==0&&credit[1]>0&&credit[1]<credit[2]);
+    assert(credit[2]==6*25000000u&&credit[3]==credit[2]&&credit[4]==credit[1]);
+    assert(settled[0]==22&&settled[1]>22&&settled[1]<28&&settled[2]==28);
+    assert(energy[2]>energy[1]&&energy[1]>energy[0]);
+    /* Real note_off only updates the visual gate, never the audio render state. */
+    reset();set_pitch(261.625565);ENGINE_vapora.note_on(ps_host_voices[0],ps_host_words[0]);
+    assert(ps_held_serial[0]);uint32_t serial=ps_held_serial[0];
+    ENGINE_vapora.note_off((void*)(OP1_VOICE_BASE+1));assert(ps_held_serial[0]==serial);
+    ENGINE_vapora.note_off(ps_host_voices[0]);assert(!ps_held_serial[0]);
+    ENGINE_vapora.note_on(ps_host_voices[0],ps_host_words[0]);assert(ps_held_serial[0]&&ps_held_serial[0]!=serial);
+    for(int v=0;v<PS_VOICES;v++)ENGINE_vapora.note_off(ps_host_voices[v]);
+    printf("Hold ripple: tap %d frames, short hold %d, long hold %d; 375ms credit cap; partial chord release and reused voice checked; late energy %lld < %lld < %lld\n",
+        settled[0],settled[1],settled[2],(long long)energy[0],(long long)energy[1],(long long)energy[2]);
+}
 static void wave_modes_contract(void)
 {
     reset();for(int k=0;k<4;k++)op1_eng_page[k]=0;
@@ -762,6 +837,10 @@ static void character_dial_contract(const char *dir)
     double previous=0,first=0;
     for(int word=1;word<=32767;word++){
         ps_test_character_dial((int16_t)word);
+        int16_t words[8]={0};words[5]=(int16_t)word;
+        ps_params decoded=ps_decode(words);char expected[48];
+        snprintf(expected,sizeof expected,"character  %02d %s",decoded.character+1,ps_character_names[decoded.character]);
+        assert(!strcmp(last_drawn_text,expected));
         double angle=atan2(last_line_b.y-PS_DIAL_Y*1024,last_line_b.x-16*1024);
         if(word==1)first=angle;
         else while(angle<previous-.000001)angle+=2*3.141592653589793;
@@ -777,7 +856,7 @@ static void character_dial_contract(const char *dir)
         ps_test_character_dial((int16_t)(1+i*32766/4));
         fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
     }
-    puts("Character dial: all 32767 encoder positions stay monotonic on one 270-degree arc, bottom-left to bottom-right; Character sound/preset decoding unchanged");
+    puts("Character dial: all 32767 encoder positions stay monotonic on one 270-degree arc, bottom-left to bottom-right; readout matches the audio Character name at every position; sound/preset decoding unchanged");
 }
 int main(int argc,char **argv)
 {
@@ -788,6 +867,6 @@ int main(int argc,char **argv)
         char name[100];snprintf(name,sizeof name,"preset-%02d-%s",i+1,preset_names[i]);
         fixture(argv[1],name,i+4);
     }
-    footer_contract(argv[1]);geometry_contract();previews(argv[1]);controls_contract(argv[1]);sun_motion_contract(argv[1]);approved_suns_contract(argv[1]);secret_contract(argv[1]);sun_pulse_contract(argv[1]);interval_particles_contract(argv[1]);logo_rotation_contract();character_dial_contract(argv[1]);wave_modes_contract();wave_edges_contract();puts("PASS: host DSP/adapter/mailbox/screen checks");
+    footer_contract(argv[1]);geometry_contract();hold_return_contract();hold_ripple_contract();previews(argv[1]);controls_contract(argv[1]);sun_motion_contract(argv[1]);approved_suns_contract(argv[1]);secret_contract(argv[1]);sun_pulse_contract(argv[1]);interval_particles_contract(argv[1]);logo_rotation_contract();character_dial_contract(argv[1]);wave_modes_contract();wave_edges_contract();puts("PASS: host DSP/adapter/mailbox/screen checks");
     return 0;
 }
