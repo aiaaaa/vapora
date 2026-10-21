@@ -1,0 +1,65 @@
+{
+  "version": "1.2.2",
+  "tap_hold": {
+    "1": {
+      "extension_ms": 0.0,
+      "lifetime_ms": 1375.0
+    },
+    "8": {
+      "extension_ms": 93.75,
+      "lifetime_ms": 1500.0
+    },
+    "100": {
+      "extension_ms": 375.0,
+      "lifetime_ms": 1750.0
+    }
+  },
+  "actual_note_off_dry_audio_equal": true,
+  "callback_pcm_sha256": "4ae71e700179b8a1f7d20f2e67b5177a08fb0b76d2c859b7c6d68952b854c820",
+  "unchanged_dsp_and_presets": [
+    "vapora_dsp.c",
+    "vapora_dsp.h",
+    "vapora_params.h",
+    "vapora_tables.h",
+    "vapora_characters.h",
+    "presets/XFIN.aif",
+    "presets/a fifth tide.aif",
+    "presets/asteroid swarm.aif",
+    "presets/breath choir.aif",
+    "presets/cavern flute.aif",
+    "presets/deep pressure.aif",
+    "presets/holy dust.aif",
+    "presets/ice chapel.aif",
+    "presets/last light.aif",
+    "presets/moon choir.aif",
+    "presets/pink surf.aif",
+    "presets/porcelain orbit.aif",
+    "presets/recipes.json",
+    "presets/stone hall.aif",
+    "presets/sub lantern.aif",
+    "presets/tidal arc.aif"
+  ],
+  "ordinary_pcm_fixtures_equal_to_1_1_15": 19,
+  "character_names": [
+    "WARM",
+    "SWARM",
+    "BREATH",
+    "FLUTE",
+    "PRESSURE",
+    "SURF",
+    "PORCELAIN",
+    "SUB",
+    "VELVET",
+    "CATHEDRAL",
+    "NEBULA",
+    "AURORA",
+    "OCEANIC",
+    "GLASSVEIL"
+  ],
+  "all_held_impacts_finite": true,
+  "tap_visuals_unchanged_from_1_2_1": true,
+  "held_return_slower": true,
+  "publication": "Published as 1.2.2 with the same evaluated plugin bytes",
+  "hardware_tested": false,
+  "gifs_generated": false
+}

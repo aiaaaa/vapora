@@ -1,0 +1,15 @@
+{
+  "initial_hit_peak_pixels": 7.96875,
+  "mean_squared_radius_early": 0.834206,
+  "mean_squared_radius_late": 7.3500228000000005,
+  "settled_frame": 22,
+  "repeated_bounce": false,
+  "readout_changes_geometry": false,
+  "backing_only_when_visible": true,
+  "star_frames_identical_to_1_1_14": 896,
+  "hardware_tested": false,
+  "measured_version": "1.1.15",
+  "release_version": "1.2.2",
+  "production_visual_sources_identical_to_measured_version": false,
+  "scope": "Historical 1.1.15 tap/readout/star measurements; current 1.2.2 hold/return results in hold-evaluation.json and checks.log."
+}

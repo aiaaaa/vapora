@@ -19,7 +19,10 @@
     "TRIPLE"
   ],
   "default": 1,
-  "heights": 27,
+  "geometry_test_heights": 27,
+  "brightness_center_low": 56,
+  "brightness_center_high": 36,
+  "travel_scale": 0.75,
   "translation_invariant": [
     1,
     2,
