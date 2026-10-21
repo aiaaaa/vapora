@@ -20,7 +20,7 @@ Two detuned playback heads read broad, evolving PADsynth spectra for each note. 
 
 ## Manual
 
-**Shift** button gives a readout, can be helpful at first
+**Shift** button will toggle a on screen active variable readout, can be helpful at first TRY IT!
 
 **Load:** press **synth**, then **Shift + T1**. Turn **blue** to **vapora** and press **T1**. To load a factory sound, open the preset browser with **Shift + a sound key**, choose **vapora**, then the preset.
 
