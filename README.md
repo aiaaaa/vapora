@@ -16,7 +16,7 @@ VAPORA is a six-voice PADsynth-based instrument with two independently phased, d
 
 Two detuned playback heads read broad, evolving PADsynth spectra for each note. Morph between two related colors, add a pitched interval, and let the tone drift. Fourteen characters cover warm ensembles, breathy choirs, hollow flutes, glassy textures and deep drones. VAPORA plays up to six notes, follows velocity, and uses the OP-1’s normal T2 envelope and T3 effect.
 
-**Version 1.2** gives the waves, stars and sun distinct visual controls, with spreading note ripples and a Shift-toggle readout. Sound generation and the 15-preset bank are unchanged.
+**Version 1.2.2** gives the waves, stars and sun distinct visual controls, with spreading note ripples and a Shift-toggle readout. Sound generation and the 15-preset bank are unchanged.
 
 ## Manual
 
@@ -35,7 +35,7 @@ Push blue, green or orange again to return to its main control. Each has its own
 
 **Characters:** Warm, Swarm, Breath, Flute, Pressure, Surf, Porcelain, Sub, Velvet, Cathedral, Nebula, Aurora, Oceanic and Glassveil. Morph explores the two endpoints within a character; use Character for a larger change in sound.
 
-**Wave styles, in Character order:** Original, Ripples, Roll, Fold, Orbit, Rings, Rain, Pulse, Tide, Ribbons, Weave, Dunes, Echo and Jelly. The Character readout shows the wave style; the sound-family assignments above are unchanged. Morph controls their movement. A key or chord makes a sharp ripple at a random position, spreading outward and fading with a small trailing wake. The lower side joints have more freedom, and the right outline sits fully on screen.
+**Wave styles, in Character order:** Original, Ripples, Roll, Fold, Orbit, Rings, Rain, Pulse, Tide, Ribbons, Weave, Dunes, Echo and Jelly. The Character readout shows the sound-family name (Warm, Swarm, Breath, etc.); the wave styles remain mapped in the same order. Morph controls their movement. A key or chord makes a sharp ripple at a random position, spreading outward and fading with a small trailing wake. Holding a note lets its ripple travel a little farther and ease back more slowly with less rebound. Quick taps stay sharp; even an indefinite hold fades within about 1.75 seconds. The lower side joints have more freedom, and the right outline sits fully on screen.
 
 **Shift:** toggle the bottom control dial/readout on and off. It starts hidden and stays in the chosen state after release. The black backing appears only when shown; waves continue into that area when hidden. The choice lasts for the session, not across a fresh plugin load or in saved sounds.
 
@@ -53,11 +53,11 @@ Load STONE HALL and play it at -3 octave range.
 
 The factory bank contains 15 sounds: A Fifth Tide, Asteroid Swarm, Breath Choir, Cavern Flute, Deep Pressure, Holy Dust, Ice Chapel, Last Light, Moon Choir, Pink Surf, Porcelain Orbit, Stone Hall, Sub Lantern, Tidal Arc and XFIN.
 
-Save an edited sound with the OP-1’s usual sound-key gesture. Deep Pressure is the only factory preset with a saved T3 effect; the other fourteen are dry. If the final bank is already installed, the 1.2 update needs only the plugin file, with no preset copying.
+Save an edited sound with the OP-1’s usual sound-key gesture. Deep Pressure is the only factory preset with a saved T3 effect; the other fourteen are dry. If the final bank is already installed, the 1.2.2 update needs only the plugin file, with no preset copying.
 
 ## Download and install
 
-- [VAPORA 1.2 plugin](downloads/vapora.knl)
+- [VAPORA 1.2.2 plugin](downloads/vapora.knl)
 - [15 factory presets](downloads/vapora-core15-presets.zip) — for new installations
 - [Checksums](downloads/SHA256SUMS)
 
@@ -73,9 +73,9 @@ Deep Pressure uses the separate Hundekraft `reverb` effect. The other factory pr
 
 [Build instructions](docs/BUILD.md) include the pinned SDK, Blackfin toolchain and host checks. All corresponding plugin source, generators, editable geometry and preset recipes are in [plugin/vapora](plugin/vapora).
 
-Native Blackfin compilation, package/import/relocation checks and sanitizer host checks passed. Audio sources, tables, saved parameter mappings and all 15 preset files are unchanged from 1.1.4; all 19 dry audio fixtures match the local 1.1.15 revision exactly. Geometry, Shift behavior, spreading impacts, stars and all seven suns are checked on the host. The author previously evaluated the sounds and selected Solid and Lines on hardware; the final 1.2 installation and combined graphics/audio performance still need a device check. No controlled device CPU benchmark is claimed.
+Native Blackfin compilation, package/import/relocation checks and sanitizer host checks passed. Audio sources, tables, saved parameter mappings and all 15 preset files are unchanged from 1.1.4; all 19 dry audio fixtures match the local 1.1.15 revision exactly. Geometry, Shift behavior, spreading impacts, stars and all seven suns are checked on the host. The author previously evaluated the sounds and selected Solid and Lines on hardware; the final 1.2.2 installation and combined graphics/audio performance still need a device check. No controlled device CPU benchmark is claimed.
 
-The existing GIF is retained from 1.1.4 for a separate manual update. It is a host rendering, not an OLED capture, and does not show the new 1.2 behavior.
+The existing GIF is retained from 1.1.4 for a separate manual update. It is a host rendering, not an OLED capture, and does not show the new 1.2.2 behavior.
 
 [Release notes](CHANGELOG.md) · [Validation records](validation) · [Hundekraft handoff notes](docs/HUNDEKRAFT.md)
 

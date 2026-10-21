@@ -1,5 +1,16 @@
+# 1.2.2 — hold-sensitive ripples and slower return
+
+- Supersedes the interrupted 1.2 publication and local 1.2.1 evaluation.
+- Character readout shows the sound family (Warm, Swarm, Breath, etc.).
+- Holding a note modestly extends its outward ripple, up to 375ms extra and 1.75s total.
+- Held ripples ease back more slowly with a softer rebound; quick taps and the sharp leading edge stay unchanged.
+- Note-off tracking affects visuals only. Audio, saved parameters and all 15 presets are unchanged.
+- Native build, sanitizer checks, finite-hold/voice-reuse tests and 19 exact audio comparisons pass. Final hardware performance testing remains pending.
+- Existing GIFs are unchanged.
+
 # 1.2 — waves, stars and sun each get their own controls
 
+- Character readout retains the sound-family names (Warm, Swarm, Breath, etc.).
 - Character selects 14 wave styles alongside the existing 14 sound families;
   Morph adjusts the chosen wave's movement. Blue push switches Morph/Character.
 - Each key or grouped chord creates a sharp, randomly placed ripple that spreads
