@@ -17,7 +17,7 @@ static const int16_t preset_words[PRESET_COUNT][8]={
 {2800,24500,23500,12500,21248,10496,8192,6000},
 {28000,30000,27500,22000,21248,11264,16384,6500},
 };
-static const int8_t preset_octave[PRESET_COUNT]={0,0,0,0,0,0,-1,0,0,0,-1,0,0,0,0};
+static const int8_t preset_octave[PRESET_COUNT]={0,0,0,0,0,0,-1,0,0,0,-1,0,0,-3,0};
 static const int32_t preset_preview[PRESET_COUNT][4]={
 {3700,1000,30146,2500},
 {650,1000,24575,2500},
