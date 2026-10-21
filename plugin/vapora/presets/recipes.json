@@ -672,14 +672,14 @@
       4000,
       4000
     ],
-    "fx_active": false,
-    "fx_type": "delay",
+    "fx_active": true,
+    "fx_type": "plate",
     "fx_params": [
-      8000,
-      8000,
-      8000,
-      8000,
+      14528,
       0,
+      22528,
+      16383,
+      21248,
       0,
       0,
       0
@@ -696,7 +696,7 @@
       0,
       0
     ],
-    "octave": 0,
+    "octave": -3,
     "synth_version": 2
   },
   {
