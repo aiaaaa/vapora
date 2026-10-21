@@ -11,11 +11,11 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 
 <img width="320" height="160" alt="22-slow-red-ripples" src="https://github.com/user-attachments/assets/de574889-9111-43bc-acd0-af45425d0160" />
 
-<img width="320" height="160" alt="32-white-disc-dunes" src="https://github.com/user-attachments/assets/2af2fa20-2f4f-43d8-9e24-77a9af5fd611" />
-
 <img width="320" height="160" alt="19-chord-ripples-eclipse-rise" src="https://github.com/user-attachments/assets/485b07e4-f327-4b0e-aeaa-639e7189a1b8" />
 
-*Holy Dust, with an synth BRIGHTNESS sweep (filter)*
+-
+
+<img width="320" height="160" alt="32-white-disc-dunes" src="https://github.com/user-attachments/assets/2af2fa20-2f4f-43d8-9e24-77a9af5fd611" />
 
 <img width="320" height="160" alt="17-chord-hits-rolling-water" src="https://github.com/user-attachments/assets/7631a034-8409-41fe-bcd0-51b37b616fc7" />
 
