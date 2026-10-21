@@ -12,13 +12,14 @@ subprocess.run(['clang','-std=c11','-O1','-g','-fsanitize=address,undefined',
  str(ROOT/'vapora_screen.c'),'-lm','-o',str(out/'render')],check=True)
 subprocess.run([str(out/'render'),str(out)],check=True)
 names=['Original','Ripples','Roll','Fold','Orbit','Rings','Rain','Pulse','Tide','Ribbons','Weave','Dunes','Echo','Jelly']
+sound_names=['Warm','Swarm','Breath','Flute','Pressure','Surf','Porcelain','Sub','Velvet','Cathedral','Nebula','Aurora','Oceanic','Glassveil']
 all_frames=[];fingerprints=[]
 for i,name in enumerate(names,1):
     frames=[];shapes=[]
     for n in range(64):
         path=out/f'mode-{i:02d}-{n:03d}.svg';xml=ET.parse(path).getroot()
         text=[e.text for e in xml.iter() if e.tag.endswith('text')]
-        assert text==[f'CHARACTER  {i:02d} {name.upper()}'],text
+        assert text==[f'CHARACTER  {i:02d} {sound_names[i-1].upper()}'],text
         shapes.append(tuple(tuple(sorted(e.attrib.items())) for e in xml.iter()
             if e.tag.endswith('line') and e.get('data-particle-layer')=='-1' and e.get('stroke-width')=='1.9043' and float(e.get('y1'))<126))
         frames.append(render(path))
@@ -54,7 +55,7 @@ for i in range(96):
     footer.append(render(out/f'footer-{i:03d}.svg'))
 footer[0].save(out/'shift-toggle.gif',save_all=True,append_images=footer[1:],duration=65,loop=0,disposal=2)
 for i in (0,31,32,63,64):footer[i].save(out/f'footer-{i:03d}.png')
-(out/'preview.json').write_text(json.dumps(dict(version=version,characters=names,morph_percent=75,footer_default=False,shift_toggle=True,
+(out/'preview.json').write_text(json.dumps(dict(version=version,characters=sound_names,wave_styles=names,morph_percent=75,footer_default=False,shift_toggle=True,
     frames_per_mode=64,production_commands=True,substitute_font='Menlo',hardware_tested=False,
     trampoline_note_events=2,trampoline_ambient_phase_fixed=True),indent=2)+'\n')
 print(out)

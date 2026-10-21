@@ -38,7 +38,8 @@ def check(toolchain,out):
         ref=binary.read_bytes()
         assert img[:len(ref)]==ref and not any(img[p["image_size"]:])
         entry=struct.unpack_from("<3I4B",img,p["entry_offset"])
-        assert entry[2]==0 and entry[3:]==(1,1,1,1)
+        assert all(base<=ptr<base+p["text_size"] for ptr in entry[:3])
+        assert entry[3:]==(1,1,1,1)
     # Missing import rejection is a package load check, not a storage-fault test.
     missing=subprocess.run([str(cexe),str(knl),"0x0299f000",str(out/"missing.bin")],capture_output=True)
     assert missing.returncode!=0
