@@ -41,10 +41,6 @@ Push blue, green or orange again to return to its main control. Each has its own
 
 **Intervals:** octave below, fifth below, unison, minor third, major third, fifth, major sixth, minor seventh, major seventh and octave above. Start with unison for a conventional pad; a fifth or octave adds a second pitch to each played note.
 
-Each Interval visibly relocates an added star layer and selects a distinct large signature star. The original 48 cool stars remain unchanged underneath. Signature colors contrast with the added stars: blue over green, green over cool. Thickness rotates and grows the signature as it crosses the full sky, wraps to the far left and passes behind the sun. Thickness and Interval no longer directly move the waves; their sound behavior is unchanged.
-
-**Sun designs:** 01 Solid (default) → 02 Lines → 03 Halo → 04 Retro → 05 Bands → 06 Saturn → 07 Triple, then back to Solid. Solid is the approved trial 10; Lines is trial 21 with thick horizontal strokes. Sun selection does not change the audio. Brightness now raises the sun 25% less, with the same lowest position. At zero Motion it stays white; Motion sets the depth of its red-orange pulse and Speed sets the rate. Orange controls no longer directly move the waves.
-
 ### Try this
 
 Load STONE HALL and play it at -3 octave range.
