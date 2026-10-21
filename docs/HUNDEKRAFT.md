@@ -23,19 +23,19 @@ VAPORA supplies these materials. Its stable ID is `vapora`, manifest `order` is 
 ## Prepared description
 
 
-VAPORA 1.2 is a six-voice PADsynth instrument for the original OP-1 / Hundekraft
+VAPORA 1.2.2 is a six-voice PADsynth instrument for the original OP-1 / Hundekraft
 3.0.2, with two detuned playback heads per voice, 14 sound Characters and 15
 cinematic presets. Character selects fourteen wave styles; Morph moves them.
-Notes make temporary outward ripples. Interval controls an added star field
+Notes make temporary outward ripples; holding extends their fade modestly and slows their return, capped at 1.75 seconds. Interval controls an added star field
 and signature; Thickness rotates and grows the signature. Motion/Speed control
 the sun's white-to-red-orange pulse. Shift toggles a default-hidden readout.
 The original star layer, sound engine and installed preset bank are preserved.
 
-The package includes a 480,652-byte `.knl`, corresponding source,
+The package includes a 481,192-byte `.knl`, corresponding source,
 deterministic generators, preset recipes, controls, licenses and validation
 records. Native Blackfin build, package/import/relocation checks and sanitizer
 host tests pass. The author previously evaluated sounds and selected Solid and
-Lines on hardware. The final 1.2 installation and combined performance remain
+Lines on hardware. The final 1.2.2 installation and combined performance remain
 untested. The public GIF is retained from 1.1.4 for a separate manual update;
 it uses a host renderer and substitute font. The static screen is updated.
 
@@ -43,7 +43,7 @@ it uses a host renderer and substitute font. The static screen is updated.
 ## Before a maintainer handoff
 
 
-Confirm the final 1.2 installation and seven-design cycle on the OP-1 and record remaining hardware checks honestly. The SDK also recommends checking sustained chords and heavy effects, save/reload/restart, replacement, removal and reinstall. Do not present unperformed checks as passed.
+Confirm the final 1.2.2 installation and seven-design cycle on the OP-1 and record remaining hardware checks honestly. The SDK also recommends checking sustained chords and heavy effects, save/reload/restart, replacement, removal and reinstall. Do not present unperformed checks as passed.
 
 
 No maintainer message, issue or pull request has been submitted. The author handles any final submission.
