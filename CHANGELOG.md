@@ -1,3 +1,28 @@
+# 1.2 — waves, stars and sun each get their own controls
+
+- Character selects 14 wave styles alongside the existing 14 sound families;
+  Morph adjusts the chosen wave's movement. Blue push switches Morph/Character.
+- Each key or grouped chord creates a sharp, randomly placed ripple that spreads
+  outward and fades, with a small trailing wake and no persistent audio bending.
+- Lower side joints move much farther; the right outline sits 8 pixels inward.
+- Shift toggles the complete bottom dial/readout, starting hidden. Its black
+  backing exists only while shown; hidden waves continue below the old cutoff.
+- Interval selects ten distinct added star fields and signature-star outlines.
+  The original 48-star layer keeps its layout, sizes and colors. Changes visibly
+  relocate only the added layer, with contrasting signature and background colors.
+- Thickness rotates the signature 360 degrees and grows it up to 60%. It crosses
+  the full sky, wraps to the far left and can pass behind the sun.
+- Motion sets the sun's white-to-red-orange pulse depth; Speed sets its rate.
+  Sun rise is 25% shorter with the same lowest point. Seven designs remain.
+- Blue and green readouts use the software reference palette; green added stars
+  share the readout green. Character's pointer makes one 270-degree sweep.
+- Thickness, Interval, Motion and Speed have no direct wave-geometry effect.
+- Sound generation, saved parameter mappings, stock encoder scrolling and the
+  15-preset bank are unchanged. Existing installations need only the plugin.
+- Native build, package/relocation/import checks and sanitizer tests pass.
+  Final 1.2 installation and combined device performance remain to be checked.
+- Existing GIFs are retained for a separate manual media update.
+
 # 1.1.4
 
 - Default 01 Solid (approved trial 10), followed by 02 Lines (approved trial 21).
