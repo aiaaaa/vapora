@@ -4,11 +4,15 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 
 **A reworking of [PADsynth](https://zynaddsubfx.sourceforge.io/doc/PADsynth/PADsynth.htm), the synthesis algorithm by Nasca Octavian Paul, for the original OP-1.**
 
-
-
-<img src="media/holy-dust.gif?rev=1.1.4-original" alt="Holy Dust: the sun sets and rises above VAPORA’s animated waves" width="320" height="160">
+<img width="960" height="480" alt="19-chord-ripples-eclipse-rise" src="https://github.com/user-attachments/assets/da88f280-a692-40f1-9bc1-18a3dc74669a" />
 
 *Holy Dust, with an synth BRIGHTNESS sweep (filter)*
+
+<img width="960" height="480" alt="17-chord-hits-rolling-water" src="https://github.com/user-attachments/assets/7a47a349-d404-45af-903d-20dda6d5da74" />
+
+
+
+
 
 ## Overview
 
