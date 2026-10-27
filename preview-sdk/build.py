@@ -47,12 +47,26 @@ def main():
     public['abi'] = 1; public['sampleRate'] = 44100; public['blockSize'] = 128
     public['wasmSHA256'] = hashlib.sha256((out/'engine.wasm').read_bytes()).hexdigest()
     (out/'plugin.json').write_text(json.dumps(public, indent=2)+'\n')
+    # A Pages deployment can leave individual files cached for ten minutes.
+    # Keep HTML, modules, manifest and WASM on one content-versioned build.
+    assets=sorted(p for p in out.iterdir() if p.suffix in ('.html','.css','.mjs','.json','.wasm') and p.name!='build.json')
+    version=hashlib.sha256(b''.join(p.name.encode()+b'\0'+p.read_bytes()+b'\0' for p in assets)).hexdigest()[:16]
+    for p in assets:
+        if p.suffix not in ('.html','.mjs'): continue
+        text=p.read_text()
+        for asset in assets:
+            for quote in ('"',"'"):
+                for prefix in ('','./'):
+                    name=prefix+asset.name
+                    text=text.replace(quote+name+quote,quote+name+'?v='+version+quote)
+        p.write_text(text)
     (out/'.nojekyll').touch()
     shutil.copy2(SDK.parent/'LICENSE', out/'LICENSE.txt')
     # Include every adapter/DSP header in provenance, not absolute workstation paths.
     files=set(sources+[manifest])
     for d in includes: files.update(d.rglob('*.h'))
     record = {'compiler': subprocess.check_output([a.cc,'--version'],text=True).splitlines()[0],
+              'assetVersion': version,
               'wasmSHA256': public['wasmSHA256'],
               'inputs': {os.path.relpath(p,SDK.parent):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)}}
     (out/'build.json').write_text(json.dumps(record,indent=2)+'\n')
