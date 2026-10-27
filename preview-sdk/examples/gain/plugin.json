@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "gain-example",
+  "name": "Gain example",
+  "version": "0.1",
+  "kind": "effect",
+  "description": "Stereo effect adapter example.",
+  "screen": {
+    "width": 320,
+    "height": 160
+  },
+  "parameters": [
+    {
+      "id": 0,
+      "label": "Gain",
+      "default": 1,
+      "format": "percent"
+    }
+  ],
+  "knobs": [
+    {
+      "primary": 0,
+      "color": "green"
+    }
+  ],
+  "buttons": [],
+  "presets": [],
+  "limitations": "SDK example: local audio-file input, independent stereo channels.",
+  "build": {
+    "sources": [
+      "adapter.c"
+    ],
+    "includes": [],
+    "defines": []
+  }
+}
