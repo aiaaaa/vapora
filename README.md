@@ -16,6 +16,8 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 <img width="320" height="160" alt="32-white-disc-dunes" src="https://github.com/user-attachments/assets/2af2fa20-2f4f-43d8-9e24-77a9af5fd611" />
 
 
+## Play VAPORA in your browser
+
 
 
 ## Overview
