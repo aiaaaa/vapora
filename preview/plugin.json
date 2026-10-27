@@ -1,0 +1,441 @@
+{
+  "schema": 1,
+  "id": "vapora",
+  "name": "Vapora",
+  "version": "1.2.4",
+  "kind": "synth",
+  "description": "Cinematic pads. Spectral textures. An ocean in motion.",
+  "screen": {
+    "width": 320,
+    "height": 160
+  },
+  "parameters": [
+    {
+      "id": 0,
+      "label": "Morph",
+      "default": 0.275,
+      "format": "percent"
+    },
+    {
+      "id": 1,
+      "label": "Thickness",
+      "default": 0.793,
+      "format": "percent"
+    },
+    {
+      "id": 2,
+      "label": "Brightness",
+      "default": 0.565,
+      "format": "percent"
+    },
+    {
+      "id": 3,
+      "label": "Motion",
+      "default": 0.381,
+      "format": "percent"
+    },
+    {
+      "id": 4,
+      "label": "Character",
+      "default": 0,
+      "choices": [
+        "Warm",
+        "Swarm",
+        "Breath",
+        "Flute",
+        "Pressure",
+        "Surf",
+        "Porcelain",
+        "Sub",
+        "Velvet",
+        "Cathedral",
+        "Nebula",
+        "Aurora",
+        "Oceanic",
+        "Glassveil"
+      ]
+    },
+    {
+      "id": 5,
+      "label": "Interval",
+      "default": 0.2222222222222222,
+      "choices": [
+        "\u2212Octave",
+        "\u2212Fifth",
+        "Unison",
+        "+Minor 3rd",
+        "+Major 3rd",
+        "+Fifth",
+        "+Major 6th",
+        "+Minor 7th",
+        "+Major 7th",
+        "+Octave"
+      ]
+    },
+    {
+      "id": 6,
+      "label": "Speed",
+      "default": 0.25,
+      "format": "speed"
+    }
+  ],
+  "knobs": [
+    {
+      "primary": 0,
+      "secondary": 4,
+      "color": "blue",
+      "action": 0
+    },
+    {
+      "primary": 1,
+      "secondary": 5,
+      "color": "green",
+      "action": 1
+    },
+    {
+      "primary": 2,
+      "secondary": null,
+      "color": "white",
+      "action": 2
+    },
+    {
+      "primary": 3,
+      "secondary": 6,
+      "color": "orange",
+      "action": 3
+    }
+  ],
+  "buttons": [
+    {
+      "label": "Next sun",
+      "action": 2,
+      "pulse": true
+    },
+    {
+      "label": "Screen readout",
+      "action": 4,
+      "pulse": true,
+      "toggle": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Asteroid Swarm",
+      "values": [
+        0.0,
+        0.07629627368999298,
+        0.9155552842799157,
+        0.7629627368999298,
+        0.07692307692307693,
+        0.2222222222222222,
+        0.4882805347006043
+      ],
+      "octave": 0,
+      "envelope": [
+        3.7,
+        1.0,
+        0.9200109866634114,
+        2.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Breath Choir",
+      "values": [
+        0.05188146610919523,
+        0.4882961516159551,
+        0.86977752006592,
+        0.35096285897396773,
+        0.15384615384615385,
+        0.5555555555555556,
+        0.21360556674601722
+      ],
+      "octave": 0,
+      "envelope": [
+        0.65,
+        1.0,
+        0.749992370372631,
+        2.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Cavern Flute",
+      "values": [
+        0.16785180211798456,
+        0.7477034821619312,
+        0.9765923032319102,
+        0.7782219916379284,
+        0.23076923076923078,
+        1.0,
+        0.8545138253067204
+      ],
+      "octave": 0,
+      "envelope": [
+        1.5,
+        1.0,
+        0.9200109866634114,
+        2.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Deep Pressure",
+      "values": [
+        0.16785180211798456,
+        0.7477034821619312,
+        0.9765923032319102,
+        0.12207403790398877,
+        0.3076923076923077,
+        1.0,
+        0.06711225050357078
+      ],
+      "octave": 0,
+      "envelope": [
+        5.2,
+        1.0,
+        0.9200109866634114,
+        2.5
+      ],
+      "note": "Dry preview \u00b7 saved Reverb is not included."
+    },
+    {
+      "name": "Pink Surf",
+      "values": [
+        0.0,
+        0.6714072084719382,
+        0.6103701895199438,
+        0.0,
+        0.38461538461538464,
+        0.2222222222222222,
+        0.24998474027955808
+      ],
+      "octave": 0,
+      "envelope": [
+        3.7,
+        1.0,
+        0.9200109866634114,
+        2.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Porcelain Orbit",
+      "values": [
+        0.16785180211798456,
+        0.7477034821619312,
+        0.9765923032319102,
+        0.7782219916379284,
+        0.46153846153846156,
+        0.2222222222222222,
+        0.8545138253067204
+      ],
+      "octave": 0,
+      "envelope": [
+        1.5,
+        1.0,
+        0.7900021362956633,
+        2.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Sub Lantern",
+      "values": [
+        0.0,
+        0.0,
+        0.5493331705679495,
+        0.0,
+        0.5384615384615384,
+        0.0,
+        0.24998474027955808
+      ],
+      "octave": -1,
+      "envelope": [
+        0.005,
+        1.8,
+        0.7000030518509476,
+        2.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "A Fifth Tide",
+      "values": [
+        0.5798516800439466,
+        0.8545182653279214,
+        0.6256294442579424,
+        0.4272591326639607,
+        0.0,
+        0.5555555555555556,
+        0.1983458463040957
+      ],
+      "octave": 0,
+      "envelope": [
+        1.5,
+        0.0,
+        1.0,
+        2.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Holy Dust",
+      "values": [
+        0.4272591326639607,
+        0.86977752006592,
+        0.8850367748039186,
+        0.5798516800439466,
+        0.6923076923076923,
+        0.5555555555555556,
+        0.2593847280717817
+      ],
+      "octave": 0,
+      "envelope": [
+        3.933,
+        2.2,
+        0.9155552842799157,
+        3.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "XFIN",
+      "values": [
+        0.6714072084719382,
+        0.9002960295419171,
+        0.7477034821619312,
+        0.5798516800439466,
+        0.0,
+        0.5555555555555556,
+        0.1678264054202527
+      ],
+      "octave": 0,
+      "envelope": [
+        3.933,
+        2.2,
+        0.9155552842799157,
+        3.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Ice Chapel",
+      "values": [
+        0.36622211371196634,
+        0.9155552842799157,
+        0.8239997558519242,
+        0.6103701895199438,
+        1.0,
+        1.0,
+        0.22886528718793872
+      ],
+      "octave": -1,
+      "envelope": [
+        4.1,
+        2.2,
+        0.9155552842799157,
+        3.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Last Light",
+      "values": [
+        0.35096285897396773,
+        0.8850367748039186,
+        0.4882961516159551,
+        0.5493331705679495,
+        0.6153846153846154,
+        0.5555555555555556,
+        0.1525666849783312
+      ],
+      "octave": 0,
+      "envelope": [
+        3.266,
+        2.2,
+        0.9155552842799157,
+        3.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Moon Choir",
+      "values": [
+        0.8239997558519242,
+        0.8545182653279214,
+        0.640888698995941,
+        0.5493331705679495,
+        1.0,
+        0.4444444444444444,
+        0.1373069645364097
+      ],
+      "octave": 0,
+      "envelope": [
+        3.766,
+        2.2,
+        0.9155552842799157,
+        3.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    },
+    {
+      "name": "Stone Hall",
+      "values": [
+        0.08545182653279214,
+        0.7477034821619312,
+        0.7171849726859341,
+        0.3814813684499649,
+        0.6923076923076923,
+        0.2222222222222222,
+        0.1830861258621742
+      ],
+      "octave": -3,
+      "envelope": [
+        3.6,
+        2.2,
+        0.9155552842799157,
+        3.5
+      ],
+      "note": "Dry preview \u00b7 saved Plate is not included."
+    },
+    {
+      "name": "Tidal Arc",
+      "values": [
+        0.8545182653279214,
+        0.9155552842799157,
+        0.8392590105899228,
+        0.6714072084719382,
+        0.9230769230769231,
+        0.5555555555555556,
+        0.1983458463040957
+      ],
+      "octave": 0,
+      "envelope": [
+        3.433,
+        2.2,
+        0.9155552842799157,
+        3.5
+      ],
+      "note": "Dry preview \u00b7 browser audition envelope."
+    }
+  ],
+  "defaultPreset": 7,
+  "repository": "https://github.com/aiaaaa/vapora",
+  "limitations": "The original Vapora engine and animation, with a browser audition envelope. OP-1 T2, T3 effects, LFOs and hardware timing are not emulated.",
+  "build": {
+    "sources": [
+      "adapters/vapora.c",
+      "../plugin/vapora/vapora.c",
+      "../plugin/vapora/vapora_dsp.c",
+      "../plugin/vapora/vapora_screen.c"
+    ],
+    "includes": [
+      "../plugin/vapora",
+      "adapters/include"
+    ],
+    "defines": [
+      "VAPORA_HOST"
+    ]
+  }
+}
