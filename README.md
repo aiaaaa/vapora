@@ -102,6 +102,8 @@ The existing images and GIFs are retained. They are host renderings, not OLED ca
 
 By **AiAAAA**, developed with AI coding assistance. PADsynth algorithm by Nasca Octavian Paul. Built with Hundekraft’s Kennel SDK, with credit to pcppcp, ultralazr and the contributors named in the retained notices.
 
+The browser preview’s workbench layout and audition workflow were inspired by [Open-XY’s OP-XY SDK and Machine Workbench](https://github.com/etcetc000/open-xy), with [meemknight’s breadboard](https://github.com/meemknight/OPXY-breadboard) as a reference example. VAPORA’s browser host is an independent implementation for OP-1/Hundekraft plugins.
+
 GPL-3.0-or-later with the additional OP-1 firmware combination permission: see [LICENSE](LICENSE), [NOTICE](NOTICE), and [third-party credits](THIRD_PARTY_NOTICES.md). No Teenage Engineering firmware, extracted fonts or device keys are included.
 
 Independent project; not affiliated with Teenage Engineering.
