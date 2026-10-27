@@ -1,0 +1,89 @@
+{
+  "nativeWasmMaxError": 0,
+  "peaks": [
+    {
+      "name": "Asteroid Swarm",
+      "peak": 0.31189119815826416
+    },
+    {
+      "name": "Breath Choir",
+      "peak": 0.30361413955688477
+    },
+    {
+      "name": "Cavern Flute",
+      "peak": 0.3785838186740875
+    },
+    {
+      "name": "Deep Pressure",
+      "peak": 0.3182463049888611
+    },
+    {
+      "name": "Pink Surf",
+      "peak": 0.33661115169525146
+    },
+    {
+      "name": "Porcelain Orbit",
+      "peak": 0.3448902368545532
+    },
+    {
+      "name": "Sub Lantern",
+      "peak": 0.2971837520599365
+    },
+    {
+      "name": "A Fifth Tide",
+      "peak": 0.3468051850795746
+    },
+    {
+      "name": "Holy Dust",
+      "peak": 0.3581405282020569
+    },
+    {
+      "name": "XFIN",
+      "peak": 0.3505663275718689
+    },
+    {
+      "name": "Ice Chapel",
+      "peak": 0.32753247022628784
+    },
+    {
+      "name": "Last Light",
+      "peak": 0.29088059067726135
+    },
+    {
+      "name": "Moon Choir",
+      "peak": 0.37111008167266846
+    },
+    {
+      "name": "Stone Hall",
+      "peak": 0.3302820026874542
+    },
+    {
+      "name": "Tidal Arc",
+      "peak": 0.3467792570590973
+    }
+  ],
+  "maxCommands": 351,
+  "workletPeak": 0.11315659433603287,
+  "passed": true,
+  "plugin_version": "1.2.4",
+  "plugin_source_commit": "c9560194c9df4ededb646f616440d79451effd57",
+  "readme_base_commit": "e50da3d21286fa542d6e3e9479ee724a64db4cf8",
+  "production_source_modified": false,
+  "browser": "Chrome, interactive AudioWorklet playback; desktop and 390px phone viewport",
+  "ui_checks": [
+    "audio opt-in",
+    "chord playback",
+    "stop all",
+    "preset octave",
+    "alternate controls",
+    "readout toggle",
+    "valid patch import",
+    "invalid patch rejected without state change"
+  ],
+  "limits": [
+    "Dry audition envelopes; no stock T2/T3/LFO emulation",
+    "Stereo gain effect is a host fixture, not a shipped Hundekraft effect",
+    "No hardware performance claim"
+  ],
+  "sdk_text_header_sha256": "efc55c08e05745879c1763f88f98831730f016669c40a0d6d2c9cebccf5bbbed"
+}
