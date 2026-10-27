@@ -1,39 +1,10 @@
 {
-  "version": "1.2.3",
-  "baseline_commit": "e97a8c54ace0334b34c7b68f7cbd465399337629",
-  "fixed_gain_multiplier": 3,
-  "gain_db": 9.542425094,
-  "unchanged_tables": true,
-  "unchanged_visual_sources": true,
-  "unchanged_presets": [
-    "asteroid swarm.aif",
-    "tidal arc.aif",
-    "ice chapel.aif",
-    "moon choir.aif",
-    "cavern flute.aif",
-    "sub lantern.aif",
-    "holy dust.aif",
-    "XFIN.aif",
-    "a fifth tide.aif",
-    "breath choir.aif",
-    "last light.aif",
-    "pink surf.aif",
-    "deep pressure.aif",
-    "porcelain orbit.aif"
-  ],
-  "stone_hall": {
-    "octave": -3,
-    "fx_active": true,
-    "fx_type": "plate",
-    "readouts": {
-      "Decay": 99,
-      "Tone": 0,
-      "Pre": 99,
-      "Mix": 33
-    },
-    "synth_knobs_and_adsr_unchanged": true,
-    "sha256": "9622503143647b11b46461d87821e00671563578643241ee6ada759a0e6ce2bb"
-  },
-  "dry_fixture_note": "Stone Hall host fixture now plays three octaves lower. Saved effects are not rendered. Other dry fixture changes are the fixed gain increase.",
+  "version": "1.2.4",
+  "baseline_commit": "738deae3b72549ad2837c12dcc5def079f10a26b",
+  "audio_sources_and_tables_unchanged": true,
+  "all_15_presets_unchanged": true,
+  "wave_geometry_unchanged": true,
+  "parameter_mappings_unchanged": true,
+  "changed_visuals": "Green signatures; stable particle paths, soft fades and 37.5% small-star drift.",
   "hardware_performance_measured": false
 }
