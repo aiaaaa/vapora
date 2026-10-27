@@ -13,7 +13,7 @@ class PreviewProcessor extends AudioWorkletProcessor {
       if(m.type==='parameters' && Array.isArray(m.values) && m.values.length<=64 && m.values.every(v=>Number.isFinite(v)&&v>=0&&v<=1))m.values.forEach((v,i)=>e.pv_parameter(i,v));
       else if(m.type==='on' && Number.isInteger(m.note) && m.note>=0 && m.note<=127 && Number.isFinite(m.velocity)){
         const pitch=Math.round(440*2**((m.note-69)/12)*4294967296/44100);
-        e.pv_note_on(m.note,m.velocity,pitch);this.offset=128;
+        e.pv_note_on(m.note,m.velocity,pitch);
       }
       else if(m.type==='off')e.pv_note_off(m.note);
       else if(m.type==='panic'){e.pv_panic();this.offset=128;}

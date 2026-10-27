@@ -19,6 +19,12 @@ function updateStatus(){
 }
 function markEdited(){selected=-1;document.querySelectorAll('#presets button').forEach(b=>b.setAttribute('aria-pressed','false'));$('preset-note').textContent='Custom sound · dry browser preview.';}
 function format(p,v){if(p.choices)return p.choices[Math.round(v*(p.choices.length-1))];if(p.format==='speed'){const q=Math.round(1+v*32766);return ((20+Math.floor(Math.floor(q*q/32768)*1980/32768))/1000).toFixed(2)+' Hz';}return Math.round(v*100)+'%';}
+function actionButton(b){
+  const button=document.createElement('button');button.textContent=b.label;
+  if(b.toggle)button.setAttribute('aria-pressed','false');
+  button.onclick=()=>{visual.pv_action(b.action,1);drawScreen($('screen'),visual,1000,manifest.screen.width,manifest.screen.height);if(b.pulse)visual.pv_action(b.action,0);if(b.toggle)button.setAttribute('aria-pressed',String(button.getAttribute('aria-pressed')!=='true'));};
+  return button;
+}
 function renderControls(){
   $('controls').replaceChildren();
   for(const [index,k] of manifest.knobs.entries()){
@@ -31,7 +37,9 @@ function renderControls(){
     input.addEventListener('input',()=>{values[p.id]=Number(input.value);output.textContent=format(p,values[p.id]);input.setAttribute('aria-valuetext',output.textContent);dial.style.setProperty('--angle',`${values[p.id]*270-135}deg`);applyValues();markEdited();});
     c.append(label,dial,output,input);
     if(k.secondary!=null){const b=document.createElement('button');b.className='alternate';b.textContent=manifest.parameters[secondary?k.primary:k.secondary].label+' ↔';b.setAttribute('aria-label',`Switch ${manifest.parameters[k.primary].label} / ${manifest.parameters[k.secondary].label}`);b.setAttribute('aria-pressed',String(!!secondary));b.onclick=()=>{mode.set(index,!secondary);if(k.action!=null)visual.pv_action(k.action,!secondary?1:0);renderControls();};c.append(b);}
-    else{const spacer=document.createElement('div');spacer.className='alternate-space';c.append(spacer);}
+    const actions=manifest.buttons.filter(b=>b.knob===index);
+    for(const action of actions){const b=actionButton(action);b.className='alternate';c.append(b);}
+    if(k.secondary==null&&!actions.length){const spacer=document.createElement('div');spacer.className='alternate-space';c.append(spacer);}
     $('controls').append(c);
   }
 }
@@ -86,7 +94,7 @@ async function start(){
   document.title=manifest.name+' · Play';$('title').textContent=manifest.name;$('description').textContent=manifest.description;$('instrument-label').textContent=`${manifest.name.toUpperCase()} / ${manifest.version}`;$('limitations').textContent=manifest.limitations;
   if(manifest.repository)$('source').href=manifest.repository;else $('source').hidden=true;
   const canvas=$('screen');canvas.width=manifest.screen.width*3;canvas.height=manifest.screen.height*3;canvas.setAttribute('aria-label',`Live ${manifest.name} screen`);
-  manifest.buttons.forEach(b=>{const button=document.createElement('button');button.textContent=b.label;if(b.toggle)button.setAttribute('aria-pressed','false');button.onclick=()=>{visual.pv_action(b.action,1);drawScreen(canvas,visual,1000,manifest.screen.width,manifest.screen.height);if(b.pulse)visual.pv_action(b.action,0);if(b.toggle)button.setAttribute('aria-pressed',String(button.getAttribute('aria-pressed')!=='true'));};$('screen-actions').append(button);});
+  manifest.buttons.filter(b=>b.knob==null).forEach(b=>$('screen-actions').append(actionButton(b)));
   manifest.presets.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p.name;b.setAttribute('aria-pressed','false');b.onclick=()=>preset(i);$('presets').append(b);});
   if(manifest.kind==='synth'){
     let white=0;
