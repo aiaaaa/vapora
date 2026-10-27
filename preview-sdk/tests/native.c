@@ -8,6 +8,7 @@ int main(void){
     pv_note_on(60,.8f,25480119u);
     for(int i=0;i<256;i++){
         if(i==100)pv_note_on(67,.65f,38176255u);
+        if(i==120)pv_note_on(60,.8f,25480119u);
         if(i==160)pv_note_off(60);
         if(i==200)pv_note_off(67);
         pv_process();if(fwrite(pv_output(),sizeof(float),256,stdout)!=256)return 1;

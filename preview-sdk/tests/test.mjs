@@ -15,6 +15,7 @@ e.pv_envelope(.01,.1,.8,.1);for(let p=0;p<7;p++)e.pv_parameter(p,p/8);e.pv_note_
 const actual=new Float32Array(256*256);
 for(let i=0;i<256;i++){
   if(i===100)e.pv_note_on(67,.65,38176255);if(i===160)e.pv_note_off(60);if(i===200)e.pv_note_off(67);
+  if(i===120)e.pv_note_on(60,.8,25480119);
   e.pv_process();actual.set(output(e),i*256);
 }
 const native=fs.readFileSync(path.join(root,'.preview-tests/native.f32'));
@@ -37,6 +38,35 @@ for(const preset of manifest.presets){
   e.pv_panic();e.pv_process();assert(output(e).every(v=>v===0));peaks.push({name:preset.name,peak});
 }
 console.log('PASS: all 15 presets, six voices, finite audio, headroom, release and panic');
+// Compare a replacement against the uninterrupted oscillator at the event boundary.
+// A reset to silence injects a click even when the mix never exceeds full scale.
+const onsetErrors=[];
+for(const steal of [false,true]){
+  const replaced=instantiate(module,'synth'),reference=instantiate(module,'synth');
+  const held=steal?[60,64,67,72,76,79]:[60],next=steal?84:60;
+  for(const voice of [replaced,reference]){
+    voice.pv_envelope(.005,.05,1,2);
+    for(const n of held)voice.pv_note_on(n,.8,pitch(n));
+    for(let b=0;b<80;b++)voice.pv_process();
+  }
+  replaced.pv_note_on(next,.8,pitch(next));replaced.pv_process();reference.pv_process();
+  const error=Math.abs(output(replaced)[0]-output(reference)[0]);onsetErrors.push(error);
+  assert(error<.001,`${steal?'voice steal':'retrigger'} onset discontinuity: ${error}`);
+  // Releasing a queued note must cancel it, including same-note retriggers.
+  replaced.pv_note_off(next);for(const n of held)replaced.pv_note_off(n);
+  for(let b=0;b<700;b++)replaced.pv_process();
+  assert.equal(replaced.pv_active(),0,'released replacement must not start later');
+  assert(output(replaced).every(x=>x===0));
+}
+// A burst of replacements completes in two fade blocks, without extending the fade.
+e=instantiate(module,'synth');e.pv_envelope(.005,.05,1,.005);
+for(let n=48;n<54;n++)e.pv_note_on(n,.8,pitch(n));for(let b=0;b<80;b++)e.pv_process();
+for(let n=60;n<66;n++)e.pv_note_on(n,.8,pitch(n));e.pv_process();
+for(let n=60;n<66;n++)e.pv_note_on(n,.8,pitch(n));e.pv_process();e.pv_process();
+assert.equal(e.pv_active(),6);
+for(let n=60;n<66;n++)e.pv_note_off(n);for(let b=0;b<4;b++)e.pv_process();
+assert.equal(e.pv_active(),0);assert(output(e).every(x=>x===0));
+console.log('PASS: click-free retriggers/voice stealing, queued release and rapid replacement',onsetErrors);
 e=instantiate(module,'synth');for(let n=40;n<60;n++)e.pv_note_on(n,.8,pitch(n));assert.equal(e.pv_active(),6);e.pv_panic();assert.equal(e.pv_active(),0);
 // Separate graphics instance receives only a fixed-size snapshot, never shared mutable DSP state.
 const visual=instantiate(module,'synth');e.pv_note_on(60,.8,pitch(60));for(let b=0;b<10;b++)e.pv_process();
@@ -73,4 +103,12 @@ w.port.onmessage({data:{type:'panic'}});w.process([], [audio]);assert(audio.ever
 const fw=new Processor({processorOptions:{module:fxModule,kind:'effect'}});fw.port.onmessage({data:{type:'parameters',values:[.5]}});
 fw.process([[Float32Array.from({length:128},()=>.4),Float32Array.from({length:128},()=>-.2)]],[audio]);assert(Math.abs(audio[0][0]-.2)<1e-7);assert(Math.abs(audio[1][0]+.1)<1e-7);
 console.log('PASS: production AudioWorklet transport, telemetry, panic and stereo effect input');
-fs.writeFileSync(path.join(root,'.preview-tests/results.json'),JSON.stringify({nativeWasmMaxError:maxError,peaks,maxCommands,workletPeak,passed:true},null,2)+'\n');
+// A new note must not discard the unplayed half of a synth render block.
+const small=new Processor({processorOptions:{module,kind:'synth'}}),control=new Processor({processorOptions:{module,kind:'synth'}});
+const half=[new Float32Array(64)],whole=[new Float32Array(128)];
+for(const worklet of [small,control])worklet.port.onmessage({data:{type:'on',note:60,velocity:.8}});
+for(let b=0;b<81;b++){small.process([],[half]);if(b%2===0)control.process([],[whole]);}
+small.port.onmessage({data:{type:'on',note:67,velocity:.8}});small.process([],[half]);
+assert.deepEqual(half[0],whole[0].slice(64),'new note skipped buffered samples');
+console.log('PASS: note-on preserves partially consumed audio blocks');
+fs.writeFileSync(path.join(root,'.preview-tests/results.json'),JSON.stringify({nativeWasmMaxError:maxError,peaks,maxCommands,workletPeak,onsetErrors,passed:true},null,2)+'\n');
