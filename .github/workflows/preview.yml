@@ -1,0 +1,49 @@
+name: Browser preview
+on:
+  push:
+    branches: [main]
+    paths: ['preview/**', 'preview-sdk/**', 'plugin/vapora/**', '.github/workflows/preview.yml']
+  pull_request:
+    paths: ['preview/**', 'preview-sdk/**', 'plugin/vapora/**', '.github/workflows/preview.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install WebAssembly compiler
+        run: sudo apt-get update && sudo apt-get install -y clang-18 lld-18
+      - name: Test source adapters and build the static site
+        run: python3 preview-sdk/test.py --cc clang-18 --native-cc clang-18
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview-test-results
+          path: .preview-tests/results.json
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy preview
+        id: deployment
+        uses: actions/deploy-pages@v4
