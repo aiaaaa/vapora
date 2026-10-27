@@ -108,6 +108,7 @@
   "buttons": [
     {
       "label": "Next sun",
+      "knob": 2,
       "action": 2,
       "pulse": true
     },
