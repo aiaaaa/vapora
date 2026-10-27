@@ -18,11 +18,11 @@ Cinematic pads and spectral textures for the original OP-1, built for Hundekraft
 
 ## Play VAPORA in your browser
 
-[![Play VAPORA in your browser](media/browser-preview.svg)](https://aiaaaa.github.io/vapora/)
-
 **[Open the playable preview →](https://aiaaaa.github.io/vapora/)**
 
 Play the actual VAPORA engine and animated screen with your keyboard or touch, explore all 15 presets, and save browser patches. Click **Enable audio** to begin. No OP-1 or installation required.
+
+[![Play VAPORA in your browser](media/browser-preview.svg)](https://aiaaaa.github.io/vapora/)
 
 The preview uses a browser audition envelope; saved Plate/Reverb effects and other OP-1 processing are not included. [Preview SDK and build instructions](preview-sdk/README.md).
 
