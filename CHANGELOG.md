@@ -1,3 +1,12 @@
+# 1.2.4 — smoother stars and green signatures
+
+- Replace the five blue signature stars with green line-art crosses and asterisks, including detailed compass and forked-ray designs. Retain the existing green outlines and Thickness rotation/size behavior.
+- Give small background stars stable subpixel paths, soft sun fades and faded screen wrapping. Remove collision-driven repositioning and prevent dark marks over the solid sun.
+- Small/tiny stars move at 37.5% of the medium/large stars' speed, using an independent clock.
+- Preserve the original 1.2.3 blue wave geometry and motion, audio, presets, parameter mappings and Shift readout.
+- Keep existing images and GIFs unchanged. Existing 1.2.3 users update only the plugin.
+- Native package/relocation checks and sanitizer host tests pass. Controlled device performance measurements remain pending.
+
 # 1.2.3 — output level and Stone Hall Plate
 
 - Raise fixed output gain by 3× (about +9.54 dB); preserve velocity, envelopes, tables and visuals. No compressor or automatic gain adjustment.

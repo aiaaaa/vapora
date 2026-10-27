@@ -59,7 +59,7 @@ Save an edited sound with the OP-1’s usual sound-key gesture. Deep Pressure sa
 
 ## Download and install
 
-- [VAPORA 1.2.3 plugin](downloads/vapora.knl)
+- [VAPORA 1.2.4 plugin](downloads/vapora.knl)
 - [15 factory presets](downloads/vapora-core15-presets.zip) — for new installations
 - [Stone Hall preset update](downloads/vapora-stone-hall-plate.zip) — replace only Stone Hall in an existing bank
 - [Checksums](downloads/SHA256SUMS)
@@ -68,7 +68,7 @@ Requires the **original OP-1 with Hundekraft 3.0.2**. This is not an OP-1 field 
 
 Open the [Hundekraft Workshop](https://hundekraft.github.io/op1-workshop/), add `vapora.knl` under **Your plugins**, connect the instrument, and use **Update OP-1**. Follow the Workshop’s transfer/restart instructions.
 
-For a new installation, unzip the preset pack and copy its `synth/vapora` folder into the instrument’s `synth` folder in normal disk mode. Eject and allow synchronization to finish. If you already have the final 15 presets, **update the plugin and replace only `synth/vapora/stone hall.aif`** from the Stone Hall update. Keep the other fourteen presets. Eject, allow synchronization to finish, then reload Stone Hall. Keep a copy first if you edited your existing Stone Hall.
+For a new installation, unzip the preset pack and copy its `synth/vapora` folder into the instrument’s `synth` folder in normal disk mode. Eject and allow synchronization to finish. If upgrading from 1.2.3, **update only the plugin; keep all presets**. If upgrading an older installation that lacks the Stone Hall update, **update the plugin and replace only `synth/vapora/stone hall.aif`** from the Stone Hall update. Keep the other fourteen presets. Eject, allow synchronization to finish, then reload Stone Hall. Keep a copy first if you edited your existing Stone Hall.
 
 Deep Pressure uses the separate Hundekraft `reverb` effect; Stone Hall uses `plate`. Install those effects to use their saved settings. The OP-1 supplies the T2 envelope and optional T3 effect.
 
@@ -83,6 +83,8 @@ The existing images and GIFs are retained. They are host renderings, not OLED ca
 [Release notes](CHANGELOG.md) · [Validation records](validation) · [Hundekraft handoff notes](docs/HUNDEKRAFT.md)
 
 ### Version notes
+
+**Version 1.2.4** adds green line-art signature stars and smoother background-star movement, with small stars drifting at 37.5% of the larger stars' speed. The original blue waves, sound, presets and Shift readout are unchanged from 1.2.3. Existing 1.2.3 users update only the plugin.
 
 **Version 1.2.3** raises VAPORA’s fixed output gain by 3× to match Stock synth output levels (about +9.54 dB), keeping its velocity response and envelopes. Stone Hall now starts at octave −3 with Plate enabled: Decay 99, Pre 99, Tone 00, Mix 33. Other presets and visuals are unchanged. Start with a lower master volume when comparing the louder output.
 
