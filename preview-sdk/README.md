@@ -48,6 +48,8 @@ on the public site. The local server is only a development convenience.
    controls/buttons, screen size, presets, source paths, include paths and defines.
    Source/include paths are relative to the manifest. Parameter IDs are contiguous
    from zero, values normalized to [0,1], and IDs remain stable across patch files.
+   A button's optional zero-based `knob` index places it below that knob's slider;
+   buttons without it appear beside the screen status.
 3. Implement the callbacks in `include/preview.h` by forwarding to the original
    engine and screen code. Replace device services with host equivalents; never
    dereference firmware addresses in WebAssembly. Read-only tables can compile
@@ -81,6 +83,9 @@ There is no microphone request or upload.
 The generic host applies a linear ADSR audition envelope; it does not reproduce
 TE's T2 envelope. Vapora's preset durations come from its existing tested host
 fixtures. Saved T3 effects are explicitly omitted. Preset octaves are applied.
+Retriggers and voice stealing fade the outgoing voice over 256 samples (5.8 ms)
+before starting its replacement. Free voices start immediately. Note-off cancels
+queued replacements; Stop all still silences every voice immediately.
 Display geometry and animation execute the original C code. Canvas rasterization
 and the substitute text font are not pixel-identical to the device OLED.
 
@@ -106,10 +111,12 @@ proposed for inclusion in Hundekraft's SDK.
 ## Validation
 
 `test.py` compiles a native adapter and the browser WASM from the same sources and
-compares 65,536 float output samples across note start, overlap, and release. It
+compares 65,536 float output samples across note start, overlap, retrigger, and release. It
 then exercises all 15 presets with six voices, finite output/headroom, voice
 stealing, panic/release, all 14 characters × seven suns, telemetry copies, patch
 validation, independent stereo effect channels, and the actual worklet transport.
+Regression checks measure replacement discontinuities, cancel queued notes, and
+verify that new notes preserve partially consumed worklet audio blocks.
 Results are written to `.preview-tests/results.json`. The stereo fixture uses a
 known input/output relationship; the native comparison catches browser-port DSP
 differences. Neither test predicts OP-1 hardware performance.
