@@ -14,7 +14,7 @@ static uint8_t edges[PS_EDGES][2];
 static uint32_t sequence[PS_VOICES], clock_last, elapsed, ocean_phase, idle_phase;
 static uint32_t sun_phase;
 static int view_slot=-1,view_selector=-1,ready;
-static uint32_t particle_phase;
+static uint32_t particle_phase,particle_slow_phase;
 static int active_knob, active_sun, control_ready;
 static int footer_visible,footer_shift_previous;
 static int shift_held(void)
@@ -242,7 +242,7 @@ static void geometry(const ps_params *p)
 #ifdef VAPORA_HOST
 void ps_test_audition_reset(int mode)
 {
-    wave_mode=mode;ocean_phase=idle_phase=particle_phase=sun_phase=0;
+    wave_mode=mode;ocean_phase=idle_phase=particle_phase=particle_slow_phase=sun_phase=0;
     impact_rng=0x7472616du;impact_count=0;impacts_reset();active_knob=active_sun=0;
 }
 int ps_test_footer(void){return footer_visible;}
@@ -345,6 +345,7 @@ static void controls(void *r,const ps_params *p,const int16_t *raw)
 #ifdef VAPORA_HOST
 int ps_test_secret(void){return z==2;}
 uint32_t ps_test_particle_phase(void){return particle_phase;}
+uint32_t ps_test_particle_slow_phase(void){return particle_slow_phase;}
 uint32_t ps_test_ocean_phase(void){return ocean_phase;}
 uint32_t ps_test_sun_phase(void){return sun_phase;}
 void ps_test_sun_color(uint32_t phase,int depth,uint8_t *out)
@@ -354,10 +355,17 @@ void ps_test_sun_frame(int design,uint32_t phase,int depth)
 void ps_test_particle_frame(int interval,uint32_t phase)
 {
     ps_params p={0};p.interval=interval;
-    uint32_t old_phase=particle_phase;int old_sun=sun_design;
-    particle_phase=phase;sun_design=2; /* Halo: no solid disk exclusion. */
+    uint32_t old_phase=particle_phase,old_slow=particle_slow_phase;int old_sun=sun_design;
+    particle_phase=particle_slow_phase=phase;sun_design=2; /* Halo: no solid disk exclusion. */
     draw_particles(op1_raster(),&p,56);
-    particle_phase=old_phase;sun_design=old_sun;
+    particle_phase=old_phase;particle_slow_phase=old_slow;sun_design=old_sun;
+}
+void ps_test_small_solid_frame(int interval,uint32_t phase)
+{
+    ps_params p={0};p.interval=interval;p.q[PS_BRIGHT]=32767;
+    uint32_t old_phase=particle_phase,old_slow=particle_slow_phase;int old_sun=sun_design;
+    particle_phase=particle_slow_phase=phase;sun_design=0;draw_particles(op1_raster(),&p,36);
+    particle_phase=old_phase;particle_slow_phase=old_slow;sun_design=old_sun;
 }
 void ps_test_logo_vertex(int interval,int thick,op1_pt *out)
 {*out=star_logo_vertex(&ps_star_logos[interval],0,0,0,(unsigned)thick*32768u/32767u,thick);}
@@ -418,7 +426,10 @@ static void update(void *scr,int dt)
         ocean_phase+=(uint32_t)(((uint64_t)step*ps_visual_speed_millihz(8192)*10737u)/1000000u);
         /* High sun: half the former daytime drift; nighttime speed unchanged. */
         int night=32767-p.q[PS_BRIGHT];
-        particle_phase+=(uint32_t)(((uint64_t)step*(160u+((unsigned)night*320u>>15)))/1000u);
+        uint32_t drift=(uint32_t)(((uint64_t)step*(160u+((unsigned)night*320u>>15)))/1000u);
+        particle_phase+=drift;
+        /* Separate clock stays continuous when either layer wraps. */
+        particle_slow_phase+=(uint32_t)((uint64_t)drift*3u/8u);
         if(!secret){impacts_tick(step);geometry(&p);}else impacts_reset();
     }
     int cy=ps_sun_y(p.q[PS_BRIGHT]);

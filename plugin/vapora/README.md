@@ -1,12 +1,11 @@
-# VAPORA 1.2.3
+# VAPORA 1.2.4
 
 Native six-voice PADsynth instrument for the original OP-1 / Hundekraft 3.0.2.
 Two independently phased, detuned playback heads per voice; 14 sound Characters
 and 15 factory presets. The OP-1 supplies velocity, T2 envelope and optional T3
-processing. This release raises fixed output gain by 3x (about +9.54 dB), retaining
-table data, sound-word mappings and visuals. Stone Hall now saves Plate enabled;
-the other fourteen preset files are unchanged. A note-off callback now
-tracks held serials solely for the screen; it does not alter DSP or T2 release.
+processing. This release refines the star field and green signature designs.
+Small/tiny stars drift at 37.5% of the medium/large stars' speed. The blue wave,
+audio, all 15 presets and saved parameter mappings are unchanged from 1.2.3.
 
 ## Controls and visuals
 
@@ -78,10 +77,11 @@ Thickness, Interval, Motion and Speed have no direct wave-geometry effect.
 
 ## Interval stars and Thickness
 
-The original 48 cool stars (8 large, 16 medium, 24 small) retain their layout,
-sizes, colors and drift. Interval adds a distinct seeded field on top; changing
-Interval immediately replaces its placement. Returning to an Interval restores
-its arrangement at the current animation phase. Added strokes avoid the base.
+The base field has 48 cool stars (8 large, 16 medium, 24 small). Interval adds
+a distinct seeded field; changing Interval immediately replaces its placement.
+Small/tiny stars use a separate clock at 37.5% of the larger stars' speed.
+All small stars follow smooth subpixel paths and fade near the sun and screen
+wrap. They can overlap instead of jumping sideways to avoid one another.
 
 | Interval | Added distribution (before sun occlusion), stock size | Color |
 |---|---|---|
@@ -97,13 +97,10 @@ its arrangement at the current animation phase. Added strokes avoid the base.
 | Octave above | 48 tiny | Green |
 
 
-Each Interval also adds a unique outline star, 14–18px at minimum Thickness:
-paired four-, five-, six-, seven- and eight-point silhouettes with differing
-proportions and rotations. Blue signatures appear over green added stars, green
-signatures over cool stars. The signature drifts the full left-to-right path,
-wraps to the far left and passes behind the sun. Original stars draw over it.
-Thickness rotates once through 360 degrees and grows the outline from 100% to
-160%; its line width remains 1.5px. Audio behavior is unchanged.
+Each Interval also adds a green signature: five retained outline stars alternate
+with a capped compass plus, forked diagonal cross, six-ray asterisk, eight-ray
+asterisk and short-diagonal cross. Thickness rotates each through a full turn
+and grows it up to 60%. Signatures cross the sky and pass behind the sun.
 
 ## Sun
 
@@ -127,7 +124,7 @@ Wave colors, base stars and the other dial paints remain unchanged.
 ## Presets and installation
 
 Update `vapora.knl` through Workshop **Your plugins / Update OP-1**. Existing
-users of the final 15-preset bank should update the plugin and replace only
+users upgrading from 1.2.3 should update only the plugin. Older installations may need to replace only
 `synth/vapora/stone hall.aif` for the Plate binding. New users can
 install the separate factory bank into `synth/vapora` in normal disk mode.
 Do not replace current presets with older R6 evaluation files: their Character
@@ -166,7 +163,7 @@ python3 tools/build.py --toolchain /path/to/toolchain --skip-previews
 ```
 
 Use the dependencies in `requirements.txt`. Omit `--skip-previews` to render
-host media; the 1.2.3 build generates no GIFs. No media generation is required
+host media; the 1.2.4 build generates no GIFs. No media generation is required
 to build the plugin.
 
 Checks cover deterministic tables, 15 AIF round trips, production DSP and screen

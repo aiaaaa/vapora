@@ -9,8 +9,8 @@ typedef struct {uint8_t count,large,medium,tiny;} ps_star_field;
 static const ps_star_field ps_star_fields[5]={
     {12,8,4,0}, {32,8,8,0}, {24,0,18,0}, {40,0,8,0}, {48,0,0,1}
 };
-typedef struct {int16_t x,y;} ps_star_position;
-static void particle_layer(void *r,const ps_params *p,int cy,int overlay,ps_star_position *base)
+
+static void particle_layer(void *r,const ps_params *p,int cy,int overlay)
 {
     #ifdef VAPORA_HOST
     ps_host_particle_layer=overlay;
@@ -22,53 +22,42 @@ static void particle_layer(void *r,const ps_params *p,int cy,int overlay,ps_star
     for(int k=0;k<count;k++){
         unsigned seed=(unsigned)k*0x9e3779b9u+(overlay?(0xa17e2b91u+(unsigned)interval*0x85ebca6bu):0x53544152u);
         seed^=seed>>16;seed*=0x7feb352du;seed^=seed>>15;
-        int x=5+(int)(((uint64_t)(uint32_t)(seed+particle_phase)*307u)>>32);
-        int wander=coherent((particle_phase>>20)+(seed&1023),(seed>>20)&1023);
-        int y=7+(int)((seed>>16)%43);
-        y+=(rounded_wave(particle_phase+(unsigned)k*0x23000000u)>>14);
-        y+=(wander*(2+(night>>13)))>>10;
-        y=ps_clamp(y,5,55);
-        if(!overlay){base[k].x=(int16_t)x;base[k].y=(int16_t)y;}
-        else {
-            /* Keep the original strokes visible. Move added stars past a base
-             * stroke's footprint, with a bounded search and no allocations. */
-            int clear=0;
-            for(int attempt=0;attempt<PS_PARTICLES*2+1;attempt++){
-                int collision=-1;
-                for(int b=0;b<PS_PARTICLES;b++){
-                    int bx=x-base[b].x,by=y-base[b].y;
-                    if(bx>-9&&bx<9&&by>-6&&by<6){collision=b;break;}
-                }
-                if(collision<0){clear=1;break;}
-                x=base[collision].x+9;
-                if(x>311)x=5;
-            }
-            if(!clear)continue;
-        }
-        int dx=x-160,dy=y-cy;
-        int shape=ps_sun_shapes[sun_design];
-        int radius=shape==18?30:shape==2?24:(shape==21||shape==22)?22:18;
-        int exclusion=overlay?28:24;
-        if(shape==21&&dx*dx+dy*dy<exclusion*exclusion)continue;
-        int light=ps_clamp((dx*dx+dy*dy-radius*radius)*6,0,255);
-        light=(light*(192+(night>>9)))>>8;
         int large=overlay?k<field->large:k%6==0;
         int medium=overlay?(!large&&k<(field->large+field->medium)):(k%6==1||k%6==2);
         int tiny=overlay&&field->tiny;
+        uint32_t phase=(large||medium)?particle_phase:particle_slow_phase;
+        /* Fixed identity + layered drift: never relocate stars to dodge one
+         * another. Subpixel coordinates avoid whole-pixel vertical jumps. */
+        int x=5*1024+(int)(((uint64_t)(uint32_t)(seed+phase)*(307u*1024u))>>32);
+        int y=(9+(int)((seed>>16)%39))*1024;
+        y+=rounded_wave(phase+seed)/16;
+        y+=rounded_wave(phase+(unsigned)k*0x23000000u)/32;
+        int dx=(x-160*1024)/256,dy=(y-cy*1024)/256;
+        int shape=ps_sun_shapes[sun_design];
+        int radius=shape==18?30:shape==2?24:(shape==21||shape==22)?22:18;
+        /* Ten-pixel soft halo replaces abrupt exclusion and one-pixel flashes. */
+        int light=ps_clamp((dx*dx+dy*dy-radius*radius*16)*255/((20*radius+100)*16),0,255);
+        /* The native solid disk is drawn first: zero-light ink must not
+         * punch black holes into it. The soft halo already reaches zero. */
+        if(shape==21&&light==0)continue;
+        light=(light*(192+(night>>9)))>>8;
+        /* Fade through the horizontal wrap rather than visibly teleport. */
+        int edge=ps_clamp((x-5*1024)/24,0,255);
+        int end=ps_clamp((312*1024-x)/24,0,255);if(end<edge)edge=end;
+        light=light*edge/255;
         uint8_t dot[4]={(uint8_t)(((large?170:medium?140:115)*light)>>8),
             (uint8_t)(((large?220:medium?195:175)*light)>>8),(uint8_t)light,255};
         if(green)for(int c=0;c<3;c++)dot[c]=(uint8_t)((ps_text_colors[1][c]*light+127)/255);
-        line(r,x*1024,y*1024,x*1024+(large?1200:medium?800:650),y*1024,
+        line(r,x,y,x+(large?1200:medium?800:650),y,
              (large?PS_BIG_DOT_STROKE:medium?PS_MED_DOT_STROKE:tiny?PS_TINY_DOT_STROKE:PS_DOT_STROKE),dot);
     }
 }
 #include "vapora_star_logos.h"
 static void draw_particles(void *r,const ps_params *p,int cy)
 {
-    ps_star_position base[PS_PARTICLES];
     draw_star_logo(r,p,cy);
-    particle_layer(r,p,cy,0,base);
-    particle_layer(r,p,cy,1,base);
+    particle_layer(r,p,cy,0);
+    particle_layer(r,p,cy,1);
     #ifdef VAPORA_HOST
     ps_host_particle_layer=-1;
     #endif

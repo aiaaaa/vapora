@@ -1,13 +1,13 @@
-/* Ten related outline stars: one signature for each Interval. */
+/* Five outline stars alternate with five green crossed-line signatures. */
 #ifndef VAPORA_STAR_LOGOS_H
 #define VAPORA_STAR_LOGOS_H
 typedef struct {uint8_t tips,inner,rx,ry;uint16_t turn;} ps_star_logo;
 static const ps_star_logo ps_star_logos[PS_INTERVALS]={
-    {4,30,9,7,0},       {4,38,8,9,4096},
-    {5,43,8,8,24576},   {5,28,9,8,27853},
-    {6,46,8,8,0},       {6,28,8,9,2731},
-    {7,45,9,8,24576},   {7,30,8,9,26917},
-    {8,48,9,8,0},       {8,29,8,9,2048}
+    {4,30,9,7,0},       {2,100,9,9,0},
+    {5,43,8,8,24576},   {2,100,9,9,4096},
+    {6,46,8,8,0},       {3,100,9,9,0},
+    {7,45,9,8,24576},   {4,100,9,9,0},
+    {8,48,9,8,0},       {4,100,10,7,0}
 };
 static op1_pt star_logo_vertex(const ps_star_logo *logo,int vertex,int x,int y,unsigned rotation,int thickness)
 {
@@ -70,14 +70,42 @@ static void draw_star_logo(void *r,const ps_params *p,int cy)
     star_logo_position(interval,&x,&y);
     const ps_star_logo *logo=&ps_star_logos[interval];
     int light=(255*(192+((32767-p->q[PS_BRIGHT])>>9)))>>8;
-    /* Opposite to the added small stars: blue over green, green over cool. */
-    const uint8_t *paint=ps_text_colors[(interval&1)?0:1];
+    const uint8_t *paint=ps_text_colors[1];
     uint8_t color[4]={0,0,0,255};
     for(int c=0;c<3;c++)color[c]=(uint8_t)((paint[c]*light+127)/255);
     #ifdef VAPORA_HOST
     ps_host_particle_layer=2;
     #endif
     unsigned rotation=(unsigned)ps_clamp(p->q[PS_THICK],0,32767)*32768u/32767u;
+    if(interval&1){
+        /* Plus, diagonal cross, six-ray asterisk, eight-ray asterisk,
+         * and a cross-hatched plus. Independent strokes, no polygon fill. */
+        int design=interval/2;
+        for(int v=0;v<logo->tips;v++){
+            op1_pt a=star_logo_vertex(logo,v,x,y,rotation,p->q[PS_THICK]);
+            op1_pt b={2*x*1024-a.x,2*y*1024-a.y};
+            if(design==4 && (v&1)){ /* Short diagonal crossbars. */
+                a.x=x*1024+(a.x-x*1024)/2;a.y=y*1024+(a.y-y*1024)/2;
+                b.x=2*x*1024-a.x;b.y=2*y*1024-a.y;
+            }
+            star_logo_segment(r,a,b,cy,p->q[PS_BRIGHT],color);
+            if(design<2){
+                /* Capped compass plus / forked diagonal snowflake. */
+                for(int end=0;end<2;end++){
+                    op1_pt tip=end?b:a;
+                    int dx=tip.x-x*1024,dy=tip.y-y*1024;
+                    op1_pt u={x*1024+dx*2/3-dy/5,y*1024+dy*2/3+dx/5};
+                    op1_pt v={x*1024+dx*2/3+dy/5,y*1024+dy*2/3-dx/5};
+                    if(design==0)star_logo_segment(r,u,v,cy,p->q[PS_BRIGHT],color);
+                    else {
+                        star_logo_segment(r,u,tip,cy,p->q[PS_BRIGHT],color);
+                        star_logo_segment(r,tip,v,cy,p->q[PS_BRIGHT],color);
+                    }
+                }
+            }
+        }
+        return;
+    }
     op1_pt first=star_logo_vertex(logo,0,x,y,rotation,p->q[PS_THICK]),previous=first;
     for(int v=1;v<=logo->tips*2;v++){
         op1_pt next=v==logo->tips*2?first:star_logo_vertex(logo,v,x,y,rotation,p->q[PS_THICK]);
