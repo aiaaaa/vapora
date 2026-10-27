@@ -9,7 +9,12 @@ static int command_count,overflow;
 static uint8_t snapshot[PV_SNAPSHOT_BYTES];
 static uint32_t serial;
 static float attack=.3f,decay=1.f,sustain=.85f,release=2.f;
-typedef struct {int note,stage,velocity;uint32_t pitch,age;float level,release_step;} voice;
+/* Fade an occupied voice for 256 samples (5.8 ms) before resetting its DSP. */
+#define REPLACE_FADE 256
+typedef struct {
+    int note,stage,velocity;uint32_t pitch,age;float level,release_step;
+    int pending,next_note,next_velocity,fade_left;uint32_t next_pitch;
+} voice;
 static voice voices[PV_MAX_VOICES];
 static int16_t envelope[PV_BLOCK],rendered[PV_BLOCK];
 static float clamp(float x,float lo,float hi){return x!=x?lo:x<lo?lo:x>hi?hi:x;}
@@ -25,39 +30,59 @@ void *pv_snapshot_buffer(void){return snapshot;}
 int pv_snapshot_size(void){int n=plugin_snapshot(snapshot);return n>=0&&n<=PV_SNAPSHOT_BYTES?n:0;}
 void pv_receive_snapshot(void){plugin_receive(snapshot);}
 int pv_overflow(void){return overflow;}
-int pv_active(void){int n=0;for(int i=0;i<PV_MAX_VOICES;i++)n+=voices[i].stage!=0;return n;}
+int pv_active(void){int n=0;for(int i=0;i<PV_MAX_VOICES;i++)n+=voices[i].stage!=0||voices[i].pending;return n;}
 void pv_parameter(int id,float value){if(id>=0&&id<64)plugin_parameter(id,clamp(value,0,1));}
 void pv_action(int id,int value){if(id>=0&&id<64)plugin_action(id,value);}
 void pv_envelope(float a,float d,float s,float r){
     attack=clamp(a,.001f,20);decay=clamp(d,.001f,20);sustain=clamp(s,0,1);release=clamp(r,.005f,20);
 }
 void pv_panic(void){
-    for(int i=0;i<PV_MAX_VOICES;i++){plugin_release(i);voices[i].stage=0;voices[i].level=0;}
+    for(int i=0;i<PV_MAX_VOICES;i++)plugin_release(i);
+    memset(voices,0,sizeof voices);
     memset(outputs,0,sizeof outputs);
 }
-void pv_note_off(int note){for(int i=0;i<PV_MAX_VOICES;i++)if(voices[i].stage&&voices[i].note==note&&voices[i].stage!=4){
-    voices[i].stage=4;voices[i].release_step=voices[i].level/(release*PV_RATE);plugin_release(i);
+void pv_note_off(int note){for(int i=0;i<PV_MAX_VOICES;i++){
+    voice *v=&voices[i];
+    if(v->pending&&v->next_note==note)v->pending=0;
+    if(v->stage&&v->note==note&&v->stage!=4&&v->stage!=5){
+        v->stage=4;v->release_step=v->level/(release*PV_RATE);plugin_release(i);
+    }
 }}
+static void start_voice(int i,int note,int velocity,uint32_t pitch,uint32_t age){
+    voices[i]=(voice){.note=note,.stage=1,.velocity=velocity,.pitch=pitch,.age=age};
+    plugin_start(i,velocity);
+}
 void pv_note_on(int note,float velocity,uint32_t pitch){
     if(PREVIEW_KIND||note<0||note>127||velocity<=0)return;
     int pick=-1;
-    for(int i=0;i<PV_MAX_VOICES;i++)if(voices[i].stage&&voices[i].note==note){pick=i;break;}
-    if(pick<0)for(int i=0;i<PV_MAX_VOICES;i++)if(!voices[i].stage){pick=i;break;}
+    for(int i=0;i<PV_MAX_VOICES;i++)if((voices[i].pending&&voices[i].next_note==note)||
+        (voices[i].stage&&voices[i].stage!=5&&voices[i].note==note)){pick=i;break;}
+    if(pick<0)for(int i=0;i<PV_MAX_VOICES;i++)if(!voices[i].stage&&!voices[i].pending){pick=i;break;}
     if(pick<0){pick=0;for(int i=1;i<PV_MAX_VOICES;i++)if(voices[i].age<voices[pick].age)pick=i;}
-    if(voices[pick].stage)plugin_release(pick);
-    voices[pick]=(voice){note,1,(int)(clamp(velocity,0,1)*32767),pitch,++serial,0,0};
-    plugin_start(pick,voices[pick].velocity);
+    voice *v=&voices[pick];int vel=(int)(clamp(velocity,0,1)*32767);
+    if(!v->stage||v->level<=0){
+        if(v->stage)plugin_release(pick);
+        start_voice(pick,note,vel,pitch,++serial);return;
+    }
+    v->pending=1;v->next_note=note;v->next_velocity=vel;v->next_pitch=pitch;v->age=++serial;
+    if(v->stage!=5){
+        v->stage=5;v->fade_left=REPLACE_FADE;v->release_step=v->level/REPLACE_FADE;
+        plugin_release(pick);
+    }
 }
 void pv_process(void){
     memset(outputs,0,sizeof outputs);
     if(PREVIEW_KIND){plugin_effect(inputs[0],inputs[1],outputs[0],outputs[1]);return;}
     for(int i=0;i<PV_MAX_VOICES;i++){
-        voice *v=&voices[i];if(!v->stage)continue;
+        voice *v=&voices[i];
+        if(!v->stage&&v->pending)start_voice(i,v->next_note,v->next_velocity,v->next_pitch,v->age);
+        if(!v->stage)continue;
         for(int n=0;n<PV_BLOCK;n++){
             if(v->stage==1){v->level+=1/(attack*PV_RATE);if(v->level>=1){v->level=1;v->stage=2;}}
             else if(v->stage==2){v->level-=(1-sustain)/(decay*PV_RATE);if(v->level<=sustain){v->level=sustain;v->stage=3;}}
             else if(v->stage==3)v->level=sustain;
             else if(v->stage==4){v->level-=v->release_step;if(v->level<=0){v->level=0;v->stage=0;}}
+            else if(v->stage==5){v->level-=v->release_step;if(--v->fade_left<=0){v->level=0;v->stage=0;}else if(v->level<0)v->level=0;}
             envelope[n]=(int16_t)(v->level*32767);
         }
         plugin_voice(i,v->pitch,v->velocity,envelope,rendered);
