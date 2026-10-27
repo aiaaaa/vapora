@@ -1,4 +1,4 @@
-# Build VAPORA 1.2.3
+# Build VAPORA 1.2.4
 
 Download the [matching Hundekraft 3.0.2 source and SDK](https://hundekraft.github.io/op1-workshop/source/hundekraft-3.0.2-source.tar.gz) and verify its [published checksum](https://hundekraft.github.io/op1-workshop/source/hundekraft-3.0.2-source.tar.gz.sha256).
 
@@ -22,11 +22,11 @@ python3 -m pip install -r synth_sdk/plugins/vapora/requirements.txt
 python3 synth_sdk/plugins/vapora/tools/build.py --toolchain /path/to/toolchain --skip-previews
 ```
 
-Outputs are `build/vapora.knl` and `build/vapora-1.2.3-validation/`. The build script expects this SDK directory layout. Keep it inside `synth_sdk/plugins/vapora`, rather than invoking it from the standalone GitHub checkout.
+Outputs are `build/vapora.knl` and `build/vapora-1.2.4-validation/`. The build script expects this SDK directory layout. Keep it inside `synth_sdk/plugins/vapora`, rather than invoking it from the standalone GitHub checkout.
 
 Checks cover table generation, 15 preset round trips, production DSP and screen harnesses, 19 dry audio fixtures, wave bounds, all seven suns, control behavior, native imports and loader relocation against GNU ld at two addresses. Host rasterization and timing do not establish native display quality or hardware CPU limits.
 
-Compiled release: 481,200-byte plugin; SHA-256 `3bd3df2bb1104da34829e1840567235321ccedae87c8386f8868aefd5cc8ddee`.
+Compiled release: 481,756-byte plugin; SHA-256 `2b096e3cea44ee4242567f39cce34e5b2141cf41eb3a327d9e579f38ff7e4911`.
 
 The release build uses `--skip-previews`: all SVG drawing-command checks still
 run, but no GIFs or other preview media are generated. Omit that option when
@@ -35,7 +35,7 @@ media exports are wanted. The user’s existing public images and GIFs are retai
 Additional checks cover default-hidden Shift toggling, conditional readout
 backing, outward note/chord ripples, fourteen Character styles, ten Interval
 fields/signatures, all 32768 Thickness values, and 16384 random side-geometry
-samples. The oscillator tables, saved control mappings and visual source are unchanged; fixed audio gain is 3× higher. Fourteen presets are byte-identical to 1.2.2. Stone Hall additionally saves Plate and octave −3. Host fixtures are dry and omit the saved Reverb/Plate effects.
+samples. Small-star continuity is checked for 512 frames per Interval, plus sun occlusion and the 37.5% drift ratio. Wave geometry, DSP, tables, saved mappings and all presets are unchanged from 1.2.3. The loaded image, relocations, imports and SVG match the approved internal.4 build byte-for-byte; only the package version label changes. Host fixtures are dry and omit saved Reverb/Plate effects.
 
 The output-level sweep is separate from the general build:
 
