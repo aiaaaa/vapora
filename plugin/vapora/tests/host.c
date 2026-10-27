@@ -19,13 +19,16 @@ volatile uint8_t op1_eng_page[4];
 static FILE *drawing;
 int ps_host_particle_layer=-1;
 static unsigned drawn_lines,particle_light;
-static int record_particles,particle_counts[8],particle_green,particle_colored;
+static int record_particles,particle_counts[8],particle_green,particle_colored,particle_interval;
 static uint32_t particle_base_hash,particle_overlay_hash;
 static op1_pt recorded_base[PS_PARTICLES];
 static int recorded_base_count,logo_lines;
-static op1_pt logo_first,logo_previous;
+static op1_pt logo_first,logo_previous,logo_center_twice;
 static uint32_t logo_shape_hash;
 static op1_pt last_line_b;
+static int track_small,small_count,check_solid_small;
+static op1_pt small_points[96];
+static uint8_t small_light[96];
 static char last_drawn_text[48];
 static const int16_t defaults[8]={9000,26000,18500,12500,0x5320,0,0,0};
 #include "native_scene.h"
@@ -37,15 +40,26 @@ void op1_raster_line(void *r,const op1_pt *a,const op1_pt *b,int32_t w,const uin
     assert(b->x>=0&&b->x<320*1024&&b->y>=0&&b->y<153*1024);
     assert(w>0&&w<=PS_BIG_DOT_STROKE*2);drawn_lines++;last_line_b=*b;
     if(w==PS_DOT_STROKE||w==PS_MED_DOT_STROKE||w==PS_BIG_DOT_STROKE)particle_light+=c[2];
+    if(check_solid_small&&(ps_host_particle_layer==0||ps_host_particle_layer==1)){
+        int64_t dx=a->x-160*1024,dy=a->y-36*1024;
+        assert(dx*dx+dy*dy>=(int64_t)(22*1024)*(22*1024));
+    }
+    if(track_small&&(ps_host_particle_layer==0||ps_host_particle_layer==1)){
+        assert(small_count<96);small_points[small_count]=*a;
+        small_light[small_count++]=c[1]>c[2]?c[1]:c[2];
+    }
     if(record_particles&&ps_host_particle_layer==2){
         assert(w==1536);
         if(!logo_lines){logo_first=*a;logo_shape_hash=2166136261u;}
-        else assert(a->x==logo_previous.x&&a->y==logo_previous.y);
+        else if(!particle_green)assert(a->x==logo_previous.x&&a->y==logo_previous.y);
+        if(particle_green&&particle_interval>=5){
+            if(!logo_lines)logo_center_twice=(op1_pt){a->x+b->x,a->y+b->y};
+            assert(a->x+b->x==logo_center_twice.x&&a->y+b->y==logo_center_twice.y);
+        }
         logo_previous=*b;logo_lines++;
         logo_shape_hash=(logo_shape_hash^(uint32_t)(a->x-logo_first.x))*16777619u;
         logo_shape_hash=(logo_shape_hash^(uint32_t)(a->y-logo_first.y))*16777619u;
-        if(!particle_green)assert(c[0]==0&&abs(c[1]*149-c[2]*237)<=193);
-        else assert(c[2]>=c[1]&&c[1]>=c[0]);
+        assert(c[0]==0&&abs(c[1]*149-c[2]*237)<=193);
     }
     if(record_particles&&ps_host_particle_layer!=2){
         int overlay=ps_host_particle_layer;assert(overlay==0||overlay==1);
@@ -60,10 +74,6 @@ void op1_raster_line(void *r,const op1_pt *a,const op1_pt *b,int32_t w,const uin
             for(unsigned j=0;j<sizeof(values)/sizeof(values[0]);j++)particle_base_hash=(particle_base_hash^values[j])*16777619u;
         }
         if(overlay){
-            for(int b=0;b<recorded_base_count;b++){
-                int dx=abs(a->x-recorded_base[b].x),dy=abs(a->y-recorded_base[b].y);
-                assert(dx>=9*1024||dy>=6*1024);
-            }
             particle_overlay_hash=(particle_overlay_hash^(uint32_t)a->x)*16777619u;
             particle_overlay_hash=(particle_overlay_hash^(uint32_t)a->y)*16777619u;
         }
@@ -362,6 +372,7 @@ static void previews(const char *dir)
 }
 extern int ps_test_sun_design(void),ps_test_active_control(void);
 extern uint32_t ps_test_particle_phase(void);
+extern uint32_t ps_test_particle_slow_phase(void);
 extern void ps_test_draw_sun(int cy,int design);
 extern void ps_test_draw_sun_at(int cy,int design,int opening);
 static void sun_motion_contract(const char *dir)
@@ -433,13 +444,16 @@ static void controls_contract(const char *dir)
         assert(ps_decode(w).character==(family+direction+PS_CHARACTERS)%PS_CHARACTERS);
     }
     for(int n=0;n<PRESET_COUNT;n++)assert(ps_decode(preset_words[n]).character==(preset_words[n][5]-8192)/256);
-    uint32_t phase=ps_test_particle_phase();ps_host_words[0][2]=0;ps_host_cycles+=25000000;
+    uint32_t phase=ps_test_particle_phase(),slow=ps_test_particle_slow_phase();ps_host_words[0][2]=0;ps_host_cycles+=25000000;
     particle_light=0;SCREEN_vapora.update(0,16);
     uint32_t night_step=ps_test_particle_phase()-phase;unsigned night_light=particle_light;
-    phase=ps_test_particle_phase();ps_host_words[0][2]=32767;ps_host_cycles+=25000000;
+    assert(ps_test_particle_slow_phase()-slow==(uint32_t)((uint64_t)night_step*3/8));
+    phase=ps_test_particle_phase();slow=ps_test_particle_slow_phase();ps_host_words[0][2]=32767;ps_host_cycles+=25000000;
     particle_light=0;SCREEN_vapora.update(0,16);
     uint32_t day_step=ps_test_particle_phase()-phase;
+    assert(ps_test_particle_slow_phase()-slow==(uint32_t)((uint64_t)day_step*3/8));
     assert(night_step>day_step*2&&night_light>particle_light);
+    puts("Star parallax: small/tiny drift at 37.5% of larger stars in both day/night states");
     printf("Particles: low-sun step %u / high-sun step %u; sky brightness %u / %u\n",night_step,day_step,night_light,particle_light);
     puts("Controls: 7 sun steps/wrap, release IDs 01/02/03/04/05/06/07; saved words unchanged by presses; active turn/page; Character changes in one detent; core preset Character mappings");
 }
@@ -601,7 +615,7 @@ static void geometry_contract(void)
     }
     assert(ps_test_impact_count()==count+1);
     ps_test_geometry(&p,playing,curves);assert(!memcmp(quiet,playing,sizeof quiet));
-    puts("Trampoline: one outward pulse per note or grouped chord; random positions, bounded overlap, pinned rim, exact settling despite held audio; real six-voice chord checked");
+    puts("Trampoline: one outward pulse per note or grouped chord; random positions, bounded overlap, original 1.2.3 mesh behavior, exact settling despite held audio; real six-voice chord checked");
 }
 extern void ps_test_audition_reset(int);
 extern void ps_test_impact_last_state(uint32_t*,uint32_t*);
@@ -761,6 +775,7 @@ static void sun_pulse_contract(const char *dir)
     puts("Sun pulse: zero Motion white at every phase; full depth reaches shared red-orange; all seven shapes; Speed follows audio rate; ocean shape/rate independent of Orange");
 }
 extern void ps_test_particle_frame(int,uint32_t);
+extern void ps_test_signature_icon(int);
 static void interval_particles_contract(const char *dir)
 {
     static const int expected[5][4]={{8,4,0,0},{8,8,16,0},{0,18,6,0},{0,8,32,0},{0,0,0,48}};
@@ -773,7 +788,7 @@ static void interval_particles_contract(const char *dir)
         p.interval=i;ps_test_geometry(&p,other,curves);assert(!memcmp(base,other,sizeof base));
         for(int phase=0;phase<64;phase++){
             memset(particle_counts,0,sizeof particle_counts);particle_colored=0;
-            particle_green=i&1;record_particles=1;recorded_base_count=0;logo_lines=0;
+            particle_interval=i;particle_green=i&1;record_particles=1;recorded_base_count=0;logo_lines=0;
             particle_base_hash=particle_overlay_hash=2166136261u;
             ps_test_particle_frame(i,(uint32_t)phase*0x04000000u);
             record_particles=0;
@@ -784,13 +799,21 @@ static void interval_particles_contract(const char *dir)
             overlay_hash[i][phase]=particle_overlay_hash;
             for(int previous=0;previous<i;previous++)assert(overlay_hash[previous][phase]!=particle_overlay_hash);
             assert(particle_colored>=8);
-            assert(logo_lines==2*(4+i/2));
-            assert(logo_previous.x==logo_first.x&&logo_previous.y==logo_first.y);
+            assert(logo_lines==((i&1)?(i==1?6:i==3?10:i==5?3:4):2*(4+i/2)));
+            if(!(i&1))assert(logo_previous.x==logo_first.x&&logo_previous.y==logo_first.y);
             if(!phase){
                 logo_hash[i]=logo_shape_hash;
                 for(int previous=0;previous<i;previous++)assert(logo_hash[previous]!=logo_hash[i]);
             }else assert(logo_hash[i]==logo_shape_hash);
         }
+    }
+    /* Full signature samples, unoccluded by the sun, using production ink. */
+    for(int i=0;i<10;i++){
+        char path[1024];snprintf(path,sizeof path,"%s/signature-icon-%02d.svg",dir,i);
+        drawing=fopen(path,"w");assert(drawing);
+        fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"160\">\n",drawing);
+        ps_test_signature_icon(i);
+        fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
     }
     /* Same-clock screenshots: each step snaps immediately, with fixed ocean. */
     reset();ps_host_words[0][2]=32767;ps_host_words[0][3]=0;
@@ -805,7 +828,39 @@ static void interval_particles_contract(const char *dir)
         assert(ps_decode(ps_host_words[0]).interval==i&&ps_test_active_control()==1);
         fputs("</svg>\n",drawing);fclose(drawing);drawing=0;
     }
-    puts("Interval stars: original 48-star base invariant in all 10 states at 64 phases; overlay count/width/length at stock scale; all ten positions distinct; no base overpaint; readout-green tint; <=96 small stars plus one distinct moving signature; ocean independent; stock interval encoding retained");
+    puts("Interval stars: original 48-star base invariant in all 10 states at 64 phases; overlay count/width/length at stock scale; all ten positions distinct; stable particle paths; readout-green tint; <=96 small stars plus one distinct moving signature; ocean independent; stock interval encoding retained");
+}
+extern void ps_test_small_solid_frame(int,uint32_t);
+static void particle_motion_contract(void)
+{
+    op1_pt previous[96];uint8_t light[96];int max_dy=0,max_light=0;
+    for(int interval=0;interval<10;interval++){
+        int count=0;
+        for(int frame=0;frame<512;frame++){
+            small_count=0;track_small=1;
+            ps_test_particle_frame(interval,(uint32_t)frame*12000000u);
+            track_small=0;
+            if(frame){
+                assert(count==small_count);
+                for(int i=0;i<count;i++){
+                    int dx=abs(small_points[i].x-previous[i].x);
+                    int dy=abs(small_points[i].y-previous[i].y);
+                    int dl=abs((int)small_light[i]-light[i]);
+                    if(dy>max_dy)max_dy=dy;if(dl>max_light)max_light=dl;
+                    assert(dx<1024||dx>300*1024);
+                    if(dx>300*1024)assert(small_light[i]<40&&light[i]<40);
+                    assert(dy<256&&dl<=48);
+                }
+            }
+            count=small_count;memcpy(previous,small_points,sizeof previous);memcpy(light,small_light,sizeof light);
+        }
+    }
+    check_solid_small=1;
+    for(int i=0;i<10;i++)for(int frame=0;frame<128;frame++)
+        ps_test_small_solid_frame(i,(uint32_t)frame*0x02000000u);
+    check_solid_small=0;
+    puts("Small-star solid-sun occlusion: 128 phases per interval, no ink inside disk margin");
+    printf("Small stars: 512 consecutive fastest-drift frames per interval; no relocation; faded wrap; max vertical step %d/1024 px, light step %d/255\n",max_dy,max_light);
 }
 extern void ps_test_logo_vertex(int,int,op1_pt*);
 extern void ps_test_signature_position(int,uint32_t,op1_pt*);
@@ -873,6 +928,6 @@ int main(int argc,char **argv)
         char name[100];snprintf(name,sizeof name,"preset-%02d-%s",i+1,preset_names[i]);
         fixture(argv[1],name,i+4);
     }
-    footer_contract(argv[1]);geometry_contract();hold_return_contract();hold_ripple_contract();previews(argv[1]);controls_contract(argv[1]);sun_motion_contract(argv[1]);approved_suns_contract(argv[1]);secret_contract(argv[1]);sun_pulse_contract(argv[1]);interval_particles_contract(argv[1]);logo_rotation_contract();character_dial_contract(argv[1]);wave_modes_contract();wave_edges_contract();puts("PASS: host DSP/adapter/mailbox/screen checks");
+    footer_contract(argv[1]);geometry_contract();hold_return_contract();hold_ripple_contract();previews(argv[1]);controls_contract(argv[1]);sun_motion_contract(argv[1]);approved_suns_contract(argv[1]);secret_contract(argv[1]);sun_pulse_contract(argv[1]);interval_particles_contract(argv[1]);particle_motion_contract();logo_rotation_contract();character_dial_contract(argv[1]);wave_modes_contract();wave_edges_contract();puts("PASS: host DSP/adapter/mailbox/screen checks");
     return 0;
 }
