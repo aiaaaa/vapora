@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Play Vapora's cinematic pads and spectral textures in your browser.">
+  <meta name="theme-color" content="#e9e9e3"><title>Vapora · Play</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header><div><p class="eyebrow">ORIGINAL OP-1 / HUNDEKRAFT</p><h1 id="title">Vapora</h1><p id="description">Cinematic pads. Spectral textures. An ocean in motion.</p></div><a id="source" href="https://github.com/aiaaaa/vapora">Source &amp; download ↗</a></header>
+  <div class="workbench">
+    <section class="instrument" aria-label="Playable instrument">
+      <div class="instrument-bar"><span class="instrument-label" id="instrument-label">VAPORA / 1.2.4</span><button id="audio" class="primary" disabled>Loading engine…</button></div>
+      <div class="display"><canvas id="screen" width="960" height="480" role="img" aria-label="Live Vapora ocean, stars, and sun animation"></canvas></div>
+      <div class="screen-bar"><span class="status"><i id="indicator"></i><span id="status" role="status">Loading preview…</span></span><div id="screen-actions"></div></div>
+      <div id="controls" class="controls"></div>
+      <section id="performance" aria-label="Keyboard">
+        <div class="keyboard-bar"><div class="octave"><button id="octave-down" aria-label="Lower octave">−</button><span id="octave">C3–C4</span><button id="octave-up" aria-label="Raise octave">+</button></div><div><button id="chord" disabled>Play a chord</button><button id="stop" disabled>Stop all <kbd>esc</kbd></button></div></div>
+        <div id="keyboard" class="keyboard"></div>
+        <p class="hint">Play with your keyboard or touch. Hold several notes for a chord.</p>
+      </section>
+      <section id="effect-input" hidden><label>Audio file <input id="audio-file" type="file" accept="audio/*"></label><button id="input-play" disabled>Play input</button><p class="hint">Your file stays in this browser. Stereo input is preserved.</p></section>
+    </section>
+    <aside>
+      <section class="preset-section"><p class="eyebrow">FIND A TEXTURE</p><h2>Factory sounds</h2><div id="presets" class="presets"></div><p id="preset-note" class="note"></p></section>
+      <section class="monitor"><label for="volume">Listening level <output id="volume-value">60%</output></label><input id="volume" type="range" min="0" max="1" step=".01" value=".6"><div class="meter" aria-hidden="true"><i id="meter"></i></div></section>
+      <details><summary>Audition envelope</summary><p class="note">Shapes notes in this browser preview.</p><div id="envelope"></div></details>
+      <div class="patch-actions"><button id="export">Save patch</button><button id="import">Load patch</button><input id="patch-file" type="file" accept="application/json,.json" hidden></div>
+      <p id="error" role="alert" hidden></p>
+    </aside>
+  </div>
+  <footer><p id="limitations"></p><span>Built from the original plugin source · <a href="LICENSE.txt">GPL-3.0</a></span></footer>
+</main><script type="module" src="app.mjs"></script>
+</body></html>
